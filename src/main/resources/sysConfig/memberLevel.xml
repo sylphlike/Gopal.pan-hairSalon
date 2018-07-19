@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+	会员等级配置文件
+-->
+<configuration>
+	<cashiers>
+		<!-- 金卡 -->
+		<goldCard></goldCard>
+		<!-- 银卡 -->
+		<silverCard></silverCard>
+		<!-- 普卡 -->
+		<classicCard></classicCard>
+	</cashiers>
+</configuration>

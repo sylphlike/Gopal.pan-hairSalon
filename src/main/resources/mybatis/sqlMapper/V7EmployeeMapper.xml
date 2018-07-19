@@ -1,0 +1,631 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.carrey.v7mc.mapperInterface.V7EmployeeMapper" >
+  <resultMap id="BaseResultMap" type="com.carrey.v7mc.po.V7Employee" >
+    <id column="ID" property="id" jdbcType="VARCHAR" />
+    <result column="v7_e_num" property="v7ENum" jdbcType="INTEGER" />
+    <result column="v7_e_name" property="v7EName" jdbcType="VARCHAR" />
+    <result column="v7_e_real_name" property="v7ERealName" jdbcType="VARCHAR" />
+    <result column="v7_e_sex" property="v7ESex" jdbcType="INTEGER" />
+    <result column="v7_e_birthday" property="v7EBirthday" jdbcType="DATE" />
+    <result column="v7_e_phone" property="v7EPhone" jdbcType="VARCHAR" />
+    <result column="v7_e_position" property="v7EPosition" jdbcType="VARCHAR" />
+    <result column="v7_e_join_date" property="v7EJoinDate" jdbcType="DATE" />
+    <result column="v7_e_password" property="v7EPassword" jdbcType="VARCHAR" />
+    <result column="v7_e_status" property="v7EStatus" jdbcType="INTEGER" />
+    <result column="v7_e_last_login" property="v7ELastLogin" jdbcType="TIMESTAMP" />
+    <result column="v7_e_last_ip" property="v7ELastIp" jdbcType="VARCHAR" />
+    <result column="v7_e_sum_login" property="v7ESumLogin" jdbcType="INTEGER" />
+    <result column="v7_e_online_time" property="v7EOnlineTime" jdbcType="TIMESTAMP" />
+    <result column="v7_e_remarks" property="v7ERemarks" jdbcType="VARCHAR" />
+    <result column="v7_e_create_user" property="v7ECreateUser" jdbcType="VARCHAR" />
+    <result column="v7_e_create_date" property="v7ECreateDate" jdbcType="TIMESTAMP" />
+    <result column="v7_e_update_user" property="v7EUpdateUser" jdbcType="VARCHAR" />
+    <result column="v7_e_update_time" property="v7EUpdateTime" jdbcType="TIMESTAMP" />
+    <result column="extends1" property="extends1" jdbcType="VARCHAR" />
+    <result column="extends2" property="extends2" jdbcType="VARCHAR" />
+    <result column="extends3" property="extends3" jdbcType="VARCHAR" />
+    <result column="extends4" property="extends4" jdbcType="VARCHAR" />
+    <result column="extends5" property="extends5" jdbcType="VARCHAR" />
+  </resultMap>
+  
+ <!-- ********************************自定义SQL开始****************************** -->
+ <!-- 统计总数 -->
+  <select id="getTotalAmount" parameterType="com.carrey.v7mc.queryVo.EmployeeQVo" resultType="int">
+  	select count(m.id) from V7_EMPLOYEE m
+	  	<where>
+	  		1=1
+	  		<if test="v7EName !=null and v7EName !=''">
+				and m.V7_E_NAME like concat('%', '#',#{v7EName}, '%')  escape '#' 
+				
+				<!-- and pr.processname like '%/${processNameQuery}%' escape '/' -->
+	  		</if>
+	  		<if test="v7ENum != null and v7ENum !=''">
+	  			and m.V7_E_NAME like concat('%', '#',#{v7ENum}, '%')  escape '#'
+	  		</if>
+	  		<if test="v7EPhone !=null and v7EPhone !=''">
+	  			 and m.V7_E_NAME like concat('%', '#',#{v7EPhone}, '%')  escape '#'
+	  		</if>
+	  		
+	  		<if test="v7EBeginTime != null and v7EBeginTime != ''">
+	  			and m.v7_e_create_date &gt;= #{v7EBeginTime}
+	  		</if>
+	  		<if test="v7EEndTime != null and v7EEndTime != ''">
+	  			and m.v7_e_create_date &lt;= #{v7EEndTime}
+	  		</if>
+	  		and m.v7_e_status != 3
+	  	</where>
+  </select>
+  <select id="getPageData" parameterType="com.carrey.v7mc.queryVo.EmployeeQVo" resultMap="BaseResultMap">
+  	select * from V7_EMPLOYEE m
+	  	<where>
+	  		1=1
+	  		<if test="v7EName !=null and v7EName !=''">
+				and m.V7_E_NAME like concat('%','#',#{v7EName},'%') escape '#' 
+				
+				<!-- and pr.processname like '%/${processNameQuery}%' escape '/' -->
+	  		</if>
+	  		<if test="v7ENum != null and v7ENum !=''">
+	  			and m.V7_E_NAME like concat('%', '#',#{v7ENum}, '%')  escape '#'
+	  		</if>
+	  		<if test="v7EPhone !=null and v7EPhone !=''">
+	  			 and m.V7_E_NAME like concat('%', '#',#{v7EPhone}, '%')  escape '#'
+	  		</if>
+	  		
+	  		<if test="v7EBeginTime != null and v7EBeginTime != ''">
+	  			and m.v7_e_create_date &gt;= #{v7EBeginTime}
+	  		</if>
+	  		<if test="v7EEndTime != null and v7EEndTime != ''">
+	  			and m.v7_e_create_date &lt;= #{v7EEndTime}
+	  		</if>
+	  		and m.v7_e_status != 3
+	  	</where>
+		order by m.v7_e_create_date DESC limit #{beginPageIndex}, #{pageSize} 
+  </select>
+  
+  <!-- 登录 -->
+  <select id="loginIn" parameterType="v7Employee" resultMap="BaseResultMap">
+  	select * from V7_EMPLOYEE m
+  		<where>
+	  		1=1
+	  		<if test="v7EName !=null and v7EName !=''">
+				and	m.V7_E_NAME = #{v7EName}
+	  		</if>
+	  		<if test="v7EPassword != null and v7EPassword !=''">
+	  			and m.V7_E_PASSWORD = #{v7EPassword}
+	  		</if>
+	  	</where>
+  </select>
+  
+  <!-- 系统缓存数据 -->
+  <select id="search4Ehcache" resultMap="BaseResultMap">
+ 	SELECT 
+	  e.ID id ,
+	  e.v7_e_num v7ENum,
+	  e.v7_e_name v7EName,
+	  e.v7_e_real_name v7ERealName,
+	  e.v7_e_position v7EPosition
+	FROM
+	  V7_EMPLOYEE e 
+	WHERE e.v7_e_status = 1
+  </select>
+  
+  
+  
+  <select id="checkUniqueness" parameterType="string" resultMap="BaseResultMap">
+  		SELECT * FROM V7_EMPLOYEE e WHERE e.v7_e_name = #{inName}
+  </select>
+  
+  
+  
+  <select id="checkUniquenessPhone" parameterType="string" resultMap="BaseResultMap">
+  		SELECT * FROM V7_EMPLOYEE e WHERE e.v7_e_phone = #{inName}
+  </select>
+  
+  
+  <select id="search4Results" resultMap="BaseResultMap">
+  		SELECT * FROM V7_EMPLOYEE e WHERE e.v7_e_status = 1
+  			and e.v7_e_position != 10
+  </select>
+  
+  
+  
+  
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    ID, v7_e_num, v7_e_name, v7_e_real_name, v7_e_sex, v7_e_birthday, v7_e_phone, v7_e_position, 
+    v7_e_join_date, v7_e_password, v7_e_status, v7_e_last_login, v7_e_last_ip, v7_e_sum_login, 
+    v7_e_online_time, v7_e_remarks, v7_e_create_user, v7_e_create_date, v7_e_update_user, 
+    v7_e_update_time, extends1, extends2, extends3, extends4, extends5
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.carrey.v7mc.po.V7EmployeeExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from V7_EMPLOYEE
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from V7_EMPLOYEE
+    where ID = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from V7_EMPLOYEE
+    where ID = #{id,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.carrey.v7mc.po.V7EmployeeExample" >
+    delete from V7_EMPLOYEE
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.carrey.v7mc.po.V7Employee" >
+    insert into V7_EMPLOYEE (ID, v7_e_num, v7_e_name, 
+      v7_e_real_name, v7_e_sex, v7_e_birthday, 
+      v7_e_phone, v7_e_position, v7_e_join_date, 
+      v7_e_password, v7_e_status, v7_e_last_login, 
+      v7_e_last_ip, v7_e_sum_login, v7_e_online_time, 
+      v7_e_remarks, v7_e_create_user, v7_e_create_date, 
+      v7_e_update_user, v7_e_update_time, extends1, 
+      extends2, extends3, extends4, 
+      extends5)
+    values (#{id,jdbcType=VARCHAR}, #{v7ENum,jdbcType=INTEGER}, #{v7EName,jdbcType=VARCHAR}, 
+      #{v7ERealName,jdbcType=VARCHAR}, #{v7ESex,jdbcType=INTEGER}, #{v7EBirthday,jdbcType=DATE}, 
+      #{v7EPhone,jdbcType=VARCHAR}, #{v7EPosition,jdbcType=VARCHAR}, #{v7EJoinDate,jdbcType=DATE}, 
+      #{v7EPassword,jdbcType=VARCHAR}, #{v7EStatus,jdbcType=INTEGER}, #{v7ELastLogin,jdbcType=TIMESTAMP}, 
+      #{v7ELastIp,jdbcType=VARCHAR}, #{v7ESumLogin,jdbcType=INTEGER}, #{v7EOnlineTime,jdbcType=TIMESTAMP}, 
+      #{v7ERemarks,jdbcType=VARCHAR}, #{v7ECreateUser,jdbcType=VARCHAR}, #{v7ECreateDate,jdbcType=TIMESTAMP}, 
+      #{v7EUpdateUser,jdbcType=VARCHAR}, #{v7EUpdateTime,jdbcType=TIMESTAMP}, #{extends1,jdbcType=VARCHAR}, 
+      #{extends2,jdbcType=VARCHAR}, #{extends3,jdbcType=VARCHAR}, #{extends4,jdbcType=VARCHAR}, 
+      #{extends5,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.carrey.v7mc.po.V7Employee" >
+    insert into V7_EMPLOYEE
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="v7ENum != null" >
+        v7_e_num,
+      </if>
+      <if test="v7EName != null" >
+        v7_e_name,
+      </if>
+      <if test="v7ERealName != null" >
+        v7_e_real_name,
+      </if>
+      <if test="v7ESex != null" >
+        v7_e_sex,
+      </if>
+      <if test="v7EBirthday != null" >
+        v7_e_birthday,
+      </if>
+      <if test="v7EPhone != null" >
+        v7_e_phone,
+      </if>
+      <if test="v7EPosition != null" >
+        v7_e_position,
+      </if>
+      <if test="v7EJoinDate != null" >
+        v7_e_join_date,
+      </if>
+      <if test="v7EPassword != null" >
+        v7_e_password,
+      </if>
+      <if test="v7EStatus != null" >
+        v7_e_status,
+      </if>
+      <if test="v7ELastLogin != null" >
+        v7_e_last_login,
+      </if>
+      <if test="v7ELastIp != null" >
+        v7_e_last_ip,
+      </if>
+      <if test="v7ESumLogin != null" >
+        v7_e_sum_login,
+      </if>
+      <if test="v7EOnlineTime != null" >
+        v7_e_online_time,
+      </if>
+      <if test="v7ERemarks != null" >
+        v7_e_remarks,
+      </if>
+      <if test="v7ECreateUser != null" >
+        v7_e_create_user,
+      </if>
+      <if test="v7ECreateDate != null" >
+        v7_e_create_date,
+      </if>
+      <if test="v7EUpdateUser != null" >
+        v7_e_update_user,
+      </if>
+      <if test="v7EUpdateTime != null" >
+        v7_e_update_time,
+      </if>
+      <if test="extends1 != null" >
+        extends1,
+      </if>
+      <if test="extends2 != null" >
+        extends2,
+      </if>
+      <if test="extends3 != null" >
+        extends3,
+      </if>
+      <if test="extends4 != null" >
+        extends4,
+      </if>
+      <if test="extends5 != null" >
+        extends5,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="v7ENum != null" >
+        #{v7ENum,jdbcType=INTEGER},
+      </if>
+      <if test="v7EName != null" >
+        #{v7EName,jdbcType=VARCHAR},
+      </if>
+      <if test="v7ERealName != null" >
+        #{v7ERealName,jdbcType=VARCHAR},
+      </if>
+      <if test="v7ESex != null" >
+        #{v7ESex,jdbcType=INTEGER},
+      </if>
+      <if test="v7EBirthday != null" >
+        #{v7EBirthday,jdbcType=DATE},
+      </if>
+      <if test="v7EPhone != null" >
+        #{v7EPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="v7EPosition != null" >
+        #{v7EPosition,jdbcType=VARCHAR},
+      </if>
+      <if test="v7EJoinDate != null" >
+        #{v7EJoinDate,jdbcType=DATE},
+      </if>
+      <if test="v7EPassword != null" >
+        #{v7EPassword,jdbcType=VARCHAR},
+      </if>
+      <if test="v7EStatus != null" >
+        #{v7EStatus,jdbcType=INTEGER},
+      </if>
+      <if test="v7ELastLogin != null" >
+        #{v7ELastLogin,jdbcType=TIMESTAMP},
+      </if>
+      <if test="v7ELastIp != null" >
+        #{v7ELastIp,jdbcType=VARCHAR},
+      </if>
+      <if test="v7ESumLogin != null" >
+        #{v7ESumLogin,jdbcType=INTEGER},
+      </if>
+      <if test="v7EOnlineTime != null" >
+        #{v7EOnlineTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="v7ERemarks != null" >
+        #{v7ERemarks,jdbcType=VARCHAR},
+      </if>
+      <if test="v7ECreateUser != null" >
+        #{v7ECreateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="v7ECreateDate != null" >
+        #{v7ECreateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="v7EUpdateUser != null" >
+        #{v7EUpdateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="v7EUpdateTime != null" >
+        #{v7EUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="extends1 != null" >
+        #{extends1,jdbcType=VARCHAR},
+      </if>
+      <if test="extends2 != null" >
+        #{extends2,jdbcType=VARCHAR},
+      </if>
+      <if test="extends3 != null" >
+        #{extends3,jdbcType=VARCHAR},
+      </if>
+      <if test="extends4 != null" >
+        #{extends4,jdbcType=VARCHAR},
+      </if>
+      <if test="extends5 != null" >
+        #{extends5,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.carrey.v7mc.po.V7EmployeeExample" resultType="java.lang.Integer" >
+    select count(*) from V7_EMPLOYEE
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update V7_EMPLOYEE
+    <set >
+      <if test="record.id != null" >
+        ID = #{record.id,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7ENum != null" >
+        v7_e_num = #{record.v7ENum,jdbcType=INTEGER},
+      </if>
+      <if test="record.v7EName != null" >
+        v7_e_name = #{record.v7EName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7ERealName != null" >
+        v7_e_real_name = #{record.v7ERealName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7ESex != null" >
+        v7_e_sex = #{record.v7ESex,jdbcType=INTEGER},
+      </if>
+      <if test="record.v7EBirthday != null" >
+        v7_e_birthday = #{record.v7EBirthday,jdbcType=DATE},
+      </if>
+      <if test="record.v7EPhone != null" >
+        v7_e_phone = #{record.v7EPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7EPosition != null" >
+        v7_e_position = #{record.v7EPosition,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7EJoinDate != null" >
+        v7_e_join_date = #{record.v7EJoinDate,jdbcType=DATE},
+      </if>
+      <if test="record.v7EPassword != null" >
+        v7_e_password = #{record.v7EPassword,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7EStatus != null" >
+        v7_e_status = #{record.v7EStatus,jdbcType=INTEGER},
+      </if>
+      <if test="record.v7ELastLogin != null" >
+        v7_e_last_login = #{record.v7ELastLogin,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.v7ELastIp != null" >
+        v7_e_last_ip = #{record.v7ELastIp,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7ESumLogin != null" >
+        v7_e_sum_login = #{record.v7ESumLogin,jdbcType=INTEGER},
+      </if>
+      <if test="record.v7EOnlineTime != null" >
+        v7_e_online_time = #{record.v7EOnlineTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.v7ERemarks != null" >
+        v7_e_remarks = #{record.v7ERemarks,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7ECreateUser != null" >
+        v7_e_create_user = #{record.v7ECreateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7ECreateDate != null" >
+        v7_e_create_date = #{record.v7ECreateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.v7EUpdateUser != null" >
+        v7_e_update_user = #{record.v7EUpdateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7EUpdateTime != null" >
+        v7_e_update_time = #{record.v7EUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.extends1 != null" >
+        extends1 = #{record.extends1,jdbcType=VARCHAR},
+      </if>
+      <if test="record.extends2 != null" >
+        extends2 = #{record.extends2,jdbcType=VARCHAR},
+      </if>
+      <if test="record.extends3 != null" >
+        extends3 = #{record.extends3,jdbcType=VARCHAR},
+      </if>
+      <if test="record.extends4 != null" >
+        extends4 = #{record.extends4,jdbcType=VARCHAR},
+      </if>
+      <if test="record.extends5 != null" >
+        extends5 = #{record.extends5,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update V7_EMPLOYEE
+    set ID = #{record.id,jdbcType=VARCHAR},
+      v7_e_num = #{record.v7ENum,jdbcType=INTEGER},
+      v7_e_name = #{record.v7EName,jdbcType=VARCHAR},
+      v7_e_real_name = #{record.v7ERealName,jdbcType=VARCHAR},
+      v7_e_sex = #{record.v7ESex,jdbcType=INTEGER},
+      v7_e_birthday = #{record.v7EBirthday,jdbcType=DATE},
+      v7_e_phone = #{record.v7EPhone,jdbcType=VARCHAR},
+      v7_e_position = #{record.v7EPosition,jdbcType=VARCHAR},
+      v7_e_join_date = #{record.v7EJoinDate,jdbcType=DATE},
+      v7_e_password = #{record.v7EPassword,jdbcType=VARCHAR},
+      v7_e_status = #{record.v7EStatus,jdbcType=INTEGER},
+      v7_e_last_login = #{record.v7ELastLogin,jdbcType=TIMESTAMP},
+      v7_e_last_ip = #{record.v7ELastIp,jdbcType=VARCHAR},
+      v7_e_sum_login = #{record.v7ESumLogin,jdbcType=INTEGER},
+      v7_e_online_time = #{record.v7EOnlineTime,jdbcType=TIMESTAMP},
+      v7_e_remarks = #{record.v7ERemarks,jdbcType=VARCHAR},
+      v7_e_create_user = #{record.v7ECreateUser,jdbcType=VARCHAR},
+      v7_e_create_date = #{record.v7ECreateDate,jdbcType=TIMESTAMP},
+      v7_e_update_user = #{record.v7EUpdateUser,jdbcType=VARCHAR},
+      v7_e_update_time = #{record.v7EUpdateTime,jdbcType=TIMESTAMP},
+      extends1 = #{record.extends1,jdbcType=VARCHAR},
+      extends2 = #{record.extends2,jdbcType=VARCHAR},
+      extends3 = #{record.extends3,jdbcType=VARCHAR},
+      extends4 = #{record.extends4,jdbcType=VARCHAR},
+      extends5 = #{record.extends5,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.carrey.v7mc.po.V7Employee" >
+    update V7_EMPLOYEE
+    <set >
+      <if test="v7ENum != null" >
+        v7_e_num = #{v7ENum,jdbcType=INTEGER},
+      </if>
+      <if test="v7EName != null" >
+        v7_e_name = #{v7EName,jdbcType=VARCHAR},
+      </if>
+      <if test="v7ERealName != null" >
+        v7_e_real_name = #{v7ERealName,jdbcType=VARCHAR},
+      </if>
+      <if test="v7ESex != null" >
+        v7_e_sex = #{v7ESex,jdbcType=INTEGER},
+      </if>
+      <if test="v7EBirthday != null" >
+        v7_e_birthday = #{v7EBirthday,jdbcType=DATE},
+      </if>
+      <if test="v7EPhone != null" >
+        v7_e_phone = #{v7EPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="v7EPosition != null" >
+        v7_e_position = #{v7EPosition,jdbcType=VARCHAR},
+      </if>
+      <if test="v7EJoinDate != null" >
+        v7_e_join_date = #{v7EJoinDate,jdbcType=DATE},
+      </if>
+      <if test="v7EPassword != null" >
+        v7_e_password = #{v7EPassword,jdbcType=VARCHAR},
+      </if>
+      <if test="v7EStatus != null" >
+        v7_e_status = #{v7EStatus,jdbcType=INTEGER},
+      </if>
+      <if test="v7ELastLogin != null" >
+        v7_e_last_login = #{v7ELastLogin,jdbcType=TIMESTAMP},
+      </if>
+      <if test="v7ELastIp != null" >
+        v7_e_last_ip = #{v7ELastIp,jdbcType=VARCHAR},
+      </if>
+      <if test="v7ESumLogin != null" >
+        v7_e_sum_login = #{v7ESumLogin,jdbcType=INTEGER},
+      </if>
+      <if test="v7EOnlineTime != null" >
+        v7_e_online_time = #{v7EOnlineTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="v7ERemarks != null" >
+        v7_e_remarks = #{v7ERemarks,jdbcType=VARCHAR},
+      </if>
+      <if test="v7ECreateUser != null" >
+        v7_e_create_user = #{v7ECreateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="v7ECreateDate != null" >
+        v7_e_create_date = #{v7ECreateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="v7EUpdateUser != null" >
+        v7_e_update_user = #{v7EUpdateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="v7EUpdateTime != null" >
+        v7_e_update_time = #{v7EUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="extends1 != null" >
+        extends1 = #{extends1,jdbcType=VARCHAR},
+      </if>
+      <if test="extends2 != null" >
+        extends2 = #{extends2,jdbcType=VARCHAR},
+      </if>
+      <if test="extends3 != null" >
+        extends3 = #{extends3,jdbcType=VARCHAR},
+      </if>
+      <if test="extends4 != null" >
+        extends4 = #{extends4,jdbcType=VARCHAR},
+      </if>
+      <if test="extends5 != null" >
+        extends5 = #{extends5,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.carrey.v7mc.po.V7Employee" >
+    update V7_EMPLOYEE
+    set v7_e_num = #{v7ENum,jdbcType=INTEGER},
+      v7_e_name = #{v7EName,jdbcType=VARCHAR},
+      v7_e_real_name = #{v7ERealName,jdbcType=VARCHAR},
+      v7_e_sex = #{v7ESex,jdbcType=INTEGER},
+      v7_e_birthday = #{v7EBirthday,jdbcType=DATE},
+      v7_e_phone = #{v7EPhone,jdbcType=VARCHAR},
+      v7_e_position = #{v7EPosition,jdbcType=VARCHAR},
+      v7_e_join_date = #{v7EJoinDate,jdbcType=DATE},
+      v7_e_password = #{v7EPassword,jdbcType=VARCHAR},
+      v7_e_status = #{v7EStatus,jdbcType=INTEGER},
+      v7_e_last_login = #{v7ELastLogin,jdbcType=TIMESTAMP},
+      v7_e_last_ip = #{v7ELastIp,jdbcType=VARCHAR},
+      v7_e_sum_login = #{v7ESumLogin,jdbcType=INTEGER},
+      v7_e_online_time = #{v7EOnlineTime,jdbcType=TIMESTAMP},
+      v7_e_remarks = #{v7ERemarks,jdbcType=VARCHAR},
+      v7_e_create_user = #{v7ECreateUser,jdbcType=VARCHAR},
+      v7_e_create_date = #{v7ECreateDate,jdbcType=TIMESTAMP},
+      v7_e_update_user = #{v7EUpdateUser,jdbcType=VARCHAR},
+      v7_e_update_time = #{v7EUpdateTime,jdbcType=TIMESTAMP},
+      extends1 = #{extends1,jdbcType=VARCHAR},
+      extends2 = #{extends2,jdbcType=VARCHAR},
+      extends3 = #{extends3,jdbcType=VARCHAR},
+      extends4 = #{extends4,jdbcType=VARCHAR},
+      extends5 = #{extends5,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

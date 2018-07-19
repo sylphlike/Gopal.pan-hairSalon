@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+	统一日志配置文件,查询功能不记录日志
+		根据模块名访问根路径-》功能访问路径配置
+ -->
+<configuration>
+	<universalLogs>
+		<member>
+			<member>会员中心</member>
+			<addMember>新增会员</addMember>
+			<updateMember>修改会员</updateMember>
+			<updateMemberState>修改会员状态</updateMemberState>
+			<delMember>删除会员</delMember>
+			<addMemberCard>添加会员卡</addMemberCard>
+		</member>
+		<card>
+			<card>会员卡中心</card>
+			<addCard>新增会员卡</addCard>
+			<updateCard>修改会员卡</updateCard>
+			<delCard>删除会员卡</delCard>
+			<addCardRecharge>会员充值</addCardRecharge>
+		</card>
+		<brand>
+			<brand>品牌管理</brand>
+			<addBrand>新增/修改品牌</addBrand>
+			<updateBrandState>修改品牌状态</updateBrandState>
+			<delBrand>删除品牌</delBrand>
+		</brand>
+		<product>
+			<product>产品管理</product>
+			<addProduct>添加/修改产品</addProduct>
+			<updateProductStatus>修改产品状态</updateProductStatus>
+		</product>
+		<inProduct>
+			<inProduct>产品入库管理</inProduct>
+			<addInProduct>添加/修改入库信息</addInProduct>
+		</inProduct>
+		<outProduct>
+			<outProduct>产品出库库管理</outProduct>
+			<addOutProduct>添加/修改出库信息</addOutProduct>
+		</outProduct>
+		
+		<employee>
+			<employee>员工中心</employee>
+			<addEmployee>添加员工</addEmployee>
+			<updateEmployeeStatus>修改员工状态</updateEmployeeStatus>
+			<updateEmployee>修改员工信息</updateEmployee>
+		</employee>
+		<cashier>
+			<cashier>前台管理</cashier>
+			<addCashier>买单</addCashier>
+		</cashier>
+		<charge>
+			<charge>扣款管理</charge>
+			<addCharge>添加/修改扣款</addCharge>
+			<delCharge>删除扣款</delCharge>
+		</charge>
+		
+	</universalLogs>
+</configuration>

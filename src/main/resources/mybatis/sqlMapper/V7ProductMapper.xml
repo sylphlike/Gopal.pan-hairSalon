@@ -1,0 +1,497 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.carrey.v7mc.mapperInterface.V7ProductMapper" >
+  <resultMap id="BaseResultMap" type="com.carrey.v7mc.po.V7Product" >
+    <id column="ID" property="id" jdbcType="VARCHAR" />
+    <result column="v7_p_brand" property="v7PBrand" jdbcType="VARCHAR" />
+    <result column="v7_p_type" property="v7PType" jdbcType="VARCHAR" />
+    <result column="v7_p_name" property="v7PName" jdbcType="VARCHAR" />
+    <result column="v7_p_unit" property="v7PUnit" jdbcType="VARCHAR" />
+    <result column="v7_p_standard" property="v7PStandard" jdbcType="VARCHAR" />
+    <result column="v7_p_agent" property="v7PAgent" jdbcType="VARCHAR" />
+    <result column="v7_p_agent_phone" property="v7PAgentPhone" jdbcType="VARCHAR" />
+    <result column="v7_p_status" property="v7PStatus" jdbcType="INTEGER" />
+    <result column="v7_p_remarks" property="v7PRemarks" jdbcType="VARCHAR" />
+    <result column="v7_p_create_user" property="v7PCreateUser" jdbcType="VARCHAR" />
+    <result column="v7_p_crate_time" property="v7PCrateTime" jdbcType="TIMESTAMP" />
+    <result column="v7_p_update_user" property="v7PUpdateUser" jdbcType="VARCHAR" />
+    <result column="v7_p_update_time" property="v7PUpdateTime" jdbcType="TIMESTAMP" />
+    <result column="v7_pk_brand" property="v7PkBrand" jdbcType="VARCHAR" />
+    <result column="extends1" property="extends1" jdbcType="VARCHAR" />
+    <result column="extends2" property="extends2" jdbcType="VARCHAR" />
+    <result column="extends3" property="extends3" jdbcType="VARCHAR" />
+    <result column="extends4" property="extends4" jdbcType="VARCHAR" />
+    <result column="extends5" property="extends5" jdbcType="VARCHAR" />
+  </resultMap>
+  <!-- ********************************自定义SQL开始****************************** -->
+  <!-- 统计总数 -->
+  <select id="getTotalAmount" parameterType="com.carrey.v7mc.queryVo.ProductQVo" resultType="int">
+  	select count(m.id) from V7_PRODUCT m
+	  	<where>
+	  		1=1 
+	  		<if test="v7PBrand !=null and v7PBrand !=''">
+				and	m.v7_p_brand like '%${v7PBrand}%'
+	  		</if>
+	  		<if test="v7PType != null and v7PType !=''">
+	  			and m.v7_p_type like '%${v7PType}%'
+	  		</if>
+	  		<if test="v7PName != null and v7PName !=''">
+	  			and m.v7_p_name like '%${v7PName}%'
+	  		</if>
+	  		and m.v7_p_status != 3 
+	  	</where>
+  </select>
+  
+   <select id="getPageData" parameterType="com.carrey.v7mc.queryVo.ProductQVo" resultMap="BaseResultMap">
+  		select * from V7_PRODUCT m
+  			<where>
+	  		1=1 
+	  		<if test="v7PBrand !=null and v7PBrand !=''">
+				and	m.v7_p_brand like '%${v7PBrand}%'
+	  		</if>
+	  		<if test="v7PType != null and v7PType !=''">
+	  			and m.v7_p_type like '%${v7PType}%'
+	  		</if>
+	  		<if test="v7PName != null and v7PName !=''">
+	  			and m.v7_p_name like '%${v7PName}%'
+	  		</if>
+	  		and m.v7_p_status != 3 
+	  	</where>
+		order by m.v7_p_crate_time DESC limit #{beginPageIndex}, #{pageSize} 
+  </select>
+   
+   <select id="search4Ehcache" resultMap="BaseResultMap">
+   		SELECT 
+			  * 
+			FROM
+			  V7_PRODUCT p 
+			WHERE p.v7_p_status = 1 
+   </select>
+  
+  <select id="checkUniqueness" parameterType="string" resultMap="BaseResultMap">
+  		SELECT * FROM V7_PRODUCT p WHERE p.v7_p_name = #{inName}
+  </select>
+  
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    ID, v7_p_brand, v7_p_type, v7_p_name, v7_p_unit, v7_p_standard, v7_p_agent, v7_p_agent_phone, 
+    v7_p_status, v7_p_remarks, v7_p_create_user, v7_p_crate_time, v7_p_update_user, v7_p_update_time, 
+    v7_pk_brand, extends1, extends2, extends3, extends4, extends5
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.carrey.v7mc.po.V7ProductExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from V7_PRODUCT
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from V7_PRODUCT
+    where ID = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from V7_PRODUCT
+    where ID = #{id,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.carrey.v7mc.po.V7ProductExample" >
+    delete from V7_PRODUCT
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.carrey.v7mc.po.V7Product" >
+    insert into V7_PRODUCT (ID, v7_p_brand, v7_p_type, 
+      v7_p_name, v7_p_unit, v7_p_standard, 
+      v7_p_agent, v7_p_agent_phone, v7_p_status, 
+      v7_p_remarks, v7_p_create_user, v7_p_crate_time, 
+      v7_p_update_user, v7_p_update_time, v7_pk_brand, 
+      extends1, extends2, extends3, 
+      extends4, extends5)
+    values (#{id,jdbcType=VARCHAR}, #{v7PBrand,jdbcType=VARCHAR}, #{v7PType,jdbcType=VARCHAR}, 
+      #{v7PName,jdbcType=VARCHAR}, #{v7PUnit,jdbcType=VARCHAR}, #{v7PStandard,jdbcType=VARCHAR}, 
+      #{v7PAgent,jdbcType=VARCHAR}, #{v7PAgentPhone,jdbcType=VARCHAR}, #{v7PStatus,jdbcType=INTEGER}, 
+      #{v7PRemarks,jdbcType=VARCHAR}, #{v7PCreateUser,jdbcType=VARCHAR}, #{v7PCrateTime,jdbcType=TIMESTAMP}, 
+      #{v7PUpdateUser,jdbcType=VARCHAR}, #{v7PUpdateTime,jdbcType=TIMESTAMP}, #{v7PkBrand,jdbcType=VARCHAR}, 
+      #{extends1,jdbcType=VARCHAR}, #{extends2,jdbcType=VARCHAR}, #{extends3,jdbcType=VARCHAR}, 
+      #{extends4,jdbcType=VARCHAR}, #{extends5,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.carrey.v7mc.po.V7Product" >
+    insert into V7_PRODUCT
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="v7PBrand != null" >
+        v7_p_brand,
+      </if>
+      <if test="v7PType != null" >
+        v7_p_type,
+      </if>
+      <if test="v7PName != null" >
+        v7_p_name,
+      </if>
+      <if test="v7PUnit != null" >
+        v7_p_unit,
+      </if>
+      <if test="v7PStandard != null" >
+        v7_p_standard,
+      </if>
+      <if test="v7PAgent != null" >
+        v7_p_agent,
+      </if>
+      <if test="v7PAgentPhone != null" >
+        v7_p_agent_phone,
+      </if>
+      <if test="v7PStatus != null" >
+        v7_p_status,
+      </if>
+      <if test="v7PRemarks != null" >
+        v7_p_remarks,
+      </if>
+      <if test="v7PCreateUser != null" >
+        v7_p_create_user,
+      </if>
+      <if test="v7PCrateTime != null" >
+        v7_p_crate_time,
+      </if>
+      <if test="v7PUpdateUser != null" >
+        v7_p_update_user,
+      </if>
+      <if test="v7PUpdateTime != null" >
+        v7_p_update_time,
+      </if>
+      <if test="v7PkBrand != null" >
+        v7_pk_brand,
+      </if>
+      <if test="extends1 != null" >
+        extends1,
+      </if>
+      <if test="extends2 != null" >
+        extends2,
+      </if>
+      <if test="extends3 != null" >
+        extends3,
+      </if>
+      <if test="extends4 != null" >
+        extends4,
+      </if>
+      <if test="extends5 != null" >
+        extends5,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="v7PBrand != null" >
+        #{v7PBrand,jdbcType=VARCHAR},
+      </if>
+      <if test="v7PType != null" >
+        #{v7PType,jdbcType=VARCHAR},
+      </if>
+      <if test="v7PName != null" >
+        #{v7PName,jdbcType=VARCHAR},
+      </if>
+      <if test="v7PUnit != null" >
+        #{v7PUnit,jdbcType=VARCHAR},
+      </if>
+      <if test="v7PStandard != null" >
+        #{v7PStandard,jdbcType=VARCHAR},
+      </if>
+      <if test="v7PAgent != null" >
+        #{v7PAgent,jdbcType=VARCHAR},
+      </if>
+      <if test="v7PAgentPhone != null" >
+        #{v7PAgentPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="v7PStatus != null" >
+        #{v7PStatus,jdbcType=INTEGER},
+      </if>
+      <if test="v7PRemarks != null" >
+        #{v7PRemarks,jdbcType=VARCHAR},
+      </if>
+      <if test="v7PCreateUser != null" >
+        #{v7PCreateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="v7PCrateTime != null" >
+        #{v7PCrateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="v7PUpdateUser != null" >
+        #{v7PUpdateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="v7PUpdateTime != null" >
+        #{v7PUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="v7PkBrand != null" >
+        #{v7PkBrand,jdbcType=VARCHAR},
+      </if>
+      <if test="extends1 != null" >
+        #{extends1,jdbcType=VARCHAR},
+      </if>
+      <if test="extends2 != null" >
+        #{extends2,jdbcType=VARCHAR},
+      </if>
+      <if test="extends3 != null" >
+        #{extends3,jdbcType=VARCHAR},
+      </if>
+      <if test="extends4 != null" >
+        #{extends4,jdbcType=VARCHAR},
+      </if>
+      <if test="extends5 != null" >
+        #{extends5,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.carrey.v7mc.po.V7ProductExample" resultType="java.lang.Integer" >
+    select count(*) from V7_PRODUCT
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update V7_PRODUCT
+    <set >
+      <if test="record.id != null" >
+        ID = #{record.id,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7PBrand != null" >
+        v7_p_brand = #{record.v7PBrand,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7PType != null" >
+        v7_p_type = #{record.v7PType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7PName != null" >
+        v7_p_name = #{record.v7PName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7PUnit != null" >
+        v7_p_unit = #{record.v7PUnit,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7PStandard != null" >
+        v7_p_standard = #{record.v7PStandard,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7PAgent != null" >
+        v7_p_agent = #{record.v7PAgent,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7PAgentPhone != null" >
+        v7_p_agent_phone = #{record.v7PAgentPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7PStatus != null" >
+        v7_p_status = #{record.v7PStatus,jdbcType=INTEGER},
+      </if>
+      <if test="record.v7PRemarks != null" >
+        v7_p_remarks = #{record.v7PRemarks,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7PCreateUser != null" >
+        v7_p_create_user = #{record.v7PCreateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7PCrateTime != null" >
+        v7_p_crate_time = #{record.v7PCrateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.v7PUpdateUser != null" >
+        v7_p_update_user = #{record.v7PUpdateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7PUpdateTime != null" >
+        v7_p_update_time = #{record.v7PUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.v7PkBrand != null" >
+        v7_pk_brand = #{record.v7PkBrand,jdbcType=VARCHAR},
+      </if>
+      <if test="record.extends1 != null" >
+        extends1 = #{record.extends1,jdbcType=VARCHAR},
+      </if>
+      <if test="record.extends2 != null" >
+        extends2 = #{record.extends2,jdbcType=VARCHAR},
+      </if>
+      <if test="record.extends3 != null" >
+        extends3 = #{record.extends3,jdbcType=VARCHAR},
+      </if>
+      <if test="record.extends4 != null" >
+        extends4 = #{record.extends4,jdbcType=VARCHAR},
+      </if>
+      <if test="record.extends5 != null" >
+        extends5 = #{record.extends5,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update V7_PRODUCT
+    set ID = #{record.id,jdbcType=VARCHAR},
+      v7_p_brand = #{record.v7PBrand,jdbcType=VARCHAR},
+      v7_p_type = #{record.v7PType,jdbcType=VARCHAR},
+      v7_p_name = #{record.v7PName,jdbcType=VARCHAR},
+      v7_p_unit = #{record.v7PUnit,jdbcType=VARCHAR},
+      v7_p_standard = #{record.v7PStandard,jdbcType=VARCHAR},
+      v7_p_agent = #{record.v7PAgent,jdbcType=VARCHAR},
+      v7_p_agent_phone = #{record.v7PAgentPhone,jdbcType=VARCHAR},
+      v7_p_status = #{record.v7PStatus,jdbcType=INTEGER},
+      v7_p_remarks = #{record.v7PRemarks,jdbcType=VARCHAR},
+      v7_p_create_user = #{record.v7PCreateUser,jdbcType=VARCHAR},
+      v7_p_crate_time = #{record.v7PCrateTime,jdbcType=TIMESTAMP},
+      v7_p_update_user = #{record.v7PUpdateUser,jdbcType=VARCHAR},
+      v7_p_update_time = #{record.v7PUpdateTime,jdbcType=TIMESTAMP},
+      v7_pk_brand = #{record.v7PkBrand,jdbcType=VARCHAR},
+      extends1 = #{record.extends1,jdbcType=VARCHAR},
+      extends2 = #{record.extends2,jdbcType=VARCHAR},
+      extends3 = #{record.extends3,jdbcType=VARCHAR},
+      extends4 = #{record.extends4,jdbcType=VARCHAR},
+      extends5 = #{record.extends5,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.carrey.v7mc.po.V7Product" >
+    update V7_PRODUCT
+    <set >
+      <if test="v7PBrand != null" >
+        v7_p_brand = #{v7PBrand,jdbcType=VARCHAR},
+      </if>
+      <if test="v7PType != null" >
+        v7_p_type = #{v7PType,jdbcType=VARCHAR},
+      </if>
+      <if test="v7PName != null" >
+        v7_p_name = #{v7PName,jdbcType=VARCHAR},
+      </if>
+      <if test="v7PUnit != null" >
+        v7_p_unit = #{v7PUnit,jdbcType=VARCHAR},
+      </if>
+      <if test="v7PStandard != null" >
+        v7_p_standard = #{v7PStandard,jdbcType=VARCHAR},
+      </if>
+      <if test="v7PAgent != null" >
+        v7_p_agent = #{v7PAgent,jdbcType=VARCHAR},
+      </if>
+      <if test="v7PAgentPhone != null" >
+        v7_p_agent_phone = #{v7PAgentPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="v7PStatus != null" >
+        v7_p_status = #{v7PStatus,jdbcType=INTEGER},
+      </if>
+      <if test="v7PRemarks != null" >
+        v7_p_remarks = #{v7PRemarks,jdbcType=VARCHAR},
+      </if>
+      <if test="v7PCreateUser != null" >
+        v7_p_create_user = #{v7PCreateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="v7PCrateTime != null" >
+        v7_p_crate_time = #{v7PCrateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="v7PUpdateUser != null" >
+        v7_p_update_user = #{v7PUpdateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="v7PUpdateTime != null" >
+        v7_p_update_time = #{v7PUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="v7PkBrand != null" >
+        v7_pk_brand = #{v7PkBrand,jdbcType=VARCHAR},
+      </if>
+      <if test="extends1 != null" >
+        extends1 = #{extends1,jdbcType=VARCHAR},
+      </if>
+      <if test="extends2 != null" >
+        extends2 = #{extends2,jdbcType=VARCHAR},
+      </if>
+      <if test="extends3 != null" >
+        extends3 = #{extends3,jdbcType=VARCHAR},
+      </if>
+      <if test="extends4 != null" >
+        extends4 = #{extends4,jdbcType=VARCHAR},
+      </if>
+      <if test="extends5 != null" >
+        extends5 = #{extends5,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.carrey.v7mc.po.V7Product" >
+    update V7_PRODUCT
+    set v7_p_brand = #{v7PBrand,jdbcType=VARCHAR},
+      v7_p_type = #{v7PType,jdbcType=VARCHAR},
+      v7_p_name = #{v7PName,jdbcType=VARCHAR},
+      v7_p_unit = #{v7PUnit,jdbcType=VARCHAR},
+      v7_p_standard = #{v7PStandard,jdbcType=VARCHAR},
+      v7_p_agent = #{v7PAgent,jdbcType=VARCHAR},
+      v7_p_agent_phone = #{v7PAgentPhone,jdbcType=VARCHAR},
+      v7_p_status = #{v7PStatus,jdbcType=INTEGER},
+      v7_p_remarks = #{v7PRemarks,jdbcType=VARCHAR},
+      v7_p_create_user = #{v7PCreateUser,jdbcType=VARCHAR},
+      v7_p_crate_time = #{v7PCrateTime,jdbcType=TIMESTAMP},
+      v7_p_update_user = #{v7PUpdateUser,jdbcType=VARCHAR},
+      v7_p_update_time = #{v7PUpdateTime,jdbcType=TIMESTAMP},
+      v7_pk_brand = #{v7PkBrand,jdbcType=VARCHAR},
+      extends1 = #{extends1,jdbcType=VARCHAR},
+      extends2 = #{extends2,jdbcType=VARCHAR},
+      extends3 = #{extends3,jdbcType=VARCHAR},
+      extends4 = #{extends4,jdbcType=VARCHAR},
+      extends5 = #{extends5,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

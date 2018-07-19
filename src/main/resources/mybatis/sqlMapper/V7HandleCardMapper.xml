@@ -1,0 +1,375 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.carrey.v7mc.mapperInterface.V7HandleCardMapper" >
+  <resultMap id="BaseResultMap" type="com.carrey.v7mc.po.V7HandleCard" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="v7_h_card_num" property="v7HCardNum" jdbcType="VARCHAR" />
+    <result column="v7_h_handle_type" property="v7HHandleType" jdbcType="INTEGER" />
+    <result column="v7_h_card_type" property="v7HCardType" jdbcType="INTEGER" />
+    <result column="v7_h_money" property="v7HMoney" jdbcType="DOUBLE" />
+    <result column="v7_h_handle_user" property="v7HHandleUser" jdbcType="VARCHAR" />
+    <result column="v7_h_oper_user" property="v7HOperUser" jdbcType="VARCHAR" />
+    <result column="v7_h_oper_time" property="v7HOperTime" jdbcType="TIMESTAMP" />
+    <result column="extends1" property="extends1" jdbcType="VARCHAR" />
+    <result column="extends2" property="extends2" jdbcType="VARCHAR" />
+    <result column="extends3" property="extends3" jdbcType="VARCHAR" />
+    <result column="extends4" property="extends4" jdbcType="VARCHAR" />
+    <result column="extends5" property="extends5" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  
+  <select id="rollDay4handle" parameterType="map" resultType="v7RollDayAccounts">
+		SELECT SUM(hc.v7_h_money) v7RCardmoney, 
+			(SELECT COUNT(c.v7_h_card_num) FROM V7_HANDLE_CARD c 
+				WHERE c.v7_h_card_type IN(1,2,3)  
+					AND  c.v7_h_oper_time &gt;= DATE_FORMAT(#{startDate},'%Y-%m-%d %T') 
+					AND  c.v7_h_oper_time &lt;= DATE_FORMAT(#{endDate},'%Y-%m-%d %T')) v7RVipin,
+			(SELECT COUNT(c.v7_h_card_num) FROM V7_HANDLE_CARD c 
+				WHERE c.v7_h_card_type = 4 
+					AND  c.v7_h_oper_time &gt;= DATE_FORMAT(#{startDate},'%Y-%m-%d %T') 
+					AND  c.v7_h_oper_time &lt;= DATE_FORMAT(#{endDate},'%Y-%m-%d %T')) v7RHedgein,
+			(SELECT COUNT(c.v7_h_card_num) FROM V7_HANDLE_CARD c 
+				WHERE c.v7_h_card_type = 5 
+					AND  c.v7_h_oper_time &gt;= DATE_FORMAT(#{startDate},'%Y-%m-%d %T') 
+					AND  c.v7_h_oper_time &lt;= DATE_FORMAT(#{endDate},'%Y-%m-%d %T')) v7RBlowwashin,
+			(SELECT COUNT(c.v7_h_card_num) FROM V7_HANDLE_CARD c 
+				WHERE c.v7_h_card_type = 6 
+					AND  c.v7_h_oper_time &gt;= DATE_FORMAT(#{startDate},'%Y-%m-%d %T') 
+					AND  c.v7_h_oper_time &lt;= DATE_FORMAT(#{endDate},'%Y-%m-%d %T')) v7RBlowcutwashin
+			FROM  V7_HANDLE_CARD hc 
+				WHERE hc.v7_h_oper_time &gt;= DATE_FORMAT(#{startDate},'%Y-%m-%d %T') 
+					AND  hc.v7_h_oper_time &lt;= DATE_FORMAT(#{endDate},'%Y-%m-%d %T')
+  </select>
+  
+  <!-- 办卡日业绩 -->
+  <select id="tTransResults" parameterType="map" resultType="double">
+		SELECT COALESCE(SUM(hc.v7_h_money),0) 
+			FROM V7_HANDLE_CARD hc 
+			where 
+				hc.v7_h_handle_user = #{id}
+				and hc.v7_h_oper_time &gt;= #{strartStr} 
+				and hc.v7_h_oper_time &lt;= #{endStr}
+			
+  </select>
+  
+  
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, v7_h_card_num, v7_h_handle_type, v7_h_card_type, v7_h_money, v7_h_handle_user, 
+    v7_h_oper_user, v7_h_oper_time, extends1, extends2, extends3, extends4, extends5
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.carrey.v7mc.po.V7HandleCardExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from V7_HANDLE_CARD
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from V7_HANDLE_CARD
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from V7_HANDLE_CARD
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.carrey.v7mc.po.V7HandleCardExample" >
+    delete from V7_HANDLE_CARD
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.carrey.v7mc.po.V7HandleCard" >
+    insert into V7_HANDLE_CARD (id, v7_h_card_num, v7_h_handle_type, 
+      v7_h_card_type, v7_h_money, v7_h_handle_user, 
+      v7_h_oper_user, v7_h_oper_time, extends1, 
+      extends2, extends3, extends4, 
+      extends5)
+    values (#{id,jdbcType=VARCHAR}, #{v7HCardNum,jdbcType=VARCHAR}, #{v7HHandleType,jdbcType=INTEGER}, 
+      #{v7HCardType,jdbcType=INTEGER}, #{v7HMoney,jdbcType=DOUBLE}, #{v7HHandleUser,jdbcType=VARCHAR}, 
+      #{v7HOperUser,jdbcType=VARCHAR}, #{v7HOperTime,jdbcType=TIMESTAMP}, #{extends1,jdbcType=VARCHAR}, 
+      #{extends2,jdbcType=VARCHAR}, #{extends3,jdbcType=VARCHAR}, #{extends4,jdbcType=VARCHAR}, 
+      #{extends5,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.carrey.v7mc.po.V7HandleCard" >
+    insert into V7_HANDLE_CARD
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="v7HCardNum != null" >
+        v7_h_card_num,
+      </if>
+      <if test="v7HHandleType != null" >
+        v7_h_handle_type,
+      </if>
+      <if test="v7HCardType != null" >
+        v7_h_card_type,
+      </if>
+      <if test="v7HMoney != null" >
+        v7_h_money,
+      </if>
+      <if test="v7HHandleUser != null" >
+        v7_h_handle_user,
+      </if>
+      <if test="v7HOperUser != null" >
+        v7_h_oper_user,
+      </if>
+      <if test="v7HOperTime != null" >
+        v7_h_oper_time,
+      </if>
+      <if test="extends1 != null" >
+        extends1,
+      </if>
+      <if test="extends2 != null" >
+        extends2,
+      </if>
+      <if test="extends3 != null" >
+        extends3,
+      </if>
+      <if test="extends4 != null" >
+        extends4,
+      </if>
+      <if test="extends5 != null" >
+        extends5,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="v7HCardNum != null" >
+        #{v7HCardNum,jdbcType=VARCHAR},
+      </if>
+      <if test="v7HHandleType != null" >
+        #{v7HHandleType,jdbcType=INTEGER},
+      </if>
+      <if test="v7HCardType != null" >
+        #{v7HCardType,jdbcType=INTEGER},
+      </if>
+      <if test="v7HMoney != null" >
+        #{v7HMoney,jdbcType=DOUBLE},
+      </if>
+      <if test="v7HHandleUser != null" >
+        #{v7HHandleUser,jdbcType=VARCHAR},
+      </if>
+      <if test="v7HOperUser != null" >
+        #{v7HOperUser,jdbcType=VARCHAR},
+      </if>
+      <if test="v7HOperTime != null" >
+        #{v7HOperTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="extends1 != null" >
+        #{extends1,jdbcType=VARCHAR},
+      </if>
+      <if test="extends2 != null" >
+        #{extends2,jdbcType=VARCHAR},
+      </if>
+      <if test="extends3 != null" >
+        #{extends3,jdbcType=VARCHAR},
+      </if>
+      <if test="extends4 != null" >
+        #{extends4,jdbcType=VARCHAR},
+      </if>
+      <if test="extends5 != null" >
+        #{extends5,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.carrey.v7mc.po.V7HandleCardExample" resultType="java.lang.Integer" >
+    select count(*) from V7_HANDLE_CARD
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update V7_HANDLE_CARD
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7HCardNum != null" >
+        v7_h_card_num = #{record.v7HCardNum,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7HHandleType != null" >
+        v7_h_handle_type = #{record.v7HHandleType,jdbcType=INTEGER},
+      </if>
+      <if test="record.v7HCardType != null" >
+        v7_h_card_type = #{record.v7HCardType,jdbcType=INTEGER},
+      </if>
+      <if test="record.v7HMoney != null" >
+        v7_h_money = #{record.v7HMoney,jdbcType=DOUBLE},
+      </if>
+      <if test="record.v7HHandleUser != null" >
+        v7_h_handle_user = #{record.v7HHandleUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7HOperUser != null" >
+        v7_h_oper_user = #{record.v7HOperUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7HOperTime != null" >
+        v7_h_oper_time = #{record.v7HOperTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.extends1 != null" >
+        extends1 = #{record.extends1,jdbcType=VARCHAR},
+      </if>
+      <if test="record.extends2 != null" >
+        extends2 = #{record.extends2,jdbcType=VARCHAR},
+      </if>
+      <if test="record.extends3 != null" >
+        extends3 = #{record.extends3,jdbcType=VARCHAR},
+      </if>
+      <if test="record.extends4 != null" >
+        extends4 = #{record.extends4,jdbcType=VARCHAR},
+      </if>
+      <if test="record.extends5 != null" >
+        extends5 = #{record.extends5,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update V7_HANDLE_CARD
+    set id = #{record.id,jdbcType=VARCHAR},
+      v7_h_card_num = #{record.v7HCardNum,jdbcType=VARCHAR},
+      v7_h_handle_type = #{record.v7HHandleType,jdbcType=INTEGER},
+      v7_h_card_type = #{record.v7HCardType,jdbcType=INTEGER},
+      v7_h_money = #{record.v7HMoney,jdbcType=DOUBLE},
+      v7_h_handle_user = #{record.v7HHandleUser,jdbcType=VARCHAR},
+      v7_h_oper_user = #{record.v7HOperUser,jdbcType=VARCHAR},
+      v7_h_oper_time = #{record.v7HOperTime,jdbcType=TIMESTAMP},
+      extends1 = #{record.extends1,jdbcType=VARCHAR},
+      extends2 = #{record.extends2,jdbcType=VARCHAR},
+      extends3 = #{record.extends3,jdbcType=VARCHAR},
+      extends4 = #{record.extends4,jdbcType=VARCHAR},
+      extends5 = #{record.extends5,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.carrey.v7mc.po.V7HandleCard" >
+    update V7_HANDLE_CARD
+    <set >
+      <if test="v7HCardNum != null" >
+        v7_h_card_num = #{v7HCardNum,jdbcType=VARCHAR},
+      </if>
+      <if test="v7HHandleType != null" >
+        v7_h_handle_type = #{v7HHandleType,jdbcType=INTEGER},
+      </if>
+      <if test="v7HCardType != null" >
+        v7_h_card_type = #{v7HCardType,jdbcType=INTEGER},
+      </if>
+      <if test="v7HMoney != null" >
+        v7_h_money = #{v7HMoney,jdbcType=DOUBLE},
+      </if>
+      <if test="v7HHandleUser != null" >
+        v7_h_handle_user = #{v7HHandleUser,jdbcType=VARCHAR},
+      </if>
+      <if test="v7HOperUser != null" >
+        v7_h_oper_user = #{v7HOperUser,jdbcType=VARCHAR},
+      </if>
+      <if test="v7HOperTime != null" >
+        v7_h_oper_time = #{v7HOperTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="extends1 != null" >
+        extends1 = #{extends1,jdbcType=VARCHAR},
+      </if>
+      <if test="extends2 != null" >
+        extends2 = #{extends2,jdbcType=VARCHAR},
+      </if>
+      <if test="extends3 != null" >
+        extends3 = #{extends3,jdbcType=VARCHAR},
+      </if>
+      <if test="extends4 != null" >
+        extends4 = #{extends4,jdbcType=VARCHAR},
+      </if>
+      <if test="extends5 != null" >
+        extends5 = #{extends5,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.carrey.v7mc.po.V7HandleCard" >
+    update V7_HANDLE_CARD
+    set v7_h_card_num = #{v7HCardNum,jdbcType=VARCHAR},
+      v7_h_handle_type = #{v7HHandleType,jdbcType=INTEGER},
+      v7_h_card_type = #{v7HCardType,jdbcType=INTEGER},
+      v7_h_money = #{v7HMoney,jdbcType=DOUBLE},
+      v7_h_handle_user = #{v7HHandleUser,jdbcType=VARCHAR},
+      v7_h_oper_user = #{v7HOperUser,jdbcType=VARCHAR},
+      v7_h_oper_time = #{v7HOperTime,jdbcType=TIMESTAMP},
+      extends1 = #{extends1,jdbcType=VARCHAR},
+      extends2 = #{extends2,jdbcType=VARCHAR},
+      extends3 = #{extends3,jdbcType=VARCHAR},
+      extends4 = #{extends4,jdbcType=VARCHAR},
+      extends5 = #{extends5,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

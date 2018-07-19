@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:cache="http://www.springframework.org/schema/cache"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:jms="http://www.springframework.org/schema/jms" xmlns:lang="http://www.springframework.org/schema/lang"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:oxm="http://www.springframework.org/schema/oxm" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:task="http://www.springframework.org/schema/task" xmlns:tx="http://www.springframework.org/schema/tx" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd  
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd  
+        http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache-3.1.xsd  
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd  
+        http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.1.xsd  
+        http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.1.xsd  
+        http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms-3.1.xsd  
+        http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang-3.1.xsd  
+        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd  
+        http://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm-3.1.xsd  
+        http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.1.xsd  
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd  
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
+	<!-- 
+		！！！
+		注入业务层，业务层实现类必须在此注入，否者 业务成将不能被事物控制
+	 -->
+	 <!--会员  -->
+	 <bean id="memberService" class="com.carrey.v7mc.member.service.impl.V7MemberServiceImpl"></bean>
+	 <!--会员卡 -->	 
+	 <bean id="cardService" class="com.carrey.v7mc.member.service.impl.V7CardServiceImpl"></bean>
+
+	
+	 <!-- 品牌 -->
+	 <bean id="brandService" class="com.carrey.v7mc.product.service.impl.BrandServiceImpl"></bean>
+	 <!-- 商品-->
+	 <bean id="productService" class="com.carrey.v7mc.product.service.impl.ProductServiceImpl"/>
+	 <!-- 商品入库 -->
+	 <bean id="inProductService" class="com.carrey.v7mc.product.service.impl.InProductServiceImpl"></bean>
+	 <!-- 商品出库 -->
+	 <bean id="outProductService" class="com.carrey.v7mc.product.service.impl.OutProductServiceImpl"></bean>
+	 <!-- 库存 -->
+	 <bean id="storeService" class="com.carrey.v7mc.product.service.impl.StoreServiceImpl"></bean>
+
+	
+	 <!-- 员工 -->
+	 <bean id="employeeService" class="com.carrey.v7mc.employee.service.impl.EmployeeServiceImpl"></bean>
+	 <!-- 登录 -->
+	 <bean id="loginService" class="com.carrey.v7mc.longin.service.impl.LoginServiceImpl"></bean>
+	 
+	 
+	 <!-- 前台收银 -->
+	 <bean id="cashierService" class="com.carrey.v7mc.cashier.service.impl.CashierServiceImpl"/>
+	 <bean id="cashierReportService" class="com.carrey.v7mc.cashier.service.impl.CashierReportServiceImpl"/>
+	 <bean id="resultsService" class="com.carrey.v7mc.cashier.service.impl.ResultsServiceImpl"/>
+	 
+	 <!-- 财务 -->
+	 <bean id="salaryService" class="com.carrey.v7mc.financial.service.impl.SalaryServiceImpl"/>
+	 <bean id="chargeService" class="com.carrey.v7mc.financial.service.impl.ChargeServiceImpl"/>
+</beans>
+
+
+
+
+
+
+
+
+
+

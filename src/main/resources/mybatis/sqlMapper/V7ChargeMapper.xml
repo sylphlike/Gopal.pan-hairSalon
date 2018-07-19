@@ -1,0 +1,395 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.carrey.v7mc.mapperInterface.V7ChargeMapper" >
+  <resultMap id="BaseResultMap" type="com.carrey.v7mc.po.V7Charge" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="v7_c_month" property="v7CMonth" jdbcType="DATE" />
+    <result column="v7_c_mnum" property="v7CMnum" jdbcType="INTEGER" />
+    <result column="v7_c_name" property="v7CName" jdbcType="VARCHAR" />
+    <result column="v7_c_position" property="v7CPosition" jdbcType="VARCHAR" />
+    <result column="v7_c_charge_money" property="v7CChargeMoney" jdbcType="DOUBLE" />
+    <result column="v7_c_charge_explain" property="v7CChargeExplain" jdbcType="VARCHAR" />
+    <result column="v7_c_oper_user" property="v7COperUser" jdbcType="VARCHAR" />
+    <result column="v7_c_oper_time" property="v7COperTime" jdbcType="TIMESTAMP" />
+    <result column="extends1" property="extends1" jdbcType="VARCHAR" />
+    <result column="extends2" property="extends2" jdbcType="VARCHAR" />
+    <result column="extends3" property="extends3" jdbcType="VARCHAR" />
+    <result column="extends4" property="extends4" jdbcType="VARCHAR" />
+    <result column="extends5" property="extends5" jdbcType="VARCHAR" />
+  </resultMap>
+  
+   <!-- ********************************自定义SQL开始****************************** -->
+ <!-- 统计总数 -->
+  <select id="getTotalAmount" parameterType="com.carrey.v7mc.queryVo.ChargeQVo" resultType="int">
+  	select count(m.id) from V7_CHARGE m
+	  	<where>
+	  		1=1
+	  		<if test="v7CName !=null and v7CName !=''">
+				and	m.v7_c_name = #{v7CName}
+	  		</if>
+	  		<if test="v7CNum != null and v7CNum !=''">
+	  			and m.v7_c_mnum = #{v7CNum}
+	  		</if>
+	  	</where>
+  </select>
+  
+  <select id="getPageData" parameterType="com.carrey.v7mc.queryVo.ChargeQVo" resultMap="BaseResultMap">
+  	select * from V7_CHARGE m
+	  	<where>
+	  		1=1
+	  		<if test="v7CName !=null and v7CName !=''">
+				and	m.v7_c_name = #{v7CName}
+	  		</if>
+	  		<if test="v7CNum != null and v7CNum !=''">
+	  			and m.v7_c_mnum = #{v7CNum}
+	  		</if>
+	  	</where>
+		order by m.v7_c_oper_time DESC limit #{beginPageIndex}, #{endPageIndex} 
+  </select>
+  
+  
+  <select id="getChargeMoney" parameterType="map" resultType="double">
+  		SELECT 
+		  COALESCE(SUM(c.v7_c_charge_money),0.0)
+		FROM
+		  V7_CHARGE c 
+		WHERE c.v7_c_month &gt;= #{startDay} 
+		  AND c.v7_c_month &lt;= #{lastDay} 
+		  AND c.v7_c_name = #{v7EName} 
+  </select>
+  
+  
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, v7_c_month, v7_c_mnum, v7_c_name, v7_c_position, v7_c_charge_money, v7_c_charge_explain, 
+    v7_c_oper_user, v7_c_oper_time, extends1, extends2, extends3, extends4, extends5
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.carrey.v7mc.po.V7ChargeExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from V7_CHARGE
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from V7_CHARGE
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from V7_CHARGE
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.carrey.v7mc.po.V7ChargeExample" >
+    delete from V7_CHARGE
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.carrey.v7mc.po.V7Charge" >
+    insert into V7_CHARGE (id, v7_c_month, v7_c_mnum, 
+      v7_c_name, v7_c_position, v7_c_charge_money, 
+      v7_c_charge_explain, v7_c_oper_user, v7_c_oper_time, 
+      extends1, extends2, extends3, 
+      extends4, extends5)
+    values (#{id,jdbcType=VARCHAR}, #{v7CMonth,jdbcType=DATE}, #{v7CMnum,jdbcType=INTEGER}, 
+      #{v7CName,jdbcType=VARCHAR}, #{v7CPosition,jdbcType=VARCHAR}, #{v7CChargeMoney,jdbcType=DOUBLE}, 
+      #{v7CChargeExplain,jdbcType=VARCHAR}, #{v7COperUser,jdbcType=VARCHAR}, #{v7COperTime,jdbcType=TIMESTAMP}, 
+      #{extends1,jdbcType=VARCHAR}, #{extends2,jdbcType=VARCHAR}, #{extends3,jdbcType=VARCHAR}, 
+      #{extends4,jdbcType=VARCHAR}, #{extends5,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.carrey.v7mc.po.V7Charge" >
+    insert into V7_CHARGE
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="v7CMonth != null" >
+        v7_c_month,
+      </if>
+      <if test="v7CMnum != null" >
+        v7_c_mnum,
+      </if>
+      <if test="v7CName != null" >
+        v7_c_name,
+      </if>
+      <if test="v7CPosition != null" >
+        v7_c_position,
+      </if>
+      <if test="v7CChargeMoney != null" >
+        v7_c_charge_money,
+      </if>
+      <if test="v7CChargeExplain != null" >
+        v7_c_charge_explain,
+      </if>
+      <if test="v7COperUser != null" >
+        v7_c_oper_user,
+      </if>
+      <if test="v7COperTime != null" >
+        v7_c_oper_time,
+      </if>
+      <if test="extends1 != null" >
+        extends1,
+      </if>
+      <if test="extends2 != null" >
+        extends2,
+      </if>
+      <if test="extends3 != null" >
+        extends3,
+      </if>
+      <if test="extends4 != null" >
+        extends4,
+      </if>
+      <if test="extends5 != null" >
+        extends5,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="v7CMonth != null" >
+        #{v7CMonth,jdbcType=DATE},
+      </if>
+      <if test="v7CMnum != null" >
+        #{v7CMnum,jdbcType=INTEGER},
+      </if>
+      <if test="v7CName != null" >
+        #{v7CName,jdbcType=VARCHAR},
+      </if>
+      <if test="v7CPosition != null" >
+        #{v7CPosition,jdbcType=VARCHAR},
+      </if>
+      <if test="v7CChargeMoney != null" >
+        #{v7CChargeMoney,jdbcType=DOUBLE},
+      </if>
+      <if test="v7CChargeExplain != null" >
+        #{v7CChargeExplain,jdbcType=VARCHAR},
+      </if>
+      <if test="v7COperUser != null" >
+        #{v7COperUser,jdbcType=VARCHAR},
+      </if>
+      <if test="v7COperTime != null" >
+        #{v7COperTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="extends1 != null" >
+        #{extends1,jdbcType=VARCHAR},
+      </if>
+      <if test="extends2 != null" >
+        #{extends2,jdbcType=VARCHAR},
+      </if>
+      <if test="extends3 != null" >
+        #{extends3,jdbcType=VARCHAR},
+      </if>
+      <if test="extends4 != null" >
+        #{extends4,jdbcType=VARCHAR},
+      </if>
+      <if test="extends5 != null" >
+        #{extends5,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.carrey.v7mc.po.V7ChargeExample" resultType="java.lang.Integer" >
+    select count(*) from V7_CHARGE
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update V7_CHARGE
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7CMonth != null" >
+        v7_c_month = #{record.v7CMonth,jdbcType=DATE},
+      </if>
+      <if test="record.v7CMnum != null" >
+        v7_c_mnum = #{record.v7CMnum,jdbcType=INTEGER},
+      </if>
+      <if test="record.v7CName != null" >
+        v7_c_name = #{record.v7CName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7CPosition != null" >
+        v7_c_position = #{record.v7CPosition,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7CChargeMoney != null" >
+        v7_c_charge_money = #{record.v7CChargeMoney,jdbcType=DOUBLE},
+      </if>
+      <if test="record.v7CChargeExplain != null" >
+        v7_c_charge_explain = #{record.v7CChargeExplain,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7COperUser != null" >
+        v7_c_oper_user = #{record.v7COperUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7COperTime != null" >
+        v7_c_oper_time = #{record.v7COperTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.extends1 != null" >
+        extends1 = #{record.extends1,jdbcType=VARCHAR},
+      </if>
+      <if test="record.extends2 != null" >
+        extends2 = #{record.extends2,jdbcType=VARCHAR},
+      </if>
+      <if test="record.extends3 != null" >
+        extends3 = #{record.extends3,jdbcType=VARCHAR},
+      </if>
+      <if test="record.extends4 != null" >
+        extends4 = #{record.extends4,jdbcType=VARCHAR},
+      </if>
+      <if test="record.extends5 != null" >
+        extends5 = #{record.extends5,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update V7_CHARGE
+    set id = #{record.id,jdbcType=VARCHAR},
+      v7_c_month = #{record.v7CMonth,jdbcType=DATE},
+      v7_c_mnum = #{record.v7CMnum,jdbcType=INTEGER},
+      v7_c_name = #{record.v7CName,jdbcType=VARCHAR},
+      v7_c_position = #{record.v7CPosition,jdbcType=VARCHAR},
+      v7_c_charge_money = #{record.v7CChargeMoney,jdbcType=DOUBLE},
+      v7_c_charge_explain = #{record.v7CChargeExplain,jdbcType=VARCHAR},
+      v7_c_oper_user = #{record.v7COperUser,jdbcType=VARCHAR},
+      v7_c_oper_time = #{record.v7COperTime,jdbcType=TIMESTAMP},
+      extends1 = #{record.extends1,jdbcType=VARCHAR},
+      extends2 = #{record.extends2,jdbcType=VARCHAR},
+      extends3 = #{record.extends3,jdbcType=VARCHAR},
+      extends4 = #{record.extends4,jdbcType=VARCHAR},
+      extends5 = #{record.extends5,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.carrey.v7mc.po.V7Charge" >
+    update V7_CHARGE
+    <set >
+      <if test="v7CMonth != null" >
+        v7_c_month = #{v7CMonth,jdbcType=DATE},
+      </if>
+      <if test="v7CMnum != null" >
+        v7_c_mnum = #{v7CMnum,jdbcType=INTEGER},
+      </if>
+      <if test="v7CName != null" >
+        v7_c_name = #{v7CName,jdbcType=VARCHAR},
+      </if>
+      <if test="v7CPosition != null" >
+        v7_c_position = #{v7CPosition,jdbcType=VARCHAR},
+      </if>
+      <if test="v7CChargeMoney != null" >
+        v7_c_charge_money = #{v7CChargeMoney,jdbcType=DOUBLE},
+      </if>
+      <if test="v7CChargeExplain != null" >
+        v7_c_charge_explain = #{v7CChargeExplain,jdbcType=VARCHAR},
+      </if>
+      <if test="v7COperUser != null" >
+        v7_c_oper_user = #{v7COperUser,jdbcType=VARCHAR},
+      </if>
+      <if test="v7COperTime != null" >
+        v7_c_oper_time = #{v7COperTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="extends1 != null" >
+        extends1 = #{extends1,jdbcType=VARCHAR},
+      </if>
+      <if test="extends2 != null" >
+        extends2 = #{extends2,jdbcType=VARCHAR},
+      </if>
+      <if test="extends3 != null" >
+        extends3 = #{extends3,jdbcType=VARCHAR},
+      </if>
+      <if test="extends4 != null" >
+        extends4 = #{extends4,jdbcType=VARCHAR},
+      </if>
+      <if test="extends5 != null" >
+        extends5 = #{extends5,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.carrey.v7mc.po.V7Charge" >
+    update V7_CHARGE
+    set v7_c_month = #{v7CMonth,jdbcType=DATE},
+      v7_c_mnum = #{v7CMnum,jdbcType=INTEGER},
+      v7_c_name = #{v7CName,jdbcType=VARCHAR},
+      v7_c_position = #{v7CPosition,jdbcType=VARCHAR},
+      v7_c_charge_money = #{v7CChargeMoney,jdbcType=DOUBLE},
+      v7_c_charge_explain = #{v7CChargeExplain,jdbcType=VARCHAR},
+      v7_c_oper_user = #{v7COperUser,jdbcType=VARCHAR},
+      v7_c_oper_time = #{v7COperTime,jdbcType=TIMESTAMP},
+      extends1 = #{extends1,jdbcType=VARCHAR},
+      extends2 = #{extends2,jdbcType=VARCHAR},
+      extends3 = #{extends3,jdbcType=VARCHAR},
+      extends4 = #{extends4,jdbcType=VARCHAR},
+      extends5 = #{extends5,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

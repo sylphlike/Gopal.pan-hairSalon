@@ -1,0 +1,491 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.carrey.v7mc.mapperInterface.V7ResultsMapper" >
+  <resultMap id="BaseResultMap" type="com.carrey.v7mc.po.V7Results" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="v7_r_month" property="v7RMonth" jdbcType="VARCHAR" />
+    <result column="v7_r_eid" property="v7REid" jdbcType="VARCHAR" />
+    <result column="v7_r_mnum" property="v7RMnum" jdbcType="INTEGER" />
+    <result column="v7_r_name" property="v7RName" jdbcType="VARCHAR" />
+    <result column="v7_r_position" property="v7RPosition" jdbcType="VARCHAR" />
+    <result column="v7_r_bus_results" property="v7RBusResults" jdbcType="DOUBLE" />
+    <result column="v7_r_raise_results" property="v7RRaiseResults" jdbcType="DOUBLE" />
+    <result column="v7_r_out_results" property="v7ROutResults" jdbcType="DOUBLE" />
+    <result column="v7_r_trans_results" property="v7RTransResults" jdbcType="DOUBLE" />
+    <result column="v7_r_blowwash" property="v7RBlowwash" jdbcType="INTEGER" />
+    <result column="v7_r_blowcutwash" property="v7RBlowcutwash" jdbcType="INTEGER" />
+    <result column="extends1" property="extends1" jdbcType="VARCHAR" />
+    <result column="extends2" property="extends2" jdbcType="VARCHAR" />
+    <result column="extends3" property="extends3" jdbcType="VARCHAR" />
+    <result column="extends4" property="extends4" jdbcType="VARCHAR" />
+    <result column="extends5" property="extends5" jdbcType="VARCHAR" />
+  </resultMap>
+     
+ <!-- ********************************自定义SQL开始****************************** -->
+ <!-- 统计总数 -->
+  <select id="getTotalAmount" parameterType="com.carrey.v7mc.queryVo.ResultsQVo" resultType="int">
+  	select count(m.id) from V7_RESULTS m
+	  	<where>
+	  		1=1
+	  		<if test="v7RNum !=null and v7RNum !=''">
+				and	m.v7_r_mnum like '%${v7RNum}%'
+	  		</if>
+	  		<if test="v7RName != null and v7RName !=''">
+	  			and m.v7_r_name like '%${v7RName}%'
+	  		</if>
+	  		<if test="v7RMonth !=null and v7RMonth !=''">
+	  			 and m.v7_r_month =  #{v7RMonth}
+	  		</if>
+	  	</where>
+  </select>
+  <select id="getPageData" parameterType="com.carrey.v7mc.queryVo.ResultsQVo" resultMap="BaseResultMap">
+  	select * from V7_RESULTS m
+	  	<where>
+	  		1=1
+	  		<if test="v7RNum !=null and v7RNum !=''">
+				and	m.v7_r_mnum like '%${v7RNum}%'
+	  		</if>
+	  		<if test="v7RName != null and v7RName !=''">
+	  			and m.v7_r_name like '%${v7RName}%'
+	  		</if>
+	  		<if test="v7RMonth !=null and v7RMonth !=''">
+	  			 and m.v7_r_month =  #{v7RMonth}
+	  		</if>
+	  	</where>
+		order by m.v7_r_month DESC limit #{beginPageIndex}, #{pageSize} 
+  </select>
+  
+  <!-- 批量插入业绩数据的每月第一天的初始化数据和业绩数据 mybatis批量插入操作-->
+  <insert id="addfirstData" parameterType="List">
+  		insert into V7_RESULTS (id,v7_r_month,v7_r_mnum,v7_r_name,v7_r_position,v7_r_bus_results,v7_r_raise_results,
+  		v7_r_out_results,v7_r_trans_results,v7_r_blowwash,v7_r_blowcutwash,v7_r_eid)   
+    	values 
+	    <foreach collection="list" item="item" index="index" separator="," >  
+			 (#{item.id},#{item.v7RMonth},#{item.v7RMnum},#{item.v7RName},#{item.v7RPosition},
+	        	#{item.v7RBusResults},#{item.v7RRaiseResults},#{item.v7ROutResults},
+	        	#{item.v7RTransResults},#{item.v7RBlowwash},#{item.v7RBlowcutwash},#{item.v7REid})
+	    </foreach> 
+  </insert>
+  
+  <update id="addResultsData" parameterType="List">
+  		<foreach collection="list" item="item" index="index" open="" close="" separator=";">
+			<![CDATA[
+				update V7_RESULTS  r
+					set
+						r.v7_r_bus_results = '${item.v7RBusResults}',
+					 	r.v7_r_raise_results = '${item.v7RRaiseResults}',
+					 	r.v7_r_out_results = '${item.v7ROutResults}',
+					 	r.v7_r_trans_results = '${item.v7RTransResults}',
+					 	r.v7_r_blowwash = '${item.v7RBlowwash}',
+					 	r.v7_r_blowcutwash = '${item.v7RBlowcutwash}'
+					where r.id = '${item.id}'
+			]]>	
+	   </foreach>
+  </update>
+  
+  <!-- 获取统计月份中已存在的数据 -->
+  <select id="searchCurrentMonth" parameterType="string" resultMap="BaseResultMap">
+  	SELECT * FROM V7_RESULTS r where r.v7_r_month = #{value}
+  </select>
+  
+  <!-- 月薪资统计 -->
+  <select id="monthSalary" parameterType="string" resultMap="BaseResultMap">
+		SELECT 
+		  r.v7_r_month,
+		  r.v7_r_eid,
+		  r.v7_r_mnum,
+		  r.v7_r_name,
+		  r.v7_r_position,
+		  COALESCE(SUM(r.v7_r_bus_results), 0) v7_r_bus_results,
+		  COALESCE(SUM(r.v7_r_raise_results), 0) v7_r_raise_results,
+		  COALESCE(SUM(r.v7_r_out_results), 0) v7_r_out_results,
+		  COALESCE(SUM(r.v7_r_trans_results), 0) v7_r_trans_results,
+		  COALESCE(SUM(r.v7_r_blowwash), 0) v7_r_blowwash, 
+		  COALESCE(SUM(r.v7_r_blowcutwash), 0) v7_r_blowcutwash 
+		FROM
+		  V7_RESULTS r 
+		WHERE r.v7_r_month = #{value}
+		GROUP BY r.v7_r_eid ;
+  
+  </select>
+  
+  
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, v7_r_month, v7_r_eid, v7_r_mnum, v7_r_name, v7_r_position, v7_r_bus_results, 
+    v7_r_raise_results, v7_r_out_results, v7_r_trans_results, v7_r_blowwash, v7_r_blowcutwash, 
+    extends1, extends2, extends3, extends4, extends5
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.carrey.v7mc.po.V7ResultsExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from V7_RESULTS
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from V7_RESULTS
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from V7_RESULTS
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.carrey.v7mc.po.V7ResultsExample" >
+    delete from V7_RESULTS
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.carrey.v7mc.po.V7Results" >
+    insert into V7_RESULTS (id, v7_r_month, v7_r_eid, 
+      v7_r_mnum, v7_r_name, v7_r_position, 
+      v7_r_bus_results, v7_r_raise_results, v7_r_out_results, 
+      v7_r_trans_results, v7_r_blowwash, v7_r_blowcutwash, 
+      extends1, extends2, extends3, 
+      extends4, extends5)
+    values (#{id,jdbcType=VARCHAR}, #{v7RMonth,jdbcType=VARCHAR}, #{v7REid,jdbcType=VARCHAR}, 
+      #{v7RMnum,jdbcType=INTEGER}, #{v7RName,jdbcType=VARCHAR}, #{v7RPosition,jdbcType=VARCHAR}, 
+      #{v7RBusResults,jdbcType=DOUBLE}, #{v7RRaiseResults,jdbcType=DOUBLE}, #{v7ROutResults,jdbcType=DOUBLE}, 
+      #{v7RTransResults,jdbcType=DOUBLE}, #{v7RBlowwash,jdbcType=INTEGER}, #{v7RBlowcutwash,jdbcType=INTEGER}, 
+      #{extends1,jdbcType=VARCHAR}, #{extends2,jdbcType=VARCHAR}, #{extends3,jdbcType=VARCHAR}, 
+      #{extends4,jdbcType=VARCHAR}, #{extends5,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.carrey.v7mc.po.V7Results" >
+    insert into V7_RESULTS
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="v7RMonth != null" >
+        v7_r_month,
+      </if>
+      <if test="v7REid != null" >
+        v7_r_eid,
+      </if>
+      <if test="v7RMnum != null" >
+        v7_r_mnum,
+      </if>
+      <if test="v7RName != null" >
+        v7_r_name,
+      </if>
+      <if test="v7RPosition != null" >
+        v7_r_position,
+      </if>
+      <if test="v7RBusResults != null" >
+        v7_r_bus_results,
+      </if>
+      <if test="v7RRaiseResults != null" >
+        v7_r_raise_results,
+      </if>
+      <if test="v7ROutResults != null" >
+        v7_r_out_results,
+      </if>
+      <if test="v7RTransResults != null" >
+        v7_r_trans_results,
+      </if>
+      <if test="v7RBlowwash != null" >
+        v7_r_blowwash,
+      </if>
+      <if test="v7RBlowcutwash != null" >
+        v7_r_blowcutwash,
+      </if>
+      <if test="extends1 != null" >
+        extends1,
+      </if>
+      <if test="extends2 != null" >
+        extends2,
+      </if>
+      <if test="extends3 != null" >
+        extends3,
+      </if>
+      <if test="extends4 != null" >
+        extends4,
+      </if>
+      <if test="extends5 != null" >
+        extends5,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="v7RMonth != null" >
+        #{v7RMonth,jdbcType=VARCHAR},
+      </if>
+      <if test="v7REid != null" >
+        #{v7REid,jdbcType=VARCHAR},
+      </if>
+      <if test="v7RMnum != null" >
+        #{v7RMnum,jdbcType=INTEGER},
+      </if>
+      <if test="v7RName != null" >
+        #{v7RName,jdbcType=VARCHAR},
+      </if>
+      <if test="v7RPosition != null" >
+        #{v7RPosition,jdbcType=VARCHAR},
+      </if>
+      <if test="v7RBusResults != null" >
+        #{v7RBusResults,jdbcType=DOUBLE},
+      </if>
+      <if test="v7RRaiseResults != null" >
+        #{v7RRaiseResults,jdbcType=DOUBLE},
+      </if>
+      <if test="v7ROutResults != null" >
+        #{v7ROutResults,jdbcType=DOUBLE},
+      </if>
+      <if test="v7RTransResults != null" >
+        #{v7RTransResults,jdbcType=DOUBLE},
+      </if>
+      <if test="v7RBlowwash != null" >
+        #{v7RBlowwash,jdbcType=INTEGER},
+      </if>
+      <if test="v7RBlowcutwash != null" >
+        #{v7RBlowcutwash,jdbcType=INTEGER},
+      </if>
+      <if test="extends1 != null" >
+        #{extends1,jdbcType=VARCHAR},
+      </if>
+      <if test="extends2 != null" >
+        #{extends2,jdbcType=VARCHAR},
+      </if>
+      <if test="extends3 != null" >
+        #{extends3,jdbcType=VARCHAR},
+      </if>
+      <if test="extends4 != null" >
+        #{extends4,jdbcType=VARCHAR},
+      </if>
+      <if test="extends5 != null" >
+        #{extends5,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.carrey.v7mc.po.V7ResultsExample" resultType="java.lang.Integer" >
+    select count(*) from V7_RESULTS
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update V7_RESULTS
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7RMonth != null" >
+        v7_r_month = #{record.v7RMonth,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7REid != null" >
+        v7_r_eid = #{record.v7REid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7RMnum != null" >
+        v7_r_mnum = #{record.v7RMnum,jdbcType=INTEGER},
+      </if>
+      <if test="record.v7RName != null" >
+        v7_r_name = #{record.v7RName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7RPosition != null" >
+        v7_r_position = #{record.v7RPosition,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7RBusResults != null" >
+        v7_r_bus_results = #{record.v7RBusResults,jdbcType=DOUBLE},
+      </if>
+      <if test="record.v7RRaiseResults != null" >
+        v7_r_raise_results = #{record.v7RRaiseResults,jdbcType=DOUBLE},
+      </if>
+      <if test="record.v7ROutResults != null" >
+        v7_r_out_results = #{record.v7ROutResults,jdbcType=DOUBLE},
+      </if>
+      <if test="record.v7RTransResults != null" >
+        v7_r_trans_results = #{record.v7RTransResults,jdbcType=DOUBLE},
+      </if>
+      <if test="record.v7RBlowwash != null" >
+        v7_r_blowwash = #{record.v7RBlowwash,jdbcType=INTEGER},
+      </if>
+      <if test="record.v7RBlowcutwash != null" >
+        v7_r_blowcutwash = #{record.v7RBlowcutwash,jdbcType=INTEGER},
+      </if>
+      <if test="record.extends1 != null" >
+        extends1 = #{record.extends1,jdbcType=VARCHAR},
+      </if>
+      <if test="record.extends2 != null" >
+        extends2 = #{record.extends2,jdbcType=VARCHAR},
+      </if>
+      <if test="record.extends3 != null" >
+        extends3 = #{record.extends3,jdbcType=VARCHAR},
+      </if>
+      <if test="record.extends4 != null" >
+        extends4 = #{record.extends4,jdbcType=VARCHAR},
+      </if>
+      <if test="record.extends5 != null" >
+        extends5 = #{record.extends5,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update V7_RESULTS
+    set id = #{record.id,jdbcType=VARCHAR},
+      v7_r_month = #{record.v7RMonth,jdbcType=VARCHAR},
+      v7_r_eid = #{record.v7REid,jdbcType=VARCHAR},
+      v7_r_mnum = #{record.v7RMnum,jdbcType=INTEGER},
+      v7_r_name = #{record.v7RName,jdbcType=VARCHAR},
+      v7_r_position = #{record.v7RPosition,jdbcType=VARCHAR},
+      v7_r_bus_results = #{record.v7RBusResults,jdbcType=DOUBLE},
+      v7_r_raise_results = #{record.v7RRaiseResults,jdbcType=DOUBLE},
+      v7_r_out_results = #{record.v7ROutResults,jdbcType=DOUBLE},
+      v7_r_trans_results = #{record.v7RTransResults,jdbcType=DOUBLE},
+      v7_r_blowwash = #{record.v7RBlowwash,jdbcType=INTEGER},
+      v7_r_blowcutwash = #{record.v7RBlowcutwash,jdbcType=INTEGER},
+      extends1 = #{record.extends1,jdbcType=VARCHAR},
+      extends2 = #{record.extends2,jdbcType=VARCHAR},
+      extends3 = #{record.extends3,jdbcType=VARCHAR},
+      extends4 = #{record.extends4,jdbcType=VARCHAR},
+      extends5 = #{record.extends5,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.carrey.v7mc.po.V7Results" >
+    update V7_RESULTS
+    <set >
+      <if test="v7RMonth != null" >
+        v7_r_month = #{v7RMonth,jdbcType=VARCHAR},
+      </if>
+      <if test="v7REid != null" >
+        v7_r_eid = #{v7REid,jdbcType=VARCHAR},
+      </if>
+      <if test="v7RMnum != null" >
+        v7_r_mnum = #{v7RMnum,jdbcType=INTEGER},
+      </if>
+      <if test="v7RName != null" >
+        v7_r_name = #{v7RName,jdbcType=VARCHAR},
+      </if>
+      <if test="v7RPosition != null" >
+        v7_r_position = #{v7RPosition,jdbcType=VARCHAR},
+      </if>
+      <if test="v7RBusResults != null" >
+        v7_r_bus_results = #{v7RBusResults,jdbcType=DOUBLE},
+      </if>
+      <if test="v7RRaiseResults != null" >
+        v7_r_raise_results = #{v7RRaiseResults,jdbcType=DOUBLE},
+      </if>
+      <if test="v7ROutResults != null" >
+        v7_r_out_results = #{v7ROutResults,jdbcType=DOUBLE},
+      </if>
+      <if test="v7RTransResults != null" >
+        v7_r_trans_results = #{v7RTransResults,jdbcType=DOUBLE},
+      </if>
+      <if test="v7RBlowwash != null" >
+        v7_r_blowwash = #{v7RBlowwash,jdbcType=INTEGER},
+      </if>
+      <if test="v7RBlowcutwash != null" >
+        v7_r_blowcutwash = #{v7RBlowcutwash,jdbcType=INTEGER},
+      </if>
+      <if test="extends1 != null" >
+        extends1 = #{extends1,jdbcType=VARCHAR},
+      </if>
+      <if test="extends2 != null" >
+        extends2 = #{extends2,jdbcType=VARCHAR},
+      </if>
+      <if test="extends3 != null" >
+        extends3 = #{extends3,jdbcType=VARCHAR},
+      </if>
+      <if test="extends4 != null" >
+        extends4 = #{extends4,jdbcType=VARCHAR},
+      </if>
+      <if test="extends5 != null" >
+        extends5 = #{extends5,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.carrey.v7mc.po.V7Results" >
+    update V7_RESULTS
+    set v7_r_month = #{v7RMonth,jdbcType=VARCHAR},
+      v7_r_eid = #{v7REid,jdbcType=VARCHAR},
+      v7_r_mnum = #{v7RMnum,jdbcType=INTEGER},
+      v7_r_name = #{v7RName,jdbcType=VARCHAR},
+      v7_r_position = #{v7RPosition,jdbcType=VARCHAR},
+      v7_r_bus_results = #{v7RBusResults,jdbcType=DOUBLE},
+      v7_r_raise_results = #{v7RRaiseResults,jdbcType=DOUBLE},
+      v7_r_out_results = #{v7ROutResults,jdbcType=DOUBLE},
+      v7_r_trans_results = #{v7RTransResults,jdbcType=DOUBLE},
+      v7_r_blowwash = #{v7RBlowwash,jdbcType=INTEGER},
+      v7_r_blowcutwash = #{v7RBlowcutwash,jdbcType=INTEGER},
+      extends1 = #{extends1,jdbcType=VARCHAR},
+      extends2 = #{extends2,jdbcType=VARCHAR},
+      extends3 = #{extends3,jdbcType=VARCHAR},
+      extends4 = #{extends4,jdbcType=VARCHAR},
+      extends5 = #{extends5,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

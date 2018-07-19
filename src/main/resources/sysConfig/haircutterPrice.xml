@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+	发型师洗吹、剪发价格配置表
+	(节点名称不能动！！！)
+ -->
+<configuration>
+	<haircuttrtPrice>
+		<!-- 洗剪吹 -->
+		<haircut>
+			<!-- 技术总监 --> 
+			<technicaldirector>188</technicaldirector>
+			<!--首席发型师   -->	
+			<chiefHairstyList>128</chiefHairstyList>
+	        <!-- 高级发型师 -->  
+	        <highHairstyList>88</highHairstyList>	   
+	        <!-- 发型师 --> 
+	        <hairstylist>58</hairstylist>
+		</haircut>
+		<!-- 洗吹 -->
+		<washBlow>
+			<!-- 技术总监 --> 
+			<technicaldirector>30</technicaldirector>
+			<!--首席发型师   -->	
+			<chiefHairstyList>30</chiefHairstyList>
+	        <!-- 高级发型师 -->  
+	        <highHairstyList>30</highHairstyList>	   
+	        <!-- 发型师 --> 
+	        <hairstylist>30</hairstylist>
+		</washBlow>
+		
+	</haircuttrtPrice>
+</configuration>

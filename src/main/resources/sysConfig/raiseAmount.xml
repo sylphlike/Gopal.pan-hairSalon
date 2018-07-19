@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+	加价产品配置文件
+	 配置样例  加价产品名称-金额
+	注：加价产品金额不可重复！
+-->
+<configuration>
+	<raiseAmounts>
+		<!-- 洗吹卡 -->
+		<raiseAmount>
+			<singleRaise>加价产品1-10</singleRaise>
+			<singleRaise>加价产品2-20</singleRaise>
+			<singleRaise>加价产品3-30</singleRaise>
+		</raiseAmount>
+	</raiseAmounts>
+</configuration>

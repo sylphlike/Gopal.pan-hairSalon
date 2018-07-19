@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+	消费项目配置文件 烫发，染发，烫染发，烫染护发
+	配置要求： 烫发名称-价格 (节点名称不能动！！！)
+-->
+<configuration>
+	<cashiers>
+		<!-- 烫发 -->
+		<perm>
+			<premNode>欧莱雅烫发-998</premNode>
+			<premNode>欧莱雅烫发-668</premNode>
+			<premNode>施华蔻烫发-998</premNode>
+		</perm>
+		
+		<!-- 染发 -->
+		<dyeHair>
+			<dyeHairNode>欧莱雅染发-998</dyeHairNode>
+			<dyeHairNode>欧莱雅染发-668</dyeHairNode>
+			<dyeHairNode>施华蔻染发-998</dyeHairNode>
+		</dyeHair>
+		<!-- 护发 -->
+		<conditioner>
+			<conditionerNode>欧莱雅护发-998</conditionerNode>
+			<conditionerNode>欧莱雅护发-668</conditionerNode>
+			<conditionerNode>施华蔻护发-998</conditionerNode>
+		</conditioner>
+	</cashiers>
+</configuration>

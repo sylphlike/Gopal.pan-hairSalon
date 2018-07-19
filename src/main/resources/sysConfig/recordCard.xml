@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+	记次卡充值金额，次数配置  配置样例  充值金额-次数
+-->
+<configuration>
+	<recordCards>
+		<!-- 洗吹卡 -->
+		<blowWashs>
+			<blowWash>500-30</blowWash>
+		</blowWashs>
+		<!-- 洗剪吹卡 -->
+		<blowCutWashs>
+			<blowCutWash>500-18</blowCutWash>
+		</blowCutWashs>
+	</recordCards>
+</configuration>

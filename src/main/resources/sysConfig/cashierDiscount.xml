@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+	前台买单折扣配置文件 配置说明 所有折扣按几折几折方式配置 如 7折卡着配置数字为 0.7，75折卡配置数字0.75
+-->
+<configuration>
+	<cashiers>
+		<!-- 金卡 -->
+		<goldCard>
+			<!-- 洗吹 -->
+			<blowWash>0.8</blowWash>
+			<!-- 洗剪吹 -->
+			<blowCutWash>0.8</blowCutWash>
+			<!-- 烫发 -->
+			<perm>0.8</perm>
+			<!-- 染发 -->
+			<dyeHair>0.8</dyeHair>
+			<!-- 护发 -->
+			<conditioner>0.8</conditioner>
+		</goldCard>
+		
+		<!-- 银卡 -->
+		<silverCard>
+			<!-- 洗吹 -->
+			<blowWash>0.9</blowWash>
+			<!-- 洗剪吹 -->
+			<blowCutWash>0.9</blowCutWash>
+			<!-- 烫发 -->
+			<perm>0.9</perm>
+			<!-- 染发 -->
+			<dyeHair>0.9</dyeHair>
+			<!-- 护发 -->
+			<conditioner>0.9</conditioner>
+		</silverCard>
+		
+		<!-- 普卡 -->
+		<classicCard>
+			<!-- 洗吹 -->
+			<blowWash>0.95</blowWash>
+			<!-- 洗剪吹 -->
+			<blowCutWash>0.95</blowCutWash>
+			<!-- 烫发 -->
+			<perm>0.95</perm>
+			<!-- 染发 -->
+			<dyeHair>0.95</dyeHair>
+			<!-- 护发 -->
+			<conditioner>0.95</conditioner>
+		</classicCard>
+		
+		<!-- 对冲卡 -->
+		<hedgingCard>
+			<!-- 洗吹 -->
+			<blowWash>0.5</blowWash>
+			<!-- 洗剪吹 -->
+			<blowCutWash>0.5</blowCutWash>
+			<!-- 烫发 -->
+			<perm>0.5</perm>
+			<!-- 染发 -->
+			<dyeHair>0.5</dyeHair>
+			<!-- 烫染发 -->
+			<permDyeHair>0.5</permDyeHair>
+			<!-- 护发 -->
+			<conditioner>0.5</conditioner>
+			<!-- 对冲卡通用折扣 -->
+			<generalDiscount>0.5</generalDiscount>
+		</hedgingCard>
+		
+		
+	</cashiers>
+</configuration>

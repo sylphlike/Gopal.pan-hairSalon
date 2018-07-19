@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:cache="http://www.springframework.org/schema/cache"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:jms="http://www.springframework.org/schema/jms" xmlns:lang="http://www.springframework.org/schema/lang"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:oxm="http://www.springframework.org/schema/oxm" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:task="http://www.springframework.org/schema/task" xmlns:tx="http://www.springframework.org/schema/tx" xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd  
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd  
+        http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache-3.1.xsd  
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd  
+        http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.1.xsd  
+        http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.1.xsd  
+        http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms-3.1.xsd  
+        http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang-3.1.xsd  
+        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd  
+        http://www.springframework.org/schema/oxm http://www.springframework.org/schema/oxm/spring-oxm-3.1.xsd  
+        http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.1.xsd  
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd  
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
+                     
+                     
+	<!-- 加载jdbc属性文件 -->			         
+	<context:property-placeholder location="classpath:jndi.properties"/>
+	
+	<!-- 注册数据源 -->
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<property name="driverClass" value="${v7mc.jdbc.driverClassName}"/>
+		<property name="jdbcUrl" value="${v7mc.jdbc.url}"/>
+		<property name="user" value="${v7mc.jdbc.username}"/>
+		<property name="password" value="${v7mc.jdbc.password}"/>
+		<property name="initialPoolSize" value="${v7mc.initialPoolSize}"/>
+		<property name="maxPoolSize" value="${v7mc.maxPoolSize}"/>
+		<property name="minPoolSize" value="${v7mc.minPoolSize}"/>
+		
+		<!-- 每60秒检查所有连接池中的空闲连接。Default: 0 -->
+		<property name="idleConnectionTestPeriod" value="60" />
+ 		<!--如果设为true那么在取得连接的同时将校验连接的有效性。Default: false -->
+		<property name="testConnectionOnCheckin" value="true" />
+		
+	</bean>
+	
+	<!-- sqlSessionFactory -->
+	
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<!-- 数据库连接池 -->
+		<property name="dataSource" ref="dataSource" />
+		<!-- 加载mybatis的全局配置文件 -->
+		<property name="configLocation" value="classpath:mybatis/sqlMapConfig.xml" />
+		<property name="mapperLocations">
+			<list>
+				<value>classpath:mybatis/sqlMapper/V7CardMapper.xml</value>
+				<value>classpath:mybatis/sqlMapper/V7CrecardMapper.xml</value>
+				<value>classpath:mybatis/sqlMapper/V7MemberMapper.xml</value>
+				<value>classpath:mybatis/sqlMapper/V7EmployeeMapper.xml</value>
+				<value>classpath:mybatis/sqlMapper/V7UniversalLogMapper.xml</value>
+				<value>classpath:mybatis/sqlMapper/V7BrandMapper.xml</value>
+				<value>classpath:mybatis/sqlMapper/V7ProductMapper.xml</value>
+				<value>classpath:mybatis/sqlMapper/V7StoreInMapper.xml</value>
+				<value>classpath:mybatis/sqlMapper/V7StoreOutMapper.xml</value>
+				<value>classpath:mybatis/sqlMapper/V7StoreQuantityMapper.xml</value>
+				<value>classpath:mybatis/sqlMapper/V7ReceptionMapper.xml</value>
+				<value>classpath:mybatis/sqlMapper/V7HandleCardMapper.xml</value>
+				<value>classpath:mybatis/sqlMapper/V7RollDayAccountsMapper.xml</value>
+				<value>classpath:mybatis/sqlMapper/V7RollMonthAccountsMapper.xml</value>
+				<value>classpath:mybatis/sqlMapper/V7ResultsMapper.xml</value>
+				<value>classpath:mybatis/sqlMapper/V7SalaryMapper.xml</value>
+				<value>classpath:mybatis/sqlMapper/V7ChargeMapper.xml</value>
+			</list>
+		</property>
+	</bean>
+	<!-- mapper扫描器 -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<!-- 扫描包路径，如果需要扫描多个包，中间使用半角逗号隔开 -->
+		<property name="basePackage" value="com.carrey.v7mc.mapperInterface"/>
+		<property name="sqlSessionFactoryBeanName" value="sqlSessionFactory" />
+	</bean>
+
+	
+</beans>

@@ -1,0 +1,475 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.carrey.v7mc.mapperInterface.V7SalaryMapper" >
+  <resultMap id="BaseResultMap" type="com.carrey.v7mc.po.V7Salary" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="v7_s_month" property="v7SMonth" jdbcType="VARCHAR" />
+    <result column="v7_s_mnum" property="v7SMnum" jdbcType="INTEGER" />
+    <result column="v7_s_name" property="v7SName" jdbcType="VARCHAR" />
+    <result column="v7_s_position" property="v7SPosition" jdbcType="VARCHAR" />
+    <result column="v7_s_base_salary" property="v7SBaseSalary" jdbcType="DOUBLE" />
+    <result column="v7_s_pre_salary" property="v7SPreSalary" jdbcType="DOUBLE" />
+    <result column="v7_s_out_salary" property="v7SOutSalary" jdbcType="DOUBLE" />
+    <result column="v7_s_trans_salary" property="v7STransSalary" jdbcType="DOUBLE" />
+    <result column="v7_s_charge_salary" property="v7SChargeSalary" jdbcType="DOUBLE" />
+    <result column="v7_s_reality_salary" property="v7SRealitySalary" jdbcType="DOUBLE" />
+    <result column="v7_s_status" property="v7SStatus" jdbcType="INTEGER" />
+    <result column="extends1" property="extends1" jdbcType="VARCHAR" />
+    <result column="extends2" property="extends2" jdbcType="VARCHAR" />
+    <result column="extends3" property="extends3" jdbcType="VARCHAR" />
+    <result column="extends4" property="extends4" jdbcType="VARCHAR" />
+    <result column="extends5" property="extends5" jdbcType="VARCHAR" />
+  </resultMap>
+  
+ 
+ <!-- ********************************自定义SQL开始****************************** -->
+ <!-- 统计总数 -->
+  <select id="getTotalAmount" parameterType="com.carrey.v7mc.queryVo.SalaryQvo" resultType="int">
+  	select count(m.id) from V7_SALARY m
+	  	<where>
+	  		1=1
+	  		<if test="v7SNum !=null and v7SNum !=''">
+				and	m.v7_s_mnum like '%${v7SNum}%'
+	  		</if>
+	  		<if test="v7SName != null and v7SName !=''">
+	  			and m.v7_s_name like '%${v7SName}%'
+	  		</if>
+	  		<if test="v7SMonth !=null and v7SMonth !=''">
+	  			 and m.v7_s_month =  #{v7SMonth}
+	  		</if>
+	  	</where>
+  </select>
+  <select id="getPageData" parameterType="com.carrey.v7mc.queryVo.SalaryQvo" resultMap="BaseResultMap">
+  	select * from V7_SALARY m
+	  	<where>
+	  		1=1
+	  		<if test="v7SNum !=null and v7SNum !=''">
+				and	m.v7_s_mnum like '%${v7SNum}%'
+	  		</if>
+	  		<if test="v7SName != null and v7SName !=''">
+	  			and m.v7_s_name like '%${v7SName}%'
+	  		</if>
+	  		<if test="v7SMonth !=null and v7SMonth !=''">
+	  			 and m.v7_s_month =  #{v7SMonth}
+	  		</if>
+	  	</where>
+		order by m.v7_s_month DESC limit #{beginPageIndex}, #{pageSize} 
+  </select>
+  
+  
+  <!-- 批量插入业绩数据的每月第一天的初始化数据和业绩数据 mybatis批量插入操作-->
+  <insert id="addData" parameterType="List">
+  		INSERT INTO V7_SALARY (
+			  id,
+			  v7_s_month,
+			  v7_s_mnum,
+			  v7_s_name,
+			  v7_s_position,
+			  v7_s_base_salary,
+			  v7_s_pre_salary,
+			  v7_s_out_salary,
+			  v7_s_trans_salary,
+			  v7_s_charge_salary,
+			  v7_s_reality_salary,
+			  v7_s_status
+			) 
+			VALUES
+	    <foreach collection="list" item="item" index="index" separator="," >  
+			 (#{item.id},
+			  #{item.v7SMonth},
+			  #{item.v7SMnum},
+			  #{item.v7SName},
+			  #{item.v7SPosition},
+			  #{item.v7SBaseSalary},
+			  #{item.v7SPreSalary},
+			  #{item.v7SOutSalary},
+			  #{item.v7STransSalary},
+			  #{item.v7SChargeSalary},
+			  #{item.v7SRealitySalary},
+			  #{item.v7SStatus}) 
+	    </foreach> 
+  </insert>
+  
+  
+  
+  
+  
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, v7_s_month, v7_s_mnum, v7_s_name, v7_s_position, v7_s_base_salary, v7_s_pre_salary, 
+    v7_s_out_salary, v7_s_trans_salary, v7_s_charge_salary, v7_s_reality_salary, v7_s_status, 
+    extends1, extends2, extends3, extends4, extends5
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.carrey.v7mc.po.V7SalaryExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from V7_SALARY
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from V7_SALARY
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from V7_SALARY
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.carrey.v7mc.po.V7SalaryExample" >
+    delete from V7_SALARY
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.carrey.v7mc.po.V7Salary" >
+    insert into V7_SALARY (id, v7_s_month, v7_s_mnum, 
+      v7_s_name, v7_s_position, v7_s_base_salary, 
+      v7_s_pre_salary, v7_s_out_salary, v7_s_trans_salary, 
+      v7_s_charge_salary, v7_s_reality_salary, v7_s_status, 
+      extends1, extends2, extends3, 
+      extends4, extends5)
+    values (#{id,jdbcType=VARCHAR}, #{v7SMonth,jdbcType=VARCHAR}, #{v7SMnum,jdbcType=INTEGER}, 
+      #{v7SName,jdbcType=VARCHAR}, #{v7SPosition,jdbcType=VARCHAR}, #{v7SBaseSalary,jdbcType=DOUBLE}, 
+      #{v7SPreSalary,jdbcType=DOUBLE}, #{v7SOutSalary,jdbcType=DOUBLE}, #{v7STransSalary,jdbcType=DOUBLE}, 
+      #{v7SChargeSalary,jdbcType=DOUBLE}, #{v7SRealitySalary,jdbcType=DOUBLE}, #{v7SStatus,jdbcType=INTEGER}, 
+      #{extends1,jdbcType=VARCHAR}, #{extends2,jdbcType=VARCHAR}, #{extends3,jdbcType=VARCHAR}, 
+      #{extends4,jdbcType=VARCHAR}, #{extends5,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.carrey.v7mc.po.V7Salary" >
+    insert into V7_SALARY
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="v7SMonth != null" >
+        v7_s_month,
+      </if>
+      <if test="v7SMnum != null" >
+        v7_s_mnum,
+      </if>
+      <if test="v7SName != null" >
+        v7_s_name,
+      </if>
+      <if test="v7SPosition != null" >
+        v7_s_position,
+      </if>
+      <if test="v7SBaseSalary != null" >
+        v7_s_base_salary,
+      </if>
+      <if test="v7SPreSalary != null" >
+        v7_s_pre_salary,
+      </if>
+      <if test="v7SOutSalary != null" >
+        v7_s_out_salary,
+      </if>
+      <if test="v7STransSalary != null" >
+        v7_s_trans_salary,
+      </if>
+      <if test="v7SChargeSalary != null" >
+        v7_s_charge_salary,
+      </if>
+      <if test="v7SRealitySalary != null" >
+        v7_s_reality_salary,
+      </if>
+      <if test="v7SStatus != null" >
+        v7_s_status,
+      </if>
+      <if test="extends1 != null" >
+        extends1,
+      </if>
+      <if test="extends2 != null" >
+        extends2,
+      </if>
+      <if test="extends3 != null" >
+        extends3,
+      </if>
+      <if test="extends4 != null" >
+        extends4,
+      </if>
+      <if test="extends5 != null" >
+        extends5,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="v7SMonth != null" >
+        #{v7SMonth,jdbcType=VARCHAR},
+      </if>
+      <if test="v7SMnum != null" >
+        #{v7SMnum,jdbcType=INTEGER},
+      </if>
+      <if test="v7SName != null" >
+        #{v7SName,jdbcType=VARCHAR},
+      </if>
+      <if test="v7SPosition != null" >
+        #{v7SPosition,jdbcType=VARCHAR},
+      </if>
+      <if test="v7SBaseSalary != null" >
+        #{v7SBaseSalary,jdbcType=DOUBLE},
+      </if>
+      <if test="v7SPreSalary != null" >
+        #{v7SPreSalary,jdbcType=DOUBLE},
+      </if>
+      <if test="v7SOutSalary != null" >
+        #{v7SOutSalary,jdbcType=DOUBLE},
+      </if>
+      <if test="v7STransSalary != null" >
+        #{v7STransSalary,jdbcType=DOUBLE},
+      </if>
+      <if test="v7SChargeSalary != null" >
+        #{v7SChargeSalary,jdbcType=DOUBLE},
+      </if>
+      <if test="v7SRealitySalary != null" >
+        #{v7SRealitySalary,jdbcType=DOUBLE},
+      </if>
+      <if test="v7SStatus != null" >
+        #{v7SStatus,jdbcType=INTEGER},
+      </if>
+      <if test="extends1 != null" >
+        #{extends1,jdbcType=VARCHAR},
+      </if>
+      <if test="extends2 != null" >
+        #{extends2,jdbcType=VARCHAR},
+      </if>
+      <if test="extends3 != null" >
+        #{extends3,jdbcType=VARCHAR},
+      </if>
+      <if test="extends4 != null" >
+        #{extends4,jdbcType=VARCHAR},
+      </if>
+      <if test="extends5 != null" >
+        #{extends5,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.carrey.v7mc.po.V7SalaryExample" resultType="java.lang.Integer" >
+    select count(*) from V7_SALARY
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update V7_SALARY
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7SMonth != null" >
+        v7_s_month = #{record.v7SMonth,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7SMnum != null" >
+        v7_s_mnum = #{record.v7SMnum,jdbcType=INTEGER},
+      </if>
+      <if test="record.v7SName != null" >
+        v7_s_name = #{record.v7SName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7SPosition != null" >
+        v7_s_position = #{record.v7SPosition,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7SBaseSalary != null" >
+        v7_s_base_salary = #{record.v7SBaseSalary,jdbcType=DOUBLE},
+      </if>
+      <if test="record.v7SPreSalary != null" >
+        v7_s_pre_salary = #{record.v7SPreSalary,jdbcType=DOUBLE},
+      </if>
+      <if test="record.v7SOutSalary != null" >
+        v7_s_out_salary = #{record.v7SOutSalary,jdbcType=DOUBLE},
+      </if>
+      <if test="record.v7STransSalary != null" >
+        v7_s_trans_salary = #{record.v7STransSalary,jdbcType=DOUBLE},
+      </if>
+      <if test="record.v7SChargeSalary != null" >
+        v7_s_charge_salary = #{record.v7SChargeSalary,jdbcType=DOUBLE},
+      </if>
+      <if test="record.v7SRealitySalary != null" >
+        v7_s_reality_salary = #{record.v7SRealitySalary,jdbcType=DOUBLE},
+      </if>
+      <if test="record.v7SStatus != null" >
+        v7_s_status = #{record.v7SStatus,jdbcType=INTEGER},
+      </if>
+      <if test="record.extends1 != null" >
+        extends1 = #{record.extends1,jdbcType=VARCHAR},
+      </if>
+      <if test="record.extends2 != null" >
+        extends2 = #{record.extends2,jdbcType=VARCHAR},
+      </if>
+      <if test="record.extends3 != null" >
+        extends3 = #{record.extends3,jdbcType=VARCHAR},
+      </if>
+      <if test="record.extends4 != null" >
+        extends4 = #{record.extends4,jdbcType=VARCHAR},
+      </if>
+      <if test="record.extends5 != null" >
+        extends5 = #{record.extends5,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update V7_SALARY
+    set id = #{record.id,jdbcType=VARCHAR},
+      v7_s_month = #{record.v7SMonth,jdbcType=VARCHAR},
+      v7_s_mnum = #{record.v7SMnum,jdbcType=INTEGER},
+      v7_s_name = #{record.v7SName,jdbcType=VARCHAR},
+      v7_s_position = #{record.v7SPosition,jdbcType=VARCHAR},
+      v7_s_base_salary = #{record.v7SBaseSalary,jdbcType=DOUBLE},
+      v7_s_pre_salary = #{record.v7SPreSalary,jdbcType=DOUBLE},
+      v7_s_out_salary = #{record.v7SOutSalary,jdbcType=DOUBLE},
+      v7_s_trans_salary = #{record.v7STransSalary,jdbcType=DOUBLE},
+      v7_s_charge_salary = #{record.v7SChargeSalary,jdbcType=DOUBLE},
+      v7_s_reality_salary = #{record.v7SRealitySalary,jdbcType=DOUBLE},
+      v7_s_status = #{record.v7SStatus,jdbcType=INTEGER},
+      extends1 = #{record.extends1,jdbcType=VARCHAR},
+      extends2 = #{record.extends2,jdbcType=VARCHAR},
+      extends3 = #{record.extends3,jdbcType=VARCHAR},
+      extends4 = #{record.extends4,jdbcType=VARCHAR},
+      extends5 = #{record.extends5,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.carrey.v7mc.po.V7Salary" >
+    update V7_SALARY
+    <set >
+      <if test="v7SMonth != null" >
+        v7_s_month = #{v7SMonth,jdbcType=VARCHAR},
+      </if>
+      <if test="v7SMnum != null" >
+        v7_s_mnum = #{v7SMnum,jdbcType=INTEGER},
+      </if>
+      <if test="v7SName != null" >
+        v7_s_name = #{v7SName,jdbcType=VARCHAR},
+      </if>
+      <if test="v7SPosition != null" >
+        v7_s_position = #{v7SPosition,jdbcType=VARCHAR},
+      </if>
+      <if test="v7SBaseSalary != null" >
+        v7_s_base_salary = #{v7SBaseSalary,jdbcType=DOUBLE},
+      </if>
+      <if test="v7SPreSalary != null" >
+        v7_s_pre_salary = #{v7SPreSalary,jdbcType=DOUBLE},
+      </if>
+      <if test="v7SOutSalary != null" >
+        v7_s_out_salary = #{v7SOutSalary,jdbcType=DOUBLE},
+      </if>
+      <if test="v7STransSalary != null" >
+        v7_s_trans_salary = #{v7STransSalary,jdbcType=DOUBLE},
+      </if>
+      <if test="v7SChargeSalary != null" >
+        v7_s_charge_salary = #{v7SChargeSalary,jdbcType=DOUBLE},
+      </if>
+      <if test="v7SRealitySalary != null" >
+        v7_s_reality_salary = #{v7SRealitySalary,jdbcType=DOUBLE},
+      </if>
+      <if test="v7SStatus != null" >
+        v7_s_status = #{v7SStatus,jdbcType=INTEGER},
+      </if>
+      <if test="extends1 != null" >
+        extends1 = #{extends1,jdbcType=VARCHAR},
+      </if>
+      <if test="extends2 != null" >
+        extends2 = #{extends2,jdbcType=VARCHAR},
+      </if>
+      <if test="extends3 != null" >
+        extends3 = #{extends3,jdbcType=VARCHAR},
+      </if>
+      <if test="extends4 != null" >
+        extends4 = #{extends4,jdbcType=VARCHAR},
+      </if>
+      <if test="extends5 != null" >
+        extends5 = #{extends5,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.carrey.v7mc.po.V7Salary" >
+    update V7_SALARY
+    set v7_s_month = #{v7SMonth,jdbcType=VARCHAR},
+      v7_s_mnum = #{v7SMnum,jdbcType=INTEGER},
+      v7_s_name = #{v7SName,jdbcType=VARCHAR},
+      v7_s_position = #{v7SPosition,jdbcType=VARCHAR},
+      v7_s_base_salary = #{v7SBaseSalary,jdbcType=DOUBLE},
+      v7_s_pre_salary = #{v7SPreSalary,jdbcType=DOUBLE},
+      v7_s_out_salary = #{v7SOutSalary,jdbcType=DOUBLE},
+      v7_s_trans_salary = #{v7STransSalary,jdbcType=DOUBLE},
+      v7_s_charge_salary = #{v7SChargeSalary,jdbcType=DOUBLE},
+      v7_s_reality_salary = #{v7SRealitySalary,jdbcType=DOUBLE},
+      v7_s_status = #{v7SStatus,jdbcType=INTEGER},
+      extends1 = #{extends1,jdbcType=VARCHAR},
+      extends2 = #{extends2,jdbcType=VARCHAR},
+      extends3 = #{extends3,jdbcType=VARCHAR},
+      extends4 = #{extends4,jdbcType=VARCHAR},
+      extends5 = #{extends5,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

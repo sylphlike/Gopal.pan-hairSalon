@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+	薪水提成率，配置文件
+-->
+<configuration>
+	<salaryPercentages>
+		<salaryPercentage>
+			<!-- 技术总监 --> 
+			<technicaldirector>0.3</technicaldirector>
+			<!--首席发型师   -->	
+			<chiefHairstyList>0.3</chiefHairstyList>
+	        <!-- 高级发型师 -->  
+	        <highHairstyList>0.3</highHairstyList>	   
+	        <!-- 发型师 --> 
+	        <hairstylist>0.3</hairstylist>
+   			<!-- 技师 -->
+   			<technician>0.1</technician>
+   			<!-- 助理 -->
+   			<assistant>0.1</assistant>
+   			<!-- 外卖 -->
+   			<takeOut>0.2</takeOut>
+   			<!-- 加价 -->
+   			<raisePrice>0.3</raisePrice>
+   			<!-- 洗吹卡 -->
+   			<blowWash>3</blowWash>
+   			<!-- 洗剪吹卡 -->
+   			<blowCutWash>5</blowCutWash>
+   			<!-- 办卡提成 -->
+   			<cardPoints>0.1</cardPoints>
+   			<!-- 助理，技师的基本薪资 -->
+   			<baseSalary>2000</baseSalary>
+   			
+		</salaryPercentage>
+	</salaryPercentages>
+</configuration>

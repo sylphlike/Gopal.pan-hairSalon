@@ -1,0 +1,505 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.carrey.v7mc.mapperInterface.V7UniversalLogMapper" >
+  <resultMap id="BaseResultMap" type="com.carrey.v7mc.po.V7UniversalLog" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="v7_u_module_name" property="v7UModuleName" jdbcType="VARCHAR" />
+    <result column="v7_u_feature_name" property="v7UFeatureName" jdbcType="VARCHAR" />
+    <result column="v7_u_feature_path" property="v7UFeaturePath" jdbcType="VARCHAR" />
+    <result column="v7_u_request_result" property="v7URequestResult" jdbcType="VARCHAR" />
+    <result column="v7_u_request_user" property="v7URequestUser" jdbcType="VARCHAR" />
+    <result column="v7_u_request_time" property="v7URequestTime" jdbcType="TIMESTAMP" />
+    <result column="v7_u_request_pcname" property="v7URequestPcname" jdbcType="VARCHAR" />
+    <result column="v7_u_request_ip" property="v7URequestIp" jdbcType="VARCHAR" />
+    <result column="extends1" property="extends1" jdbcType="VARCHAR" />
+    <result column="extends2" property="extends2" jdbcType="VARCHAR" />
+    <result column="extends3" property="extends3" jdbcType="VARCHAR" />
+    <result column="extends4" property="extends4" jdbcType="VARCHAR" />
+    <result column="extends5" property="extends5" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <resultMap id="ResultMapWithBLOBs" type="com.carrey.v7mc.po.V7UniversalLog" extends="BaseResultMap" >
+    <result column="v7_u_request_param" property="v7URequestParam" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  
+  
+    
+  <!-- ********************************自定义SQL开始****************************** -->
+  <!-- 统计总数 -->
+  <select id="getTotalAmount" parameterType="com.carrey.v7mc.queryVo.UniversalQVo" resultType="int">
+  	select count(m.id) from V7_UNIVERSAL_LOG m
+	  	<where>
+	  		1=1
+	  		<if test="moduleName !=null and moduleName !=''">
+				and	m.v7_u_module_name like '%${moduleName}%'
+	  		</if>
+	  		<if test="featureName != null and featureName !=''">
+	  			and m.v7_u_feature_name like '%${featureName}%'
+	  		</if>
+	  		<if test="requestResult !=null and requestResult !=''">
+	  			 and m.v7_u_request_result like '%${requestResult}%'
+	  		</if>
+	  		
+	  		<if test="startTime != null and startTime != ''">
+	  			and v7_u_request_time &gt;= #{startTime}
+	  		</if>
+	  		<if test="endTime != null and endTime != ''">
+	  			and m.v7_u_request_time &lt;= #{endTime}
+	  		</if>
+	  	</where>
+  </select>
+  <select id="getPageData" parameterType="com.carrey.v7mc.queryVo.MemberQVo" resultType="com.carrey.v7mc.po.V7UniversalLog">
+  	select
+  		  m.id id,
+		  m.v7_u_module_name v7UModuleName,
+		  m.v7_u_feature_name v7UFeatureName,
+		  m.v7_u_feature_path v7UFeaturePath,
+		  m.v7_u_request_param v7URequestParam ,
+		  m.v7_u_request_user v7URequestUser,
+		  m.v7_u_request_result v7URequestResult,
+		  m.v7_u_request_user v7URequestUser,
+		  m.v7_u_request_time v7URequestTime,
+		  m.v7_u_request_pcname v7URequestPcname,
+		  m.v7_u_request_ip v7URequestIp
+   from V7_UNIVERSAL_LOG m
+	  	<where>
+	  		1=1
+	  		<if test="moduleName !=null and moduleName !=''">
+				and	m.v7_u_module_name like '%${moduleName}%'
+	  		</if>
+	  		<if test="featureName != null and featureName !=''">
+	  			and m.v7_u_feature_name like '%${featureName}%'
+	  		</if>
+	  		<if test="requestResult !=null and requestResult !=''">
+	  			 and m.v7_u_request_result like '%${requestResult}%'
+	  		</if>
+	  		
+	  		<if test="startTime != null and startTime != ''">
+	  			and v7_u_request_time &gt;= #{startTime}
+	  		</if>
+	  		<if test="endTime != null and endTime != ''">
+	  			and m.v7_u_request_time &lt;= #{endTime}
+	  		</if>
+	  	</where>
+		order by m.v7_u_request_time DESC limit #{beginPageIndex}, #{pageSize} 
+  </select>
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, v7_u_module_name, v7_u_feature_name, v7_u_feature_path, v7_u_request_result, 
+    v7_u_request_user, v7_u_request_time, v7_u_request_pcname, v7_u_request_ip, extends1, 
+    extends2, extends3, extends4, extends5
+  </sql>
+  <sql id="Blob_Column_List" >
+    v7_u_request_param
+  </sql>
+  <select id="selectByExampleWithBLOBs" resultMap="ResultMapWithBLOBs" parameterType="com.carrey.v7mc.po.V7UniversalLogExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from V7_UNIVERSAL_LOG
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.carrey.v7mc.po.V7UniversalLogExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from V7_UNIVERSAL_LOG
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from V7_UNIVERSAL_LOG
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from V7_UNIVERSAL_LOG
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.carrey.v7mc.po.V7UniversalLogExample" >
+    delete from V7_UNIVERSAL_LOG
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.carrey.v7mc.po.V7UniversalLog" >
+    insert into V7_UNIVERSAL_LOG (id, v7_u_module_name, v7_u_feature_name, 
+      v7_u_feature_path, v7_u_request_result, v7_u_request_user, 
+      v7_u_request_time, v7_u_request_pcname, v7_u_request_ip, 
+      extends1, extends2, extends3, 
+      extends4, extends5, v7_u_request_param
+      )
+    values (#{id,jdbcType=VARCHAR}, #{v7UModuleName,jdbcType=VARCHAR}, #{v7UFeatureName,jdbcType=VARCHAR}, 
+      #{v7UFeaturePath,jdbcType=VARCHAR}, #{v7URequestResult,jdbcType=VARCHAR}, #{v7URequestUser,jdbcType=VARCHAR}, 
+      #{v7URequestTime,jdbcType=TIMESTAMP}, #{v7URequestPcname,jdbcType=VARCHAR}, #{v7URequestIp,jdbcType=VARCHAR}, 
+      #{extends1,jdbcType=VARCHAR}, #{extends2,jdbcType=VARCHAR}, #{extends3,jdbcType=VARCHAR}, 
+      #{extends4,jdbcType=VARCHAR}, #{extends5,jdbcType=VARCHAR}, #{v7URequestParam,jdbcType=LONGVARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.carrey.v7mc.po.V7UniversalLog" >
+    insert into V7_UNIVERSAL_LOG
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="v7UModuleName != null" >
+        v7_u_module_name,
+      </if>
+      <if test="v7UFeatureName != null" >
+        v7_u_feature_name,
+      </if>
+      <if test="v7UFeaturePath != null" >
+        v7_u_feature_path,
+      </if>
+      <if test="v7URequestResult != null" >
+        v7_u_request_result,
+      </if>
+      <if test="v7URequestUser != null" >
+        v7_u_request_user,
+      </if>
+      <if test="v7URequestTime != null" >
+        v7_u_request_time,
+      </if>
+      <if test="v7URequestPcname != null" >
+        v7_u_request_pcname,
+      </if>
+      <if test="v7URequestIp != null" >
+        v7_u_request_ip,
+      </if>
+      <if test="extends1 != null" >
+        extends1,
+      </if>
+      <if test="extends2 != null" >
+        extends2,
+      </if>
+      <if test="extends3 != null" >
+        extends3,
+      </if>
+      <if test="extends4 != null" >
+        extends4,
+      </if>
+      <if test="extends5 != null" >
+        extends5,
+      </if>
+      <if test="v7URequestParam != null" >
+        v7_u_request_param,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="v7UModuleName != null" >
+        #{v7UModuleName,jdbcType=VARCHAR},
+      </if>
+      <if test="v7UFeatureName != null" >
+        #{v7UFeatureName,jdbcType=VARCHAR},
+      </if>
+      <if test="v7UFeaturePath != null" >
+        #{v7UFeaturePath,jdbcType=VARCHAR},
+      </if>
+      <if test="v7URequestResult != null" >
+        #{v7URequestResult,jdbcType=VARCHAR},
+      </if>
+      <if test="v7URequestUser != null" >
+        #{v7URequestUser,jdbcType=VARCHAR},
+      </if>
+      <if test="v7URequestTime != null" >
+        #{v7URequestTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="v7URequestPcname != null" >
+        #{v7URequestPcname,jdbcType=VARCHAR},
+      </if>
+      <if test="v7URequestIp != null" >
+        #{v7URequestIp,jdbcType=VARCHAR},
+      </if>
+      <if test="extends1 != null" >
+        #{extends1,jdbcType=VARCHAR},
+      </if>
+      <if test="extends2 != null" >
+        #{extends2,jdbcType=VARCHAR},
+      </if>
+      <if test="extends3 != null" >
+        #{extends3,jdbcType=VARCHAR},
+      </if>
+      <if test="extends4 != null" >
+        #{extends4,jdbcType=VARCHAR},
+      </if>
+      <if test="extends5 != null" >
+        #{extends5,jdbcType=VARCHAR},
+      </if>
+      <if test="v7URequestParam != null" >
+        #{v7URequestParam,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.carrey.v7mc.po.V7UniversalLogExample" resultType="java.lang.Integer" >
+    select count(*) from V7_UNIVERSAL_LOG
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update V7_UNIVERSAL_LOG
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7UModuleName != null" >
+        v7_u_module_name = #{record.v7UModuleName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7UFeatureName != null" >
+        v7_u_feature_name = #{record.v7UFeatureName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7UFeaturePath != null" >
+        v7_u_feature_path = #{record.v7UFeaturePath,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7URequestResult != null" >
+        v7_u_request_result = #{record.v7URequestResult,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7URequestUser != null" >
+        v7_u_request_user = #{record.v7URequestUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7URequestTime != null" >
+        v7_u_request_time = #{record.v7URequestTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.v7URequestPcname != null" >
+        v7_u_request_pcname = #{record.v7URequestPcname,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7URequestIp != null" >
+        v7_u_request_ip = #{record.v7URequestIp,jdbcType=VARCHAR},
+      </if>
+      <if test="record.extends1 != null" >
+        extends1 = #{record.extends1,jdbcType=VARCHAR},
+      </if>
+      <if test="record.extends2 != null" >
+        extends2 = #{record.extends2,jdbcType=VARCHAR},
+      </if>
+      <if test="record.extends3 != null" >
+        extends3 = #{record.extends3,jdbcType=VARCHAR},
+      </if>
+      <if test="record.extends4 != null" >
+        extends4 = #{record.extends4,jdbcType=VARCHAR},
+      </if>
+      <if test="record.extends5 != null" >
+        extends5 = #{record.extends5,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7URequestParam != null" >
+        v7_u_request_param = #{record.v7URequestParam,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExampleWithBLOBs" parameterType="map" >
+    update V7_UNIVERSAL_LOG
+    set id = #{record.id,jdbcType=VARCHAR},
+      v7_u_module_name = #{record.v7UModuleName,jdbcType=VARCHAR},
+      v7_u_feature_name = #{record.v7UFeatureName,jdbcType=VARCHAR},
+      v7_u_feature_path = #{record.v7UFeaturePath,jdbcType=VARCHAR},
+      v7_u_request_result = #{record.v7URequestResult,jdbcType=VARCHAR},
+      v7_u_request_user = #{record.v7URequestUser,jdbcType=VARCHAR},
+      v7_u_request_time = #{record.v7URequestTime,jdbcType=TIMESTAMP},
+      v7_u_request_pcname = #{record.v7URequestPcname,jdbcType=VARCHAR},
+      v7_u_request_ip = #{record.v7URequestIp,jdbcType=VARCHAR},
+      extends1 = #{record.extends1,jdbcType=VARCHAR},
+      extends2 = #{record.extends2,jdbcType=VARCHAR},
+      extends3 = #{record.extends3,jdbcType=VARCHAR},
+      extends4 = #{record.extends4,jdbcType=VARCHAR},
+      extends5 = #{record.extends5,jdbcType=VARCHAR},
+      v7_u_request_param = #{record.v7URequestParam,jdbcType=LONGVARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update V7_UNIVERSAL_LOG
+    set id = #{record.id,jdbcType=VARCHAR},
+      v7_u_module_name = #{record.v7UModuleName,jdbcType=VARCHAR},
+      v7_u_feature_name = #{record.v7UFeatureName,jdbcType=VARCHAR},
+      v7_u_feature_path = #{record.v7UFeaturePath,jdbcType=VARCHAR},
+      v7_u_request_result = #{record.v7URequestResult,jdbcType=VARCHAR},
+      v7_u_request_user = #{record.v7URequestUser,jdbcType=VARCHAR},
+      v7_u_request_time = #{record.v7URequestTime,jdbcType=TIMESTAMP},
+      v7_u_request_pcname = #{record.v7URequestPcname,jdbcType=VARCHAR},
+      v7_u_request_ip = #{record.v7URequestIp,jdbcType=VARCHAR},
+      extends1 = #{record.extends1,jdbcType=VARCHAR},
+      extends2 = #{record.extends2,jdbcType=VARCHAR},
+      extends3 = #{record.extends3,jdbcType=VARCHAR},
+      extends4 = #{record.extends4,jdbcType=VARCHAR},
+      extends5 = #{record.extends5,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.carrey.v7mc.po.V7UniversalLog" >
+    update V7_UNIVERSAL_LOG
+    <set >
+      <if test="v7UModuleName != null" >
+        v7_u_module_name = #{v7UModuleName,jdbcType=VARCHAR},
+      </if>
+      <if test="v7UFeatureName != null" >
+        v7_u_feature_name = #{v7UFeatureName,jdbcType=VARCHAR},
+      </if>
+      <if test="v7UFeaturePath != null" >
+        v7_u_feature_path = #{v7UFeaturePath,jdbcType=VARCHAR},
+      </if>
+      <if test="v7URequestResult != null" >
+        v7_u_request_result = #{v7URequestResult,jdbcType=VARCHAR},
+      </if>
+      <if test="v7URequestUser != null" >
+        v7_u_request_user = #{v7URequestUser,jdbcType=VARCHAR},
+      </if>
+      <if test="v7URequestTime != null" >
+        v7_u_request_time = #{v7URequestTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="v7URequestPcname != null" >
+        v7_u_request_pcname = #{v7URequestPcname,jdbcType=VARCHAR},
+      </if>
+      <if test="v7URequestIp != null" >
+        v7_u_request_ip = #{v7URequestIp,jdbcType=VARCHAR},
+      </if>
+      <if test="extends1 != null" >
+        extends1 = #{extends1,jdbcType=VARCHAR},
+      </if>
+      <if test="extends2 != null" >
+        extends2 = #{extends2,jdbcType=VARCHAR},
+      </if>
+      <if test="extends3 != null" >
+        extends3 = #{extends3,jdbcType=VARCHAR},
+      </if>
+      <if test="extends4 != null" >
+        extends4 = #{extends4,jdbcType=VARCHAR},
+      </if>
+      <if test="extends5 != null" >
+        extends5 = #{extends5,jdbcType=VARCHAR},
+      </if>
+      <if test="v7URequestParam != null" >
+        v7_u_request_param = #{v7URequestParam,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.carrey.v7mc.po.V7UniversalLog" >
+    update V7_UNIVERSAL_LOG
+    set v7_u_module_name = #{v7UModuleName,jdbcType=VARCHAR},
+      v7_u_feature_name = #{v7UFeatureName,jdbcType=VARCHAR},
+      v7_u_feature_path = #{v7UFeaturePath,jdbcType=VARCHAR},
+      v7_u_request_result = #{v7URequestResult,jdbcType=VARCHAR},
+      v7_u_request_user = #{v7URequestUser,jdbcType=VARCHAR},
+      v7_u_request_time = #{v7URequestTime,jdbcType=TIMESTAMP},
+      v7_u_request_pcname = #{v7URequestPcname,jdbcType=VARCHAR},
+      v7_u_request_ip = #{v7URequestIp,jdbcType=VARCHAR},
+      extends1 = #{extends1,jdbcType=VARCHAR},
+      extends2 = #{extends2,jdbcType=VARCHAR},
+      extends3 = #{extends3,jdbcType=VARCHAR},
+      extends4 = #{extends4,jdbcType=VARCHAR},
+      extends5 = #{extends5,jdbcType=VARCHAR},
+      v7_u_request_param = #{v7URequestParam,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.carrey.v7mc.po.V7UniversalLog" >
+    update V7_UNIVERSAL_LOG
+    set v7_u_module_name = #{v7UModuleName,jdbcType=VARCHAR},
+      v7_u_feature_name = #{v7UFeatureName,jdbcType=VARCHAR},
+      v7_u_feature_path = #{v7UFeaturePath,jdbcType=VARCHAR},
+      v7_u_request_result = #{v7URequestResult,jdbcType=VARCHAR},
+      v7_u_request_user = #{v7URequestUser,jdbcType=VARCHAR},
+      v7_u_request_time = #{v7URequestTime,jdbcType=TIMESTAMP},
+      v7_u_request_pcname = #{v7URequestPcname,jdbcType=VARCHAR},
+      v7_u_request_ip = #{v7URequestIp,jdbcType=VARCHAR},
+      extends1 = #{extends1,jdbcType=VARCHAR},
+      extends2 = #{extends2,jdbcType=VARCHAR},
+      extends3 = #{extends3,jdbcType=VARCHAR},
+      extends4 = #{extends4,jdbcType=VARCHAR},
+      extends5 = #{extends5,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

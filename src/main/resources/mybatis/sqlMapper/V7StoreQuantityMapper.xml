@@ -1,0 +1,433 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.carrey.v7mc.mapperInterface.V7StoreQuantityMapper" >
+  <resultMap id="BaseResultMap" type="com.carrey.v7mc.po.V7StoreQuantity" >
+    <id column="ID" property="id" jdbcType="VARCHAR" />
+    <result column="v7_s_brand" property="v7SBrand" jdbcType="VARCHAR" />
+    <result column="v7_s_type" property="v7SType" jdbcType="VARCHAR" />
+    <result column="v7_s_name" property="v7SName" jdbcType="VARCHAR" />
+    <result column="v7_s_count" property="v7SCount" jdbcType="INTEGER" />
+    <result column="v7_s_unit" property="v7SUnit" jdbcType="VARCHAR" />
+    <result column="v7_s_standard" property="v7SStandard" jdbcType="VARCHAR" />
+    <result column="v7_s_lately_time" property="v7SLatelyTime" jdbcType="TIMESTAMP" />
+    <result column="v7_pk_product" property="v7PkProduct" jdbcType="VARCHAR" />
+    <result column="extends1" property="extends1" jdbcType="VARCHAR" />
+    <result column="extends2" property="extends2" jdbcType="VARCHAR" />
+    <result column="extends3" property="extends3" jdbcType="VARCHAR" />
+    <result column="extends4" property="extends4" jdbcType="VARCHAR" />
+    <result column="extends5" property="extends5" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  
+      
+  <!-- ********************************自定义SQL开始****************************** -->
+  <!-- 统计总数 -->
+  <select id="getTotalAmount" parameterType="com.carrey.v7mc.queryVo.StoreQVo" resultType="int">
+  	select count(m.id) from V7_STORE_QUANTITY m
+	  	<where>
+	  		1=1 
+	  		<if test="brandName !=null and brandName !=''">
+				and	m.v7_s_brand like '%${brandName}%'
+	  		</if>
+	  		<if test="brandType != null and brandType !=''">
+	  			and m.v7_s_type like '%${brandType}%'
+	  		</if>
+	  		<if test="productName != null and productName !=''">
+	  			and m.v7_s_name like '%${productName}%'
+	  		</if>
+	  		
+	  	</where>
+  </select>
+  
+   <select id="getPageData" parameterType="com.carrey.v7mc.queryVo.StoreQVo" resultMap="BaseResultMap">
+  	select * from V7_STORE_QUANTITY m
+		 <where>
+	  		1=1 
+	  		<if test="brandName !=null and brandName !=''">
+				and	m.v7_s_brand like '%${brandName}%'
+	  		</if>
+	  		<if test="brandType != null and brandType !=''">
+	  			and m.v7_s_type like '%${brandType}%'
+	  		</if>
+	  		<if test="productName != null and productName !=''">
+	  			and m.v7_s_name like '%${productName}%'
+	  		</if>
+	  		
+	  	</where>
+		order by m.v7_s_count ASC, m.v7_s_lately_time DESC limit #{beginPageIndex}, #{pageSize} 
+  </select>
+   
+  
+  <select id="selectExistQuantity" parameterType="com.carrey.v7mc.po.V7Product" resultMap="BaseResultMap">
+		SELECT 
+		  *
+		FROM
+		  V7_STORE_QUANTITY q 
+		  <where>
+		  	<if test="v7PBrand != '' and v7PBrand != null" >
+		  		 AND q.v7_s_brand = #{v7PBrand}
+		  	</if>
+		  	<if test="v7PType != '' and v7PType != null">
+				 AND q.v7_s_type = #{v7PType}
+		  	</if>
+		  	<if test="v7PName != '' and v7PName != null">
+			    AND q.v7_s_name = #{v7PName} 
+		  	</if>
+		  </where>
+		 
+  </select>
+  
+  <select id="selectStoreProduct" parameterType="string" resultMap="BaseResultMap">
+  		select * from V7_STORE_QUANTITY q
+  			where q.v7_s_name like '%${value}%'
+  </select>
+  <select id="selectEqualsStoreProduct" parameterType="string" resultMap="BaseResultMap">
+  		select * from V7_STORE_QUANTITY q
+  			where q.v7_s_name = #{value}
+  </select>
+  
+  <select id="selectStoreProductCount" parameterType="string"  resultMap="BaseResultMap">
+  		select * from V7_STORE_QUANTITY q
+  			where q.v7_s_name = #{value}
+  </select>
+  
+  <select id="selectByProductId" parameterType="string" resultMap="BaseResultMap">
+  			select * from V7_STORE_QUANTITY q
+  			where q.v7_pk_product = #{value}
+  </select>
+  
+  
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    ID, v7_s_brand, v7_s_type, v7_s_name, v7_s_count, v7_s_unit, v7_s_standard, v7_s_lately_time, 
+    v7_pk_product, extends1, extends2, extends3, extends4, extends5
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.carrey.v7mc.po.V7StoreQuantityExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from V7_STORE_QUANTITY
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from V7_STORE_QUANTITY
+    where ID = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from V7_STORE_QUANTITY
+    where ID = #{id,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.carrey.v7mc.po.V7StoreQuantityExample" >
+    delete from V7_STORE_QUANTITY
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.carrey.v7mc.po.V7StoreQuantity" >
+    insert into V7_STORE_QUANTITY (ID, v7_s_brand, v7_s_type, 
+      v7_s_name, v7_s_count, v7_s_unit, 
+      v7_s_standard, v7_s_lately_time, v7_pk_product, 
+      extends1, extends2, extends3, 
+      extends4, extends5)
+    values (#{id,jdbcType=VARCHAR}, #{v7SBrand,jdbcType=VARCHAR}, #{v7SType,jdbcType=VARCHAR}, 
+      #{v7SName,jdbcType=VARCHAR}, #{v7SCount,jdbcType=INTEGER}, #{v7SUnit,jdbcType=VARCHAR}, 
+      #{v7SStandard,jdbcType=VARCHAR}, #{v7SLatelyTime,jdbcType=TIMESTAMP}, #{v7PkProduct,jdbcType=VARCHAR}, 
+      #{extends1,jdbcType=VARCHAR}, #{extends2,jdbcType=VARCHAR}, #{extends3,jdbcType=VARCHAR}, 
+      #{extends4,jdbcType=VARCHAR}, #{extends5,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.carrey.v7mc.po.V7StoreQuantity" >
+    insert into V7_STORE_QUANTITY
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="v7SBrand != null" >
+        v7_s_brand,
+      </if>
+      <if test="v7SType != null" >
+        v7_s_type,
+      </if>
+      <if test="v7SName != null" >
+        v7_s_name,
+      </if>
+      <if test="v7SCount != null" >
+        v7_s_count,
+      </if>
+      <if test="v7SUnit != null" >
+        v7_s_unit,
+      </if>
+      <if test="v7SStandard != null" >
+        v7_s_standard,
+      </if>
+      <if test="v7SLatelyTime != null" >
+        v7_s_lately_time,
+      </if>
+      <if test="v7PkProduct != null" >
+        v7_pk_product,
+      </if>
+      <if test="extends1 != null" >
+        extends1,
+      </if>
+      <if test="extends2 != null" >
+        extends2,
+      </if>
+      <if test="extends3 != null" >
+        extends3,
+      </if>
+      <if test="extends4 != null" >
+        extends4,
+      </if>
+      <if test="extends5 != null" >
+        extends5,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="v7SBrand != null" >
+        #{v7SBrand,jdbcType=VARCHAR},
+      </if>
+      <if test="v7SType != null" >
+        #{v7SType,jdbcType=VARCHAR},
+      </if>
+      <if test="v7SName != null" >
+        #{v7SName,jdbcType=VARCHAR},
+      </if>
+      <if test="v7SCount != null" >
+        #{v7SCount,jdbcType=INTEGER},
+      </if>
+      <if test="v7SUnit != null" >
+        #{v7SUnit,jdbcType=VARCHAR},
+      </if>
+      <if test="v7SStandard != null" >
+        #{v7SStandard,jdbcType=VARCHAR},
+      </if>
+      <if test="v7SLatelyTime != null" >
+        #{v7SLatelyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="v7PkProduct != null" >
+        #{v7PkProduct,jdbcType=VARCHAR},
+      </if>
+      <if test="extends1 != null" >
+        #{extends1,jdbcType=VARCHAR},
+      </if>
+      <if test="extends2 != null" >
+        #{extends2,jdbcType=VARCHAR},
+      </if>
+      <if test="extends3 != null" >
+        #{extends3,jdbcType=VARCHAR},
+      </if>
+      <if test="extends4 != null" >
+        #{extends4,jdbcType=VARCHAR},
+      </if>
+      <if test="extends5 != null" >
+        #{extends5,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.carrey.v7mc.po.V7StoreQuantityExample" resultType="java.lang.Integer" >
+    select count(*) from V7_STORE_QUANTITY
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update V7_STORE_QUANTITY
+    <set >
+      <if test="record.id != null" >
+        ID = #{record.id,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7SBrand != null" >
+        v7_s_brand = #{record.v7SBrand,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7SType != null" >
+        v7_s_type = #{record.v7SType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7SName != null" >
+        v7_s_name = #{record.v7SName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7SCount != null" >
+        v7_s_count = #{record.v7SCount,jdbcType=INTEGER},
+      </if>
+      <if test="record.v7SUnit != null" >
+        v7_s_unit = #{record.v7SUnit,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7SStandard != null" >
+        v7_s_standard = #{record.v7SStandard,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7SLatelyTime != null" >
+        v7_s_lately_time = #{record.v7SLatelyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.v7PkProduct != null" >
+        v7_pk_product = #{record.v7PkProduct,jdbcType=VARCHAR},
+      </if>
+      <if test="record.extends1 != null" >
+        extends1 = #{record.extends1,jdbcType=VARCHAR},
+      </if>
+      <if test="record.extends2 != null" >
+        extends2 = #{record.extends2,jdbcType=VARCHAR},
+      </if>
+      <if test="record.extends3 != null" >
+        extends3 = #{record.extends3,jdbcType=VARCHAR},
+      </if>
+      <if test="record.extends4 != null" >
+        extends4 = #{record.extends4,jdbcType=VARCHAR},
+      </if>
+      <if test="record.extends5 != null" >
+        extends5 = #{record.extends5,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update V7_STORE_QUANTITY
+    set ID = #{record.id,jdbcType=VARCHAR},
+      v7_s_brand = #{record.v7SBrand,jdbcType=VARCHAR},
+      v7_s_type = #{record.v7SType,jdbcType=VARCHAR},
+      v7_s_name = #{record.v7SName,jdbcType=VARCHAR},
+      v7_s_count = #{record.v7SCount,jdbcType=INTEGER},
+      v7_s_unit = #{record.v7SUnit,jdbcType=VARCHAR},
+      v7_s_standard = #{record.v7SStandard,jdbcType=VARCHAR},
+      v7_s_lately_time = #{record.v7SLatelyTime,jdbcType=TIMESTAMP},
+      v7_pk_product = #{record.v7PkProduct,jdbcType=VARCHAR},
+      extends1 = #{record.extends1,jdbcType=VARCHAR},
+      extends2 = #{record.extends2,jdbcType=VARCHAR},
+      extends3 = #{record.extends3,jdbcType=VARCHAR},
+      extends4 = #{record.extends4,jdbcType=VARCHAR},
+      extends5 = #{record.extends5,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.carrey.v7mc.po.V7StoreQuantity" >
+    update V7_STORE_QUANTITY
+    <set >
+      <if test="v7SBrand != null" >
+        v7_s_brand = #{v7SBrand,jdbcType=VARCHAR},
+      </if>
+      <if test="v7SType != null" >
+        v7_s_type = #{v7SType,jdbcType=VARCHAR},
+      </if>
+      <if test="v7SName != null" >
+        v7_s_name = #{v7SName,jdbcType=VARCHAR},
+      </if>
+      <if test="v7SCount != null" >
+        v7_s_count = #{v7SCount,jdbcType=INTEGER},
+      </if>
+      <if test="v7SUnit != null" >
+        v7_s_unit = #{v7SUnit,jdbcType=VARCHAR},
+      </if>
+      <if test="v7SStandard != null" >
+        v7_s_standard = #{v7SStandard,jdbcType=VARCHAR},
+      </if>
+      <if test="v7SLatelyTime != null" >
+        v7_s_lately_time = #{v7SLatelyTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="v7PkProduct != null" >
+        v7_pk_product = #{v7PkProduct,jdbcType=VARCHAR},
+      </if>
+      <if test="extends1 != null" >
+        extends1 = #{extends1,jdbcType=VARCHAR},
+      </if>
+      <if test="extends2 != null" >
+        extends2 = #{extends2,jdbcType=VARCHAR},
+      </if>
+      <if test="extends3 != null" >
+        extends3 = #{extends3,jdbcType=VARCHAR},
+      </if>
+      <if test="extends4 != null" >
+        extends4 = #{extends4,jdbcType=VARCHAR},
+      </if>
+      <if test="extends5 != null" >
+        extends5 = #{extends5,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.carrey.v7mc.po.V7StoreQuantity" >
+    update V7_STORE_QUANTITY
+    set v7_s_brand = #{v7SBrand,jdbcType=VARCHAR},
+      v7_s_type = #{v7SType,jdbcType=VARCHAR},
+      v7_s_name = #{v7SName,jdbcType=VARCHAR},
+      v7_s_count = #{v7SCount,jdbcType=INTEGER},
+      v7_s_unit = #{v7SUnit,jdbcType=VARCHAR},
+      v7_s_standard = #{v7SStandard,jdbcType=VARCHAR},
+      v7_s_lately_time = #{v7SLatelyTime,jdbcType=TIMESTAMP},
+      v7_pk_product = #{v7PkProduct,jdbcType=VARCHAR},
+      extends1 = #{extends1,jdbcType=VARCHAR},
+      extends2 = #{extends2,jdbcType=VARCHAR},
+      extends3 = #{extends3,jdbcType=VARCHAR},
+      extends4 = #{extends4,jdbcType=VARCHAR},
+      extends5 = #{extends5,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

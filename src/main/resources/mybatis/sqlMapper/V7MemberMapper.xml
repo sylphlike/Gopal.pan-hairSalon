@@ -1,0 +1,598 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.carrey.v7mc.mapperInterface.V7MemberMapper" >
+  <resultMap id="BaseResultMap" type="com.carrey.v7mc.po.V7Member" >
+    <id column="ID" property="id" jdbcType="VARCHAR" />
+    <result column="v7_m_num" property="v7MNum" jdbcType="INTEGER" />
+    <result column="v7_m_name" property="v7MName" jdbcType="VARCHAR" />
+    <result column="v7_m_real_name" property="v7MRealName" jdbcType="VARCHAR" />
+    <result column="v7_m_sex" property="v7MSex" jdbcType="INTEGER" />
+    <result column="v7_m_birthday" property="v7MBirthday" jdbcType="DATE" />
+    <result column="v7_m_passowrd" property="v7MPassowrd" jdbcType="VARCHAR" />
+    <result column="v7_m_status" property="v7MStatus" jdbcType="INTEGER" />
+    <result column="v7_m_phone" property="v7MPhone" jdbcType="VARCHAR" />
+    <result column="v7_re_c_type" property="v7ReCType" jdbcType="VARCHAR" />
+    <result column="v7_m_create_user" property="v7MCreateUser" jdbcType="VARCHAR" />
+    <result column="v7_m_crate_time" property="v7MCrateTime" jdbcType="TIMESTAMP" />
+    <result column="v7_m_update_user" property="v7MUpdateUser" jdbcType="VARCHAR" />
+    <result column="V7_m_update_time" property="v7MUpdateTime" jdbcType="TIMESTAMP" />
+    <result column="v7_m_remarks" property="v7MRemarks" jdbcType="VARCHAR" />
+    <result column="extends1" property="extends1" jdbcType="VARCHAR" />
+    <result column="extends2" property="extends2" jdbcType="VARCHAR" />
+    <result column="extends3" property="extends3" jdbcType="VARCHAR" />
+    <result column="extends4" property="extends4" jdbcType="VARCHAR" />
+    <result column="extends5" property="extends5" jdbcType="VARCHAR" />
+  	<collection property="memberCard" ofType="v7Card">
+			<id column="cardId" property="id" />
+			<result column="V7_C_TYPE" property="v7CType"/>
+			<result column="V7_C_SURPLUS_AMOUNT" property="v7CSurplusAmount"/>
+			<result column="V7_C_RECHARGE_AMOUNT" property="v7CRechargeAmount"/>
+			<result column="V7_C_TINTEGRAL" property="v7CTintegral"/>
+			<result column="V7_C_STATUS" property="v7CStatus"/>
+			<result column="V7_C_REMARKS" property="v7CRemarks"/>
+			<result column="V7_PK_MEMBER" property="v7PkMember"/>
+	 </collection>    
+
+  </resultMap>
+  
+  <!-- ********************************自定义SQL开始****************************** -->
+  <!-- 统计总数 -->
+  <select id="getTotalAmount" parameterType="com.carrey.v7mc.queryVo.MemberQVo" resultType="int">
+  	select count(m.id) from V7_MEMBER m
+	  	<where>
+	  		1=1 
+	  		<if test="v7MName !=null and v7MName !=''">
+				and	m.V7_M_NAME like '%${v7MName}%'
+	  		</if>
+	  		<if test="v7MNum != null and v7MNum !=''">
+	  			and m.V7_M_NUM like '%${v7MNum}%'
+	  		</if>
+	  		<if test="v7MPhone !=null and v7MPhone !=''">
+	  			 and m.V7_M_PHONE like '%${v7MPhone}%'
+	  		</if>
+	  		
+	  		<if test="v7MBeginTime != null and v7MBeginTime != ''">
+	  			and v7_m_crate_time &gt;= #{v7MBeginTime}
+	  		</if>
+	  		<if test="v7MEndTime != null and v7MEndTime != ''">
+	  			and m.v7_m_crate_time &lt;= #{v7MEndTime}
+	  		</if>
+	  		and m.v7_m_status != 3 
+	  	</where>
+  </select>
+  <select id="getPageData" parameterType="com.carrey.v7mc.queryVo.MemberQVo" resultMap="BaseResultMap">
+  	select * from V7_MEMBER m
+  		<where>
+	  		1=1 
+	  		<if test="v7MName !=null and v7MName !=''">
+				and	m.V7_M_NAME like '%${v7MName}%'
+	  		</if>
+	  		<if test="v7MNum != null and v7MNum !=''">
+	  			and m.V7_M_NUM like '%${v7MNum}%'
+	  		</if>
+	  		<if test="v7MPhone !=null and v7MPhone !=''">
+	  			 and m.V7_M_PHONE like '%${v7MPhone}%'
+	  		</if>
+	  		
+	  		<if test="v7MBeginTime != null and v7MBeginTime != ''">
+	  			and v7_m_crate_time &gt;= #{v7MBeginTime}
+	  		</if>
+	  		<if test="v7MEndTime != null and v7MEndTime != ''">
+	  			and m.v7_m_crate_time &lt;= #{v7MEndTime}
+	  		</if>
+	  		and m.v7_m_status != 3
+	  	</where>
+		order by m.v7_m_crate_time DESC limit #{beginPageIndex}, #{pageSize} 
+  </select>
+  
+  <!--会员信息，会员卡信息条件收索 -->
+   <select id="searchByCondition" parameterType="com.carrey.v7mc.queryVo.MemberQVo" resultMap="BaseResultMap">
+  		SELECT 
+			  m.id id,
+			  m.V7_M_NUM ,
+			  m.V7_M_NAME,
+			  m.V7_M_SEX ,
+			  m.V7_M_PHONE ,
+			  m.V7_M_BIRTHDAY,
+			  m.V7_M_STATUS,
+			  m.v7_m_crate_time,
+			  m.v7_m_real_name,
+			  c.id cardId,
+			  c.V7_C_TYPE,
+			  c.V7_C_SURPLUS_AMOUNT,
+			  c.V7_C_RECHARGE_AMOUNT,
+			  c.V7_C_TINTEGRAL,
+			  c.V7_C_STATUS,
+			  c.V7_C_REMARKS,
+			  c.V7_PK_MEMBER
+			FROM
+			  V7_MEMBER m,
+			  V7_CARD c
+  		<where>
+	  		c.V7_PK_MEMBER=m.id
+	  		<if test="searchType == 1">
+	  			and m.V7_M_NUM = #{searchNum}
+	  		</if>
+	  		<if test="searchType == 2">
+	  			 and m.V7_M_PHONE = #{searchNum}
+	  		</if>
+	  		<if test="searchType == 3">
+	  			 and m.V7_M_NAME = #{searchNum}
+	  		</if>
+	  		 and c.V7_C_STATUS = 1
+	  	</where>
+	  	ORDER BY c.v7_c_type ASC
+  </select>
+  
+
+	<!-- 根据id查询会员下的所有信息，包括会员卡 -->
+   <select id="selectByKeyMemberCard" parameterType="string" resultMap="BaseResultMap">
+  		SELECT 
+			  m.id id,
+			  m.V7_M_NUM ,
+			  m.V7_M_NAME,
+			  m.V7_M_SEX ,
+			  m.V7_M_PHONE ,
+			  m.V7_M_BIRTHDAY,
+			  m.V7_M_STATUS,
+			  m.v7_m_crate_time,
+			  m.v7_m_real_name,
+			  c.id cardId,
+			  c.V7_C_TYPE,
+			  c.V7_C_SURPLUS_AMOUNT,
+			  c.V7_C_RECHARGE_AMOUNT,
+			  c.V7_C_TINTEGRAL,
+			  c.V7_C_STATUS,
+			  c.V7_C_REMARKS,
+			  c.V7_PK_MEMBER
+			FROM
+			  V7_MEMBER m,
+			  V7_CARD c
+  		<where>
+	  		c.`V7_PK_MEMBER`=m.`ID`  and m.ID = #{id}
+	  	</where>
+ 	</select>
+	<!-- 根据id改变当前会员状态 -->
+	<update id="updateMemberStatus" parameterType="com.carrey.v7mc.po.V7Member">
+    	update V7_MEMBER
+	    <set >
+	        v7_m_status = #{v7MStatus,jdbcType=INTEGER},
+	    </set>
+	   <where>
+		   	 id=#{id}
+		</where>
+	</update>
+
+
+	<select id="checkUniqueness" parameterType="string" resultMap="BaseResultMap">
+			SELECT * FROM V7_MEMBER m WHERE m.v7_m_name = #{inName}
+	</select>
+	
+	<select id="checkUniquenessPhone" parameterType="string" resultMap="BaseResultMap">
+			SELECT * FROM V7_MEMBER m WHERE m.v7_m_phone = #{inName}
+	</select>
+
+
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    ID, v7_m_num, v7_m_name, v7_m_real_name, v7_m_sex, v7_m_birthday, v7_m_passowrd, 
+    v7_m_status, v7_m_phone, v7_re_c_type, v7_m_create_user, v7_m_crate_time, v7_m_update_user, 
+    V7_m_update_time, v7_m_remarks, extends1, extends2, extends3, extends4, extends5
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.carrey.v7mc.po.V7MemberExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from V7_MEMBER
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from V7_MEMBER
+    where ID = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from V7_MEMBER
+    where ID = #{id,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.carrey.v7mc.po.V7MemberExample" >
+    delete from V7_MEMBER
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.carrey.v7mc.po.V7Member" >
+    insert into V7_MEMBER (ID, v7_m_num, v7_m_name, 
+      v7_m_real_name, v7_m_sex, v7_m_birthday, 
+      v7_m_passowrd, v7_m_status, v7_m_phone, 
+      v7_re_c_type, v7_m_create_user, v7_m_crate_time, 
+      v7_m_update_user, V7_m_update_time, v7_m_remarks, 
+      extends1, extends2, extends3, 
+      extends4, extends5)
+    values (#{id,jdbcType=VARCHAR}, #{v7MNum,jdbcType=INTEGER}, #{v7MName,jdbcType=VARCHAR}, 
+      #{v7MRealName,jdbcType=VARCHAR}, #{v7MSex,jdbcType=INTEGER}, #{v7MBirthday,jdbcType=DATE}, 
+      #{v7MPassowrd,jdbcType=VARCHAR}, #{v7MStatus,jdbcType=INTEGER}, #{v7MPhone,jdbcType=VARCHAR}, 
+      #{v7ReCType,jdbcType=VARCHAR}, #{v7MCreateUser,jdbcType=VARCHAR}, #{v7MCrateTime,jdbcType=TIMESTAMP}, 
+      #{v7MUpdateUser,jdbcType=VARCHAR}, #{v7MUpdateTime,jdbcType=TIMESTAMP}, #{v7MRemarks,jdbcType=VARCHAR}, 
+      #{extends1,jdbcType=VARCHAR}, #{extends2,jdbcType=VARCHAR}, #{extends3,jdbcType=VARCHAR}, 
+      #{extends4,jdbcType=VARCHAR}, #{extends5,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.carrey.v7mc.po.V7Member" >
+    insert into V7_MEMBER
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        ID,
+      </if>
+      <if test="v7MNum != null" >
+        v7_m_num,
+      </if>
+      <if test="v7MName != null" >
+        v7_m_name,
+      </if>
+      <if test="v7MRealName != null" >
+        v7_m_real_name,
+      </if>
+      <if test="v7MSex != null" >
+        v7_m_sex,
+      </if>
+      <if test="v7MBirthday != null" >
+        v7_m_birthday,
+      </if>
+      <if test="v7MPassowrd != null" >
+        v7_m_passowrd,
+      </if>
+      <if test="v7MStatus != null" >
+        v7_m_status,
+      </if>
+      <if test="v7MPhone != null" >
+        v7_m_phone,
+      </if>
+      <if test="v7ReCType != null" >
+        v7_re_c_type,
+      </if>
+      <if test="v7MCreateUser != null" >
+        v7_m_create_user,
+      </if>
+      <if test="v7MCrateTime != null" >
+        v7_m_crate_time,
+      </if>
+      <if test="v7MUpdateUser != null" >
+        v7_m_update_user,
+      </if>
+      <if test="v7MUpdateTime != null" >
+        V7_m_update_time,
+      </if>
+      <if test="v7MRemarks != null" >
+        v7_m_remarks,
+      </if>
+      <if test="extends1 != null" >
+        extends1,
+      </if>
+      <if test="extends2 != null" >
+        extends2,
+      </if>
+      <if test="extends3 != null" >
+        extends3,
+      </if>
+      <if test="extends4 != null" >
+        extends4,
+      </if>
+      <if test="extends5 != null" >
+        extends5,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="v7MNum != null" >
+        #{v7MNum,jdbcType=INTEGER},
+      </if>
+      <if test="v7MName != null" >
+        #{v7MName,jdbcType=VARCHAR},
+      </if>
+      <if test="v7MRealName != null" >
+        #{v7MRealName,jdbcType=VARCHAR},
+      </if>
+      <if test="v7MSex != null" >
+        #{v7MSex,jdbcType=INTEGER},
+      </if>
+      <if test="v7MBirthday != null" >
+        #{v7MBirthday,jdbcType=DATE},
+      </if>
+      <if test="v7MPassowrd != null" >
+        #{v7MPassowrd,jdbcType=VARCHAR},
+      </if>
+      <if test="v7MStatus != null" >
+        #{v7MStatus,jdbcType=INTEGER},
+      </if>
+      <if test="v7MPhone != null" >
+        #{v7MPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="v7ReCType != null" >
+        #{v7ReCType,jdbcType=VARCHAR},
+      </if>
+      <if test="v7MCreateUser != null" >
+        #{v7MCreateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="v7MCrateTime != null" >
+        #{v7MCrateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="v7MUpdateUser != null" >
+        #{v7MUpdateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="v7MUpdateTime != null" >
+        #{v7MUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="v7MRemarks != null" >
+        #{v7MRemarks,jdbcType=VARCHAR},
+      </if>
+      <if test="extends1 != null" >
+        #{extends1,jdbcType=VARCHAR},
+      </if>
+      <if test="extends2 != null" >
+        #{extends2,jdbcType=VARCHAR},
+      </if>
+      <if test="extends3 != null" >
+        #{extends3,jdbcType=VARCHAR},
+      </if>
+      <if test="extends4 != null" >
+        #{extends4,jdbcType=VARCHAR},
+      </if>
+      <if test="extends5 != null" >
+        #{extends5,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.carrey.v7mc.po.V7MemberExample" resultType="java.lang.Integer" >
+    select count(*) from V7_MEMBER
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update V7_MEMBER
+    <set >
+      <if test="record.id != null" >
+        ID = #{record.id,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7MNum != null" >
+        v7_m_num = #{record.v7MNum,jdbcType=INTEGER},
+      </if>
+      <if test="record.v7MName != null" >
+        v7_m_name = #{record.v7MName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7MRealName != null" >
+        v7_m_real_name = #{record.v7MRealName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7MSex != null" >
+        v7_m_sex = #{record.v7MSex,jdbcType=INTEGER},
+      </if>
+      <if test="record.v7MBirthday != null" >
+        v7_m_birthday = #{record.v7MBirthday,jdbcType=DATE},
+      </if>
+      <if test="record.v7MPassowrd != null" >
+        v7_m_passowrd = #{record.v7MPassowrd,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7MStatus != null" >
+        v7_m_status = #{record.v7MStatus,jdbcType=INTEGER},
+      </if>
+      <if test="record.v7MPhone != null" >
+        v7_m_phone = #{record.v7MPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7ReCType != null" >
+        v7_re_c_type = #{record.v7ReCType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7MCreateUser != null" >
+        v7_m_create_user = #{record.v7MCreateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7MCrateTime != null" >
+        v7_m_crate_time = #{record.v7MCrateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.v7MUpdateUser != null" >
+        v7_m_update_user = #{record.v7MUpdateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7MUpdateTime != null" >
+        V7_m_update_time = #{record.v7MUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.v7MRemarks != null" >
+        v7_m_remarks = #{record.v7MRemarks,jdbcType=VARCHAR},
+      </if>
+      <if test="record.extends1 != null" >
+        extends1 = #{record.extends1,jdbcType=VARCHAR},
+      </if>
+      <if test="record.extends2 != null" >
+        extends2 = #{record.extends2,jdbcType=VARCHAR},
+      </if>
+      <if test="record.extends3 != null" >
+        extends3 = #{record.extends3,jdbcType=VARCHAR},
+      </if>
+      <if test="record.extends4 != null" >
+        extends4 = #{record.extends4,jdbcType=VARCHAR},
+      </if>
+      <if test="record.extends5 != null" >
+        extends5 = #{record.extends5,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update V7_MEMBER
+    set ID = #{record.id,jdbcType=VARCHAR},
+      v7_m_num = #{record.v7MNum,jdbcType=INTEGER},
+      v7_m_name = #{record.v7MName,jdbcType=VARCHAR},
+      v7_m_real_name = #{record.v7MRealName,jdbcType=VARCHAR},
+      v7_m_sex = #{record.v7MSex,jdbcType=INTEGER},
+      v7_m_birthday = #{record.v7MBirthday,jdbcType=DATE},
+      v7_m_passowrd = #{record.v7MPassowrd,jdbcType=VARCHAR},
+      v7_m_status = #{record.v7MStatus,jdbcType=INTEGER},
+      v7_m_phone = #{record.v7MPhone,jdbcType=VARCHAR},
+      v7_re_c_type = #{record.v7ReCType,jdbcType=VARCHAR},
+      v7_m_create_user = #{record.v7MCreateUser,jdbcType=VARCHAR},
+      v7_m_crate_time = #{record.v7MCrateTime,jdbcType=TIMESTAMP},
+      v7_m_update_user = #{record.v7MUpdateUser,jdbcType=VARCHAR},
+      V7_m_update_time = #{record.v7MUpdateTime,jdbcType=TIMESTAMP},
+      v7_m_remarks = #{record.v7MRemarks,jdbcType=VARCHAR},
+      extends1 = #{record.extends1,jdbcType=VARCHAR},
+      extends2 = #{record.extends2,jdbcType=VARCHAR},
+      extends3 = #{record.extends3,jdbcType=VARCHAR},
+      extends4 = #{record.extends4,jdbcType=VARCHAR},
+      extends5 = #{record.extends5,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.carrey.v7mc.po.V7Member" >
+    update V7_MEMBER
+    <set >
+      <if test="v7MNum != null" >
+        v7_m_num = #{v7MNum,jdbcType=INTEGER},
+      </if>
+      <if test="v7MName != null" >
+        v7_m_name = #{v7MName,jdbcType=VARCHAR},
+      </if>
+      <if test="v7MRealName != null" >
+        v7_m_real_name = #{v7MRealName,jdbcType=VARCHAR},
+      </if>
+      <if test="v7MSex != null" >
+        v7_m_sex = #{v7MSex,jdbcType=INTEGER},
+      </if>
+      <if test="v7MBirthday != null" >
+        v7_m_birthday = #{v7MBirthday,jdbcType=DATE},
+      </if>
+      <if test="v7MPassowrd != null" >
+        v7_m_passowrd = #{v7MPassowrd,jdbcType=VARCHAR},
+      </if>
+      <if test="v7MStatus != null" >
+        v7_m_status = #{v7MStatus,jdbcType=INTEGER},
+      </if>
+      <if test="v7MPhone != null" >
+        v7_m_phone = #{v7MPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="v7ReCType != null" >
+        v7_re_c_type = #{v7ReCType,jdbcType=VARCHAR},
+      </if>
+      <if test="v7MCreateUser != null" >
+        v7_m_create_user = #{v7MCreateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="v7MCrateTime != null" >
+        v7_m_crate_time = #{v7MCrateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="v7MUpdateUser != null" >
+        v7_m_update_user = #{v7MUpdateUser,jdbcType=VARCHAR},
+      </if>
+      <if test="v7MUpdateTime != null" >
+        V7_m_update_time = #{v7MUpdateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="v7MRemarks != null" >
+        v7_m_remarks = #{v7MRemarks,jdbcType=VARCHAR},
+      </if>
+      <if test="extends1 != null" >
+        extends1 = #{extends1,jdbcType=VARCHAR},
+      </if>
+      <if test="extends2 != null" >
+        extends2 = #{extends2,jdbcType=VARCHAR},
+      </if>
+      <if test="extends3 != null" >
+        extends3 = #{extends3,jdbcType=VARCHAR},
+      </if>
+      <if test="extends4 != null" >
+        extends4 = #{extends4,jdbcType=VARCHAR},
+      </if>
+      <if test="extends5 != null" >
+        extends5 = #{extends5,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.carrey.v7mc.po.V7Member" >
+    update V7_MEMBER
+    set v7_m_num = #{v7MNum,jdbcType=INTEGER},
+      v7_m_name = #{v7MName,jdbcType=VARCHAR},
+      v7_m_real_name = #{v7MRealName,jdbcType=VARCHAR},
+      v7_m_sex = #{v7MSex,jdbcType=INTEGER},
+      v7_m_birthday = #{v7MBirthday,jdbcType=DATE},
+      v7_m_passowrd = #{v7MPassowrd,jdbcType=VARCHAR},
+      v7_m_status = #{v7MStatus,jdbcType=INTEGER},
+      v7_m_phone = #{v7MPhone,jdbcType=VARCHAR},
+      v7_re_c_type = #{v7ReCType,jdbcType=VARCHAR},
+      v7_m_create_user = #{v7MCreateUser,jdbcType=VARCHAR},
+      v7_m_crate_time = #{v7MCrateTime,jdbcType=TIMESTAMP},
+      v7_m_update_user = #{v7MUpdateUser,jdbcType=VARCHAR},
+      V7_m_update_time = #{v7MUpdateTime,jdbcType=TIMESTAMP},
+      v7_m_remarks = #{v7MRemarks,jdbcType=VARCHAR},
+      extends1 = #{extends1,jdbcType=VARCHAR},
+      extends2 = #{extends2,jdbcType=VARCHAR},
+      extends3 = #{extends3,jdbcType=VARCHAR},
+      extends4 = #{extends4,jdbcType=VARCHAR},
+      extends5 = #{extends5,jdbcType=VARCHAR}
+    where ID = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

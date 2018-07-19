@@ -1,0 +1,627 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.carrey.v7mc.mapperInterface.V7RollDayAccountsMapper" >
+  <resultMap id="BaseResultMap" type="com.carrey.v7mc.po.V7RollDayAccounts" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="v7_r_rolling_date" property="v7RRollingDate" jdbcType="DATE" />
+    <result column="v7_r_cash" property="v7RCash" jdbcType="DOUBLE" />
+    <result column="v7_r_vipout" property="v7RVipout" jdbcType="DOUBLE" />
+    <result column="v7_r_hedgeout" property="v7RHedgeout" jdbcType="DOUBLE" />
+    <result column="v7_r_hedgecashin" property="v7RHedgecashin" jdbcType="DOUBLE" />
+    <result column="v7_r_blowwashout" property="v7RBlowwashout" jdbcType="INTEGER" />
+    <result column="v7_r_blowcutwashout" property="v7RBlowcutwashout" jdbcType="INTEGER" />
+    <result column="v7_r_vipin" property="v7RVipin" jdbcType="INTEGER" />
+    <result column="v7_r_hedgein" property="v7RHedgein" jdbcType="INTEGER" />
+    <result column="v7_r_blowwashin" property="v7RBlowwashin" jdbcType="INTEGER" />
+    <result column="v7_r_blowcutwashin" property="v7RBlowcutwashin" jdbcType="INTEGER" />
+    <result column="v7_r_cardmoney" property="v7RCardmoney" jdbcType="DOUBLE" />
+    <result column="v7_r_raiseamount" property="v7RRaiseamount" jdbcType="DOUBLE" />
+    <result column="v7_r_takeout" property="v7RTakeout" jdbcType="DOUBLE" />
+    <result column="v7_r_total_card" property="v7RTotalCard" jdbcType="DOUBLE" />
+    <result column="v7_r_total_cash" property="v7RTotalCash" jdbcType="DOUBLE" />
+    <result column="v7_r_operuser" property="v7ROperuser" jdbcType="VARCHAR" />
+    <result column="v7_r_opertime" property="v7ROpertime" jdbcType="TIMESTAMP" />
+    <result column="extends1" property="extends1" jdbcType="VARCHAR" />
+    <result column="extends2" property="extends2" jdbcType="VARCHAR" />
+    <result column="extends3" property="extends3" jdbcType="VARCHAR" />
+    <result column="extends4" property="extends4" jdbcType="VARCHAR" />
+    <result column="extends5" property="extends5" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  
+  
+ <!-- ********************************自定义SQL开始****************************** -->
+ <!-- 统计总数 -->
+  <select id="getTotalAmount" parameterType="com.carrey.v7mc.queryVo.RollDayAccountsQVo" resultType="int">
+  	select count(m.id) from V7_ROLL_DAY_ACCOUNTS m
+	  	<where>
+	  		1=1
+	  		<if test="v7RBeginTime != null and v7RBeginTime != ''">
+	  			and m.v7_r_rolling_date &gt;= #{v7RBeginTime}
+	  		</if>
+	  		<if test="v7REndTime != null and v7REndTime != ''">
+	  			and m.v7_r_rolling_date &lt;= #{v7REndTime}
+	  		</if>
+	  	</where>
+  </select>
+  <select id="getPageData" parameterType="com.carrey.v7mc.queryVo.RollDayAccountsQVo" resultMap="BaseResultMap">
+  	select * from V7_ROLL_DAY_ACCOUNTS m
+	  	<where>
+	  		1=1
+	  		<if test="v7RBeginTime != null and v7RBeginTime != ''">
+	  			and m.v7_r_rolling_date &gt;= #{v7RBeginTime}
+	  		</if>
+	  		<if test="v7REndTime != null and v7REndTime != ''">
+	  			and m.v7_r_rolling_date &lt;= #{v7REndTime}
+	  		</if>
+	  	</where>
+		order by m.v7_r_rolling_date DESC limit #{beginPageIndex}, #{endPageIndex} 
+  </select>
+  
+  <select id="queryIsRoll" parameterType="string" resultType="int">
+  	select count(m.id) from V7_ROLL_DAY_ACCOUNTS m
+  		where m.v7_r_rolling_date = #{value}
+  </select>
+  
+  <select id="rollDay4Rec"  parameterType="map"  resultType="v7RollDayAccounts">
+		SELECT 
+		  SUM(r.v7_r_paycash) v7RCash,
+		  SUM(r.v7_r_paycash4hedging) v7RHedgecashin,
+		  SUM(r.v7_r_sale_totalprice) v7RTakeout,
+		  SUM(r.v7_r_raiseamount) v7RRaiseamount,
+		  (SELECT 
+		    COALESCE(SUM(l.v7_r_discountprice),0)+ COALESCE(SUM(l.v7_r_raiseamount),0)+COALESCE(SUM(l.v7_r_sale_totalprice),0) 
+		  	FROM
+		    	V7_RECEPTION l 
+			  WHERE l.v7_r_consumption = 1 
+			    AND DATE_FORMAT(l.v7_r_statement_date, '%Y-%m-%d %T') &gt;=#{startDate}
+			    AND DATE_FORMAT(l.v7_r_statement_date, '%Y-%m-%d %T') &lt;=#{endDate}) v7RVipout ,
+		  (SELECT 
+		    SUM(c.v7_r_recordnum)
+		 	 FROM
+		    	V7_RECEPTION c 
+			  WHERE c.v7_r_consumption = 3 
+			    AND DATE_FORMAT(c.v7_r_statement_date, '%Y-%m-%d %T') &gt;=#{startDate}
+			    AND DATE_FORMAT(c.v7_r_statement_date, '%Y-%m-%d %T') &lt;=#{endDate}) v7RBlowwashout,
+		    
+		 (SELECT 
+		    SUM(w.v7_r_recordnum)
+			  FROM
+			    V7_RECEPTION w 
+			  WHERE w.v7_r_consumption = 4 
+			    AND DATE_FORMAT(w.v7_r_statement_date, '%Y-%m-%d %T') &gt;=#{startDate}
+			    AND DATE_FORMAT(w.v7_r_statement_date, '%Y-%m-%d %T') &lt;=#{endDate}) v7RBlowcutwashout,
+	     (SELECT 
+			  COALESCE(SUM(v.v7_r_payCash), 0) + COALESCE(SUM(v.v7_r_sale_totalprice), 0) + COALESCE(SUM(v.v7_r_raiseamount), 0) 
+			FROM
+			  V7_RECEPTION v 
+			WHERE v.v7_r_consumption = 5 
+			    AND DATE_FORMAT(v.v7_r_statement_date, '%Y-%m-%d %T') &gt;=#{startDate}
+			    AND DATE_FORMAT(v.v7_r_statement_date, '%Y-%m-%d %T') &lt;=#{endDate}) v7RTotalCash
+		FROM
+		  V7_RECEPTION r 
+		WHERE DATE_FORMAT(r.v7_r_statement_date, '%Y-%m-%d %T') &gt;=#{startDate}
+		  AND DATE_FORMAT(r.v7_r_statement_date, '%Y-%m-%d %T') &lt;=#{endDate}
+  </select>
+  
+  <select id="queryChart" parameterType="string" resultMap="BaseResultMap">
+  		select * from V7_ROLL_DAY_ACCOUNTS a 
+  			where 
+  				a.v7_r_rolling_date = #{value}
+  </select>
+  
+  
+  
+  <select id="monthAccountsSchedule" parameterType="string" resultType="v7RollMonthAccounts">
+		SELECT 
+		  COALESCE(SUM(a.v7_r_cash),0) v7MCash,
+		  COALESCE(SUM(a.v7_r_vipout),0) v7MVipout,
+		  COALESCE(SUM(a.v7_r_hedgeout),0) v7MHedgeout,
+		  COALESCE(SUM(a.v7_r_hedgecashin),0) v7MHedgecashin,
+		  COALESCE(SUM(a.v7_r_blowwashout),0) v7MBlowwashout,
+		  COALESCE(SUM(a.v7_r_blowcutwashout),0) v7MBlowcutwashout,
+		  COALESCE(SUM(a.v7_r_vipin),0) v7MVipin,
+		  COALESCE(SUM(a.v7_r_hedgein),0) v7MHedgein,
+		  COALESCE(SUM(a.v7_r_blowwashin),0) v7MBlowwashin,
+		  COALESCE(SUM(a.v7_r_blowcutwashin),0) v7MBlowcutwashin,
+		  COALESCE(SUM(a.v7_r_cardmoney),0) v7MCardmoney,
+		  COALESCE(SUM(a.v7_r_raiseamount),0) v7MRaiseamount,
+		  COALESCE(SUM(a.v7_r_takeout),0) v7MTakeout,
+		  COALESCE(SUM(a.v7_r_total_card),0) v7MTotalCard,
+		  COALESCE(SUM(a.v7_r_total_cash),0) v7MTotalCash
+		FROM
+		  V7_ROLL_DAY_ACCOUNTS a 
+		WHERE a.v7_r_rolling_date LIKE '${value}%' 
+  </select>
+  
+  <select id="businessReport" resultMap="BaseResultMap">
+  		SELECT a.* FROM V7_ROLL_DAY_ACCOUNTS a ORDER BY a.v7_r_opertime DESC LIMIT 0,1 
+  </select>
+  
+  
+  
+  
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, v7_r_rolling_date, v7_r_cash, v7_r_vipout, v7_r_hedgeout, v7_r_hedgecashin, v7_r_blowwashout, 
+    v7_r_blowcutwashout, v7_r_vipin, v7_r_hedgein, v7_r_blowwashin, v7_r_blowcutwashin, 
+    v7_r_cardmoney, v7_r_raiseamount, v7_r_takeout, v7_r_total_card, v7_r_total_cash, 
+    v7_r_operuser, v7_r_opertime, extends1, extends2, extends3, extends4, extends5
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.carrey.v7mc.po.V7RollDayAccountsExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from V7_ROLL_DAY_ACCOUNTS
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from V7_ROLL_DAY_ACCOUNTS
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from V7_ROLL_DAY_ACCOUNTS
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.carrey.v7mc.po.V7RollDayAccountsExample" >
+    delete from V7_ROLL_DAY_ACCOUNTS
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.carrey.v7mc.po.V7RollDayAccounts" >
+    insert into V7_ROLL_DAY_ACCOUNTS (id, v7_r_rolling_date, v7_r_cash, 
+      v7_r_vipout, v7_r_hedgeout, v7_r_hedgecashin, 
+      v7_r_blowwashout, v7_r_blowcutwashout, v7_r_vipin, 
+      v7_r_hedgein, v7_r_blowwashin, v7_r_blowcutwashin, 
+      v7_r_cardmoney, v7_r_raiseamount, v7_r_takeout, 
+      v7_r_total_card, v7_r_total_cash, v7_r_operuser, 
+      v7_r_opertime, extends1, extends2, 
+      extends3, extends4, extends5
+      )
+    values (#{id,jdbcType=VARCHAR}, #{v7RRollingDate,jdbcType=DATE}, #{v7RCash,jdbcType=DOUBLE}, 
+      #{v7RVipout,jdbcType=DOUBLE}, #{v7RHedgeout,jdbcType=DOUBLE}, #{v7RHedgecashin,jdbcType=DOUBLE}, 
+      #{v7RBlowwashout,jdbcType=INTEGER}, #{v7RBlowcutwashout,jdbcType=INTEGER}, #{v7RVipin,jdbcType=INTEGER}, 
+      #{v7RHedgein,jdbcType=INTEGER}, #{v7RBlowwashin,jdbcType=INTEGER}, #{v7RBlowcutwashin,jdbcType=INTEGER}, 
+      #{v7RCardmoney,jdbcType=DOUBLE}, #{v7RRaiseamount,jdbcType=DOUBLE}, #{v7RTakeout,jdbcType=DOUBLE}, 
+      #{v7RTotalCard,jdbcType=DOUBLE}, #{v7RTotalCash,jdbcType=DOUBLE}, #{v7ROperuser,jdbcType=VARCHAR}, 
+      #{v7ROpertime,jdbcType=TIMESTAMP}, #{extends1,jdbcType=VARCHAR}, #{extends2,jdbcType=VARCHAR}, 
+      #{extends3,jdbcType=VARCHAR}, #{extends4,jdbcType=VARCHAR}, #{extends5,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.carrey.v7mc.po.V7RollDayAccounts" >
+    insert into V7_ROLL_DAY_ACCOUNTS
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="v7RRollingDate != null" >
+        v7_r_rolling_date,
+      </if>
+      <if test="v7RCash != null" >
+        v7_r_cash,
+      </if>
+      <if test="v7RVipout != null" >
+        v7_r_vipout,
+      </if>
+      <if test="v7RHedgeout != null" >
+        v7_r_hedgeout,
+      </if>
+      <if test="v7RHedgecashin != null" >
+        v7_r_hedgecashin,
+      </if>
+      <if test="v7RBlowwashout != null" >
+        v7_r_blowwashout,
+      </if>
+      <if test="v7RBlowcutwashout != null" >
+        v7_r_blowcutwashout,
+      </if>
+      <if test="v7RVipin != null" >
+        v7_r_vipin,
+      </if>
+      <if test="v7RHedgein != null" >
+        v7_r_hedgein,
+      </if>
+      <if test="v7RBlowwashin != null" >
+        v7_r_blowwashin,
+      </if>
+      <if test="v7RBlowcutwashin != null" >
+        v7_r_blowcutwashin,
+      </if>
+      <if test="v7RCardmoney != null" >
+        v7_r_cardmoney,
+      </if>
+      <if test="v7RRaiseamount != null" >
+        v7_r_raiseamount,
+      </if>
+      <if test="v7RTakeout != null" >
+        v7_r_takeout,
+      </if>
+      <if test="v7RTotalCard != null" >
+        v7_r_total_card,
+      </if>
+      <if test="v7RTotalCash != null" >
+        v7_r_total_cash,
+      </if>
+      <if test="v7ROperuser != null" >
+        v7_r_operuser,
+      </if>
+      <if test="v7ROpertime != null" >
+        v7_r_opertime,
+      </if>
+      <if test="extends1 != null" >
+        extends1,
+      </if>
+      <if test="extends2 != null" >
+        extends2,
+      </if>
+      <if test="extends3 != null" >
+        extends3,
+      </if>
+      <if test="extends4 != null" >
+        extends4,
+      </if>
+      <if test="extends5 != null" >
+        extends5,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="v7RRollingDate != null" >
+        #{v7RRollingDate,jdbcType=DATE},
+      </if>
+      <if test="v7RCash != null" >
+        #{v7RCash,jdbcType=DOUBLE},
+      </if>
+      <if test="v7RVipout != null" >
+        #{v7RVipout,jdbcType=DOUBLE},
+      </if>
+      <if test="v7RHedgeout != null" >
+        #{v7RHedgeout,jdbcType=DOUBLE},
+      </if>
+      <if test="v7RHedgecashin != null" >
+        #{v7RHedgecashin,jdbcType=DOUBLE},
+      </if>
+      <if test="v7RBlowwashout != null" >
+        #{v7RBlowwashout,jdbcType=INTEGER},
+      </if>
+      <if test="v7RBlowcutwashout != null" >
+        #{v7RBlowcutwashout,jdbcType=INTEGER},
+      </if>
+      <if test="v7RVipin != null" >
+        #{v7RVipin,jdbcType=INTEGER},
+      </if>
+      <if test="v7RHedgein != null" >
+        #{v7RHedgein,jdbcType=INTEGER},
+      </if>
+      <if test="v7RBlowwashin != null" >
+        #{v7RBlowwashin,jdbcType=INTEGER},
+      </if>
+      <if test="v7RBlowcutwashin != null" >
+        #{v7RBlowcutwashin,jdbcType=INTEGER},
+      </if>
+      <if test="v7RCardmoney != null" >
+        #{v7RCardmoney,jdbcType=DOUBLE},
+      </if>
+      <if test="v7RRaiseamount != null" >
+        #{v7RRaiseamount,jdbcType=DOUBLE},
+      </if>
+      <if test="v7RTakeout != null" >
+        #{v7RTakeout,jdbcType=DOUBLE},
+      </if>
+      <if test="v7RTotalCard != null" >
+        #{v7RTotalCard,jdbcType=DOUBLE},
+      </if>
+      <if test="v7RTotalCash != null" >
+        #{v7RTotalCash,jdbcType=DOUBLE},
+      </if>
+      <if test="v7ROperuser != null" >
+        #{v7ROperuser,jdbcType=VARCHAR},
+      </if>
+      <if test="v7ROpertime != null" >
+        #{v7ROpertime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="extends1 != null" >
+        #{extends1,jdbcType=VARCHAR},
+      </if>
+      <if test="extends2 != null" >
+        #{extends2,jdbcType=VARCHAR},
+      </if>
+      <if test="extends3 != null" >
+        #{extends3,jdbcType=VARCHAR},
+      </if>
+      <if test="extends4 != null" >
+        #{extends4,jdbcType=VARCHAR},
+      </if>
+      <if test="extends5 != null" >
+        #{extends5,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.carrey.v7mc.po.V7RollDayAccountsExample" resultType="java.lang.Integer" >
+    select count(*) from V7_ROLL_DAY_ACCOUNTS
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update V7_ROLL_DAY_ACCOUNTS
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7RRollingDate != null" >
+        v7_r_rolling_date = #{record.v7RRollingDate,jdbcType=DATE},
+      </if>
+      <if test="record.v7RCash != null" >
+        v7_r_cash = #{record.v7RCash,jdbcType=DOUBLE},
+      </if>
+      <if test="record.v7RVipout != null" >
+        v7_r_vipout = #{record.v7RVipout,jdbcType=DOUBLE},
+      </if>
+      <if test="record.v7RHedgeout != null" >
+        v7_r_hedgeout = #{record.v7RHedgeout,jdbcType=DOUBLE},
+      </if>
+      <if test="record.v7RHedgecashin != null" >
+        v7_r_hedgecashin = #{record.v7RHedgecashin,jdbcType=DOUBLE},
+      </if>
+      <if test="record.v7RBlowwashout != null" >
+        v7_r_blowwashout = #{record.v7RBlowwashout,jdbcType=INTEGER},
+      </if>
+      <if test="record.v7RBlowcutwashout != null" >
+        v7_r_blowcutwashout = #{record.v7RBlowcutwashout,jdbcType=INTEGER},
+      </if>
+      <if test="record.v7RVipin != null" >
+        v7_r_vipin = #{record.v7RVipin,jdbcType=INTEGER},
+      </if>
+      <if test="record.v7RHedgein != null" >
+        v7_r_hedgein = #{record.v7RHedgein,jdbcType=INTEGER},
+      </if>
+      <if test="record.v7RBlowwashin != null" >
+        v7_r_blowwashin = #{record.v7RBlowwashin,jdbcType=INTEGER},
+      </if>
+      <if test="record.v7RBlowcutwashin != null" >
+        v7_r_blowcutwashin = #{record.v7RBlowcutwashin,jdbcType=INTEGER},
+      </if>
+      <if test="record.v7RCardmoney != null" >
+        v7_r_cardmoney = #{record.v7RCardmoney,jdbcType=DOUBLE},
+      </if>
+      <if test="record.v7RRaiseamount != null" >
+        v7_r_raiseamount = #{record.v7RRaiseamount,jdbcType=DOUBLE},
+      </if>
+      <if test="record.v7RTakeout != null" >
+        v7_r_takeout = #{record.v7RTakeout,jdbcType=DOUBLE},
+      </if>
+      <if test="record.v7RTotalCard != null" >
+        v7_r_total_card = #{record.v7RTotalCard,jdbcType=DOUBLE},
+      </if>
+      <if test="record.v7RTotalCash != null" >
+        v7_r_total_cash = #{record.v7RTotalCash,jdbcType=DOUBLE},
+      </if>
+      <if test="record.v7ROperuser != null" >
+        v7_r_operuser = #{record.v7ROperuser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7ROpertime != null" >
+        v7_r_opertime = #{record.v7ROpertime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.extends1 != null" >
+        extends1 = #{record.extends1,jdbcType=VARCHAR},
+      </if>
+      <if test="record.extends2 != null" >
+        extends2 = #{record.extends2,jdbcType=VARCHAR},
+      </if>
+      <if test="record.extends3 != null" >
+        extends3 = #{record.extends3,jdbcType=VARCHAR},
+      </if>
+      <if test="record.extends4 != null" >
+        extends4 = #{record.extends4,jdbcType=VARCHAR},
+      </if>
+      <if test="record.extends5 != null" >
+        extends5 = #{record.extends5,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update V7_ROLL_DAY_ACCOUNTS
+    set id = #{record.id,jdbcType=VARCHAR},
+      v7_r_rolling_date = #{record.v7RRollingDate,jdbcType=DATE},
+      v7_r_cash = #{record.v7RCash,jdbcType=DOUBLE},
+      v7_r_vipout = #{record.v7RVipout,jdbcType=DOUBLE},
+      v7_r_hedgeout = #{record.v7RHedgeout,jdbcType=DOUBLE},
+      v7_r_hedgecashin = #{record.v7RHedgecashin,jdbcType=DOUBLE},
+      v7_r_blowwashout = #{record.v7RBlowwashout,jdbcType=INTEGER},
+      v7_r_blowcutwashout = #{record.v7RBlowcutwashout,jdbcType=INTEGER},
+      v7_r_vipin = #{record.v7RVipin,jdbcType=INTEGER},
+      v7_r_hedgein = #{record.v7RHedgein,jdbcType=INTEGER},
+      v7_r_blowwashin = #{record.v7RBlowwashin,jdbcType=INTEGER},
+      v7_r_blowcutwashin = #{record.v7RBlowcutwashin,jdbcType=INTEGER},
+      v7_r_cardmoney = #{record.v7RCardmoney,jdbcType=DOUBLE},
+      v7_r_raiseamount = #{record.v7RRaiseamount,jdbcType=DOUBLE},
+      v7_r_takeout = #{record.v7RTakeout,jdbcType=DOUBLE},
+      v7_r_total_card = #{record.v7RTotalCard,jdbcType=DOUBLE},
+      v7_r_total_cash = #{record.v7RTotalCash,jdbcType=DOUBLE},
+      v7_r_operuser = #{record.v7ROperuser,jdbcType=VARCHAR},
+      v7_r_opertime = #{record.v7ROpertime,jdbcType=TIMESTAMP},
+      extends1 = #{record.extends1,jdbcType=VARCHAR},
+      extends2 = #{record.extends2,jdbcType=VARCHAR},
+      extends3 = #{record.extends3,jdbcType=VARCHAR},
+      extends4 = #{record.extends4,jdbcType=VARCHAR},
+      extends5 = #{record.extends5,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.carrey.v7mc.po.V7RollDayAccounts" >
+    update V7_ROLL_DAY_ACCOUNTS
+    <set >
+      <if test="v7RRollingDate != null" >
+        v7_r_rolling_date = #{v7RRollingDate,jdbcType=DATE},
+      </if>
+      <if test="v7RCash != null" >
+        v7_r_cash = #{v7RCash,jdbcType=DOUBLE},
+      </if>
+      <if test="v7RVipout != null" >
+        v7_r_vipout = #{v7RVipout,jdbcType=DOUBLE},
+      </if>
+      <if test="v7RHedgeout != null" >
+        v7_r_hedgeout = #{v7RHedgeout,jdbcType=DOUBLE},
+      </if>
+      <if test="v7RHedgecashin != null" >
+        v7_r_hedgecashin = #{v7RHedgecashin,jdbcType=DOUBLE},
+      </if>
+      <if test="v7RBlowwashout != null" >
+        v7_r_blowwashout = #{v7RBlowwashout,jdbcType=INTEGER},
+      </if>
+      <if test="v7RBlowcutwashout != null" >
+        v7_r_blowcutwashout = #{v7RBlowcutwashout,jdbcType=INTEGER},
+      </if>
+      <if test="v7RVipin != null" >
+        v7_r_vipin = #{v7RVipin,jdbcType=INTEGER},
+      </if>
+      <if test="v7RHedgein != null" >
+        v7_r_hedgein = #{v7RHedgein,jdbcType=INTEGER},
+      </if>
+      <if test="v7RBlowwashin != null" >
+        v7_r_blowwashin = #{v7RBlowwashin,jdbcType=INTEGER},
+      </if>
+      <if test="v7RBlowcutwashin != null" >
+        v7_r_blowcutwashin = #{v7RBlowcutwashin,jdbcType=INTEGER},
+      </if>
+      <if test="v7RCardmoney != null" >
+        v7_r_cardmoney = #{v7RCardmoney,jdbcType=DOUBLE},
+      </if>
+      <if test="v7RRaiseamount != null" >
+        v7_r_raiseamount = #{v7RRaiseamount,jdbcType=DOUBLE},
+      </if>
+      <if test="v7RTakeout != null" >
+        v7_r_takeout = #{v7RTakeout,jdbcType=DOUBLE},
+      </if>
+      <if test="v7RTotalCard != null" >
+        v7_r_total_card = #{v7RTotalCard,jdbcType=DOUBLE},
+      </if>
+      <if test="v7RTotalCash != null" >
+        v7_r_total_cash = #{v7RTotalCash,jdbcType=DOUBLE},
+      </if>
+      <if test="v7ROperuser != null" >
+        v7_r_operuser = #{v7ROperuser,jdbcType=VARCHAR},
+      </if>
+      <if test="v7ROpertime != null" >
+        v7_r_opertime = #{v7ROpertime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="extends1 != null" >
+        extends1 = #{extends1,jdbcType=VARCHAR},
+      </if>
+      <if test="extends2 != null" >
+        extends2 = #{extends2,jdbcType=VARCHAR},
+      </if>
+      <if test="extends3 != null" >
+        extends3 = #{extends3,jdbcType=VARCHAR},
+      </if>
+      <if test="extends4 != null" >
+        extends4 = #{extends4,jdbcType=VARCHAR},
+      </if>
+      <if test="extends5 != null" >
+        extends5 = #{extends5,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.carrey.v7mc.po.V7RollDayAccounts" >
+    update V7_ROLL_DAY_ACCOUNTS
+    set v7_r_rolling_date = #{v7RRollingDate,jdbcType=DATE},
+      v7_r_cash = #{v7RCash,jdbcType=DOUBLE},
+      v7_r_vipout = #{v7RVipout,jdbcType=DOUBLE},
+      v7_r_hedgeout = #{v7RHedgeout,jdbcType=DOUBLE},
+      v7_r_hedgecashin = #{v7RHedgecashin,jdbcType=DOUBLE},
+      v7_r_blowwashout = #{v7RBlowwashout,jdbcType=INTEGER},
+      v7_r_blowcutwashout = #{v7RBlowcutwashout,jdbcType=INTEGER},
+      v7_r_vipin = #{v7RVipin,jdbcType=INTEGER},
+      v7_r_hedgein = #{v7RHedgein,jdbcType=INTEGER},
+      v7_r_blowwashin = #{v7RBlowwashin,jdbcType=INTEGER},
+      v7_r_blowcutwashin = #{v7RBlowcutwashin,jdbcType=INTEGER},
+      v7_r_cardmoney = #{v7RCardmoney,jdbcType=DOUBLE},
+      v7_r_raiseamount = #{v7RRaiseamount,jdbcType=DOUBLE},
+      v7_r_takeout = #{v7RTakeout,jdbcType=DOUBLE},
+      v7_r_total_card = #{v7RTotalCard,jdbcType=DOUBLE},
+      v7_r_total_cash = #{v7RTotalCash,jdbcType=DOUBLE},
+      v7_r_operuser = #{v7ROperuser,jdbcType=VARCHAR},
+      v7_r_opertime = #{v7ROpertime,jdbcType=TIMESTAMP},
+      extends1 = #{extends1,jdbcType=VARCHAR},
+      extends2 = #{extends2,jdbcType=VARCHAR},
+      extends3 = #{extends3,jdbcType=VARCHAR},
+      extends4 = #{extends4,jdbcType=VARCHAR},
+      extends5 = #{extends5,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

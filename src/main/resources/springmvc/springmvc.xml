@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+				         http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+				         http://www.springframework.org/schema/context
+				         http://www.springframework.org/schema/context/spring-context-3.1.xsd
+				         http://www.springframework.org/schema/tx
+				         http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+				         http://www.springframework.org/schema/aop 
+				         http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+				         http://www.springframework.org/schema/mvc 
+				         http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd
+				         ">
+	
+	<!-- 自动扫描的包名 ，使Spring支持自动检测组件，此处扫描整个工程下的所有包-->
+    <context:component-scan base-package="com.carrey.v7mc" />
+	
+	<!-- 静态资源解析包括 ：js、css、img、..-->
+	 <mvc:resources location="/js/" mapping="/js/**,/lib**"/>
+	 <mvc:resources location="/img/" mapping="/images/**"/>
+	 <mvc:resources location="/css/" mapping="/css/**"/>
+	
+	
+	<!-- 启用spring mvc 注解-->
+	<!--<mvc:annotation-driven ></mvc:annotation-driven> -->
+   	<mvc:annotation-driven conversion-service="conversionService"></mvc:annotation-driven>
+   	
+	<!-- 视图解析器:定义跳转的文件的前后缀 -->  
+    <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">  
+        <property name="prefix" value="/WEB-INF/pages/" />  
+         <!--可为空,方便实现自已的依据扩展名来选择视图解释类的逻辑  -->
+        <property name="suffix" value=".jsp" /> 
+    </bean> 
+
+    <!-- 自定义参数绑定 -->
+	<bean id="conversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+		<!-- 转换器 -->
+		<property name="converters">
+			<list>
+				<!-- 日期类型转换 -->
+				<bean class="com.carrey.v7mc.common.converter.DateConverter"/>
+			</list>
+		</property>
+	</bean>
+    
+    
+    
+    <!-- 
+    	全局异常处理类 ，不能有多个类
+    	实现接口 HandlerExceptionResolver
+     -->
+    <bean class="com.carrey.v7mc.common.exception.SysExceptionResolver"/>
+    
+    
+    <!--拦截器 多个拦截器，顺序执行-->
+	<mvc:interceptors>
+		<!--登陆认证拦截器 -->
+		<mvc:interceptor>
+			<mvc:mapping path="/**"/>
+			<bean class="com.carrey.v7mc.common.interceptor.LoginInterceptor"></bean>
+		</mvc:interceptor>
+		
+		<!--统一日志 -->
+		<mvc:interceptor>
+			<mvc:mapping path="/**"/>
+			<bean class="com.carrey.v7mc.common.interceptor.UniversalLogManagement"></bean>
+		</mvc:interceptor>
+		
+	</mvc:interceptors>
+	    
+    
+</beans>

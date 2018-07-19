@@ -1,0 +1,842 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.carrey.v7mc.mapperInterface.V7ReceptionMapper" >
+  <resultMap id="BaseResultMap" type="com.carrey.v7mc.po.V7Reception" >
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="v7_r_num" property="v7RNum" jdbcType="VARCHAR" />
+    <result column="v7_r_consumption" property="v7RConsumption" jdbcType="INTEGER" />
+    <result column="v7_r_consumetype" property="v7RConsumetype" jdbcType="INTEGER" />
+    <result column="v7_r_memberid" property="v7RMemberid" jdbcType="VARCHAR" />
+    <result column="v7_r_cardid" property="v7RCardid" jdbcType="VARCHAR" />
+    <result column="v7_r_usecardtype" property="v7RUsecardtype" jdbcType="INTEGER" />
+    <result column="v7_r_blowWash" property="v7RBlowwash" jdbcType="DOUBLE" />
+    <result column="v7_r_blowCutWash" property="v7RBlowcutwash" jdbcType="DOUBLE" />
+    <result column="v7_r_permcostprice" property="v7RPermcostprice" jdbcType="VARCHAR" />
+    <result column="v7_r_dyehaircostprice" property="v7RDyehaircostprice" jdbcType="VARCHAR" />
+    <result column="v7_r_conditionercostprice" property="v7RConditionercostprice" jdbcType="VARCHAR" />
+    <result column="v7_r_sumcostprice" property="v7RSumcostprice" jdbcType="DOUBLE" />
+    <result column="v7_r_discountprice" property="v7RDiscountprice" jdbcType="DOUBLE" />
+    <result column="v7_r_discountrate" property="v7RDiscountrate" jdbcType="DOUBLE" />
+    <result column="v7_r_payCash4Hedging" property="v7RPaycash4hedging" jdbcType="DOUBLE" />
+    <result column="v7_r_payCash" property="v7RPaycash" jdbcType="DOUBLE" />
+    <result column="v7_r_recordnum" property="v7RRecordnum" jdbcType="INTEGER" />
+    <result column="v7_r_raiseamount" property="v7RRaiseamount" jdbcType="DOUBLE" />
+    <result column="v7_r_hairstylist" property="v7RHairstylist" jdbcType="VARCHAR" />
+    <result column="v7_r_technician" property="v7RTechnician" jdbcType="VARCHAR" />
+    <result column="v7_r_assistant" property="v7RAssistant" jdbcType="VARCHAR" />
+    <result column="v7_r_productid" property="v7RProductid" jdbcType="VARCHAR" />
+    <result column="v7_r_sale_user" property="v7RSaleUser" jdbcType="VARCHAR" />
+    <result column="v7_r_sale_proammount" property="v7RSaleProammount" jdbcType="DOUBLE" />
+    <result column="v7_r_sale_count" property="v7RSaleCount" jdbcType="INTEGER" />
+    <result column="v7_r_sale_totalprice" property="v7RSaleTotalprice" jdbcType="DOUBLE" />
+    <result column="v7_r_statement_user" property="v7RStatementUser" jdbcType="VARCHAR" />
+    <result column="v7_r_statement_date" property="v7RStatementDate" jdbcType="TIMESTAMP" />
+    <result column="v7_r_remarks" property="v7RRemarks" jdbcType="VARCHAR" />
+    <result column="extends1" property="extends1" jdbcType="VARCHAR" />
+    <result column="extends2" property="extends2" jdbcType="VARCHAR" />
+    <result column="extends3" property="extends3" jdbcType="VARCHAR" />
+    <result column="extends4" property="extends4" jdbcType="VARCHAR" />
+    <result column="extends5" property="extends5" jdbcType="VARCHAR" />
+  </resultMap>
+ 
+<!-- ********************************自定义SQL开始****************************** -->
+  <!-- 统计总数 -->
+  <select id="getTotalAmount" parameterType="com.carrey.v7mc.queryVo.CashierQVo" resultType="int">
+			SELECT 
+			 count(r.id)
+			FROM
+			  V7_RECEPTION r 
+			  LEFT JOIN V7_MEMBER m 
+			    ON r.v7_r_memberid = m.id 
+			  LEFT JOIN V7_EMPLOYEE eh 
+			    ON r.v7_r_hairstylist = eh.id 
+			  LEFT JOIN V7_EMPLOYEE et 
+			    ON r.v7_r_technician = et.id 
+			  LEFT JOIN V7_PRODUCT p
+			    ON r.v7_r_productid = p.id 
+			  LEFT JOIN V7_EMPLOYEE ep 
+			    ON r.v7_r_sale_user = ep.id 
+			    
+	  	<where>
+	  		1=1 
+	  		<if test="v7CBeginTime !=null and v7CBeginTime !=''">
+				and	r.v7_r_statement_date &gt;= '${v7CBeginTime}'
+	  		</if>
+	  		<if test="v7CEndTime != null and v7CEndTime !=''">
+	  			and r.v7_r_statement_date &lt;='${v7CEndTime}'
+	  		</if>
+	  	</where>
+  </select>
+  <select id="getPageData" parameterType="com.carrey.v7mc.queryVo.MemberQVo" resultType="com.carrey.v7mc.po.V7Reception">
+  	 <![CDATA[ 
+  		SELECT 
+		  r.v7_r_consumption v7RConsumption,#消费方式
+		  r.v7_r_consumetype v7RConsumetype,#消费类型
+		  m.v7_m_name v7RMemberid,#会员名
+		  r.v7_r_usecardtype v7RUsecardtype,#使用会员卡类型
+		  r.v7_r_sumcostprice v7RSumcostprice,#总原价
+		  r.v7_r_discountprice v7RDiscountprice,#折后价
+		  r.v7_r_discountrate v7RDiscountrate,#折扣率
+		  r.v7_r_paycash4hedging v7RPaycash4hedging,#对冲卡应付现金
+		  r.v7_r_paycash v7RPaycash,#现金支付金额
+		  r.v7_r_recordnum v7RRecordnum,#记次卡划卡次数
+		  r.v7_r_raiseamount v7RRaiseamount,#加价产品金额
+		  eh.v7_e_name v7RHairstylist,#发型师
+		  et.v7_e_name v7RTechnician,#技师
+		  p.v7_p_name v7RProductid,#产品名称
+		  ep.v7_e_name v7RSaleUser,#销售人
+		  r.v7_r_sale_totalprice v7RSaleTotalprice,#销售总价
+		  r.v7_r_statement_date v7RStatementDate #结单时间
+		FROM
+		  V7_RECEPTION r 
+		  LEFT JOIN V7_MEMBER m 
+		    ON r.v7_r_memberid = m.id 
+		  LEFT JOIN V7_EMPLOYEE eh 
+		    ON r.v7_r_hairstylist = eh.id 
+		  LEFT JOIN V7_EMPLOYEE et 
+		    ON r.v7_r_technician = et.id 
+		  LEFT JOIN V7_PRODUCT p
+		    ON r.v7_r_productid = p.id 
+		  LEFT JOIN V7_EMPLOYEE ep 
+		    ON r.v7_r_sale_user = ep.id 
+		]]>
+	  	<where>
+	  		1=1 
+	  		<if test="v7CBeginTime !=null and v7CBeginTime !=''">
+				and	r.v7_r_statement_date &gt;= '${v7CBeginTime}'
+	  		</if>
+	  		<if test="v7CEndTime != null and v7CEndTime !=''">
+	  			and r.v7_r_statement_date &lt;= '${v7CEndTime}'
+	  		</if>
+	  	</where>
+		order by r.v7_r_statement_date DESC limit #{beginPageIndex}, #{pageSize} 
+	
+  </select>
+  
+  <!-- 项目业绩 -->
+  <select id="busResults" parameterType="map" resultType="double">
+		SELECT 
+		  COALESCE(SUM(v7_r_discountprice), 0) + COALESCE(SUM(v7_r_paycash4hedging), 0) 
+			FROM
+			  V7_RECEPTION r 
+			<where>
+				1=1
+				<if test="positionNum == 1">
+					and r.v7_r_hairstylist = #{id}
+				</if>
+				<if test="positionNum == 2">
+					and r.v7_r_technician = #{id}
+				</if>
+				<if test="positionNum == 3">
+					and r.v7_r_assistant = #{id}
+				</if>
+			</where>
+			and r.v7_r_statement_date &gt;= #{strartStr}
+			and r.v7_r_statement_date &lt;=#{endStr}
+	  		
+  </select>
+  
+  <!-- 洗剪吹卡业绩次数 -->
+  <select id="blowcutwash" parameterType="map" resultType="int">
+		SELECT 
+		 	COALESCE(SUM(r.v7_r_recordnum),0)
+			FROM
+			  V7_RECEPTION r 
+			<where>
+				1=1
+				<if test="positionNum == 1">
+					and r.v7_r_hairstylist = #{id}
+				</if>
+				<if test="positionNum == 2">
+					and r.v7_r_technician = #{id}
+				</if>
+				<if test="positionNum == 3">
+					and r.v7_r_assistant = #{id}
+				</if>
+			</where>
+			and r.v7_r_statement_date &gt;= #{strartStr}
+			and r.v7_r_statement_date &lt;=#{endStr}
+			and r.v7_r_usecardtype = 6
+  </select>
+  
+  <!-- 洗吹卡业绩次数 -->
+  <select id="blowwash" parameterType="map" resultType="int">
+		SELECT 
+		 	COALESCE(SUM(r.v7_r_recordnum),0)
+			FROM
+			  V7_RECEPTION r 
+			<where>
+				1=1
+				<if test="positionNum == 1">
+					and r.v7_r_hairstylist = #{id}
+				</if>
+				<if test="positionNum == 2">
+					and r.v7_r_technician = #{id}
+				</if>
+				<if test="positionNum == 3">
+					and r.v7_r_assistant = #{id}
+				</if>
+			</where>
+			and r.v7_r_statement_date &gt;= #{strartStr}
+			and r.v7_r_statement_date &lt;=#{endStr}
+			and r.v7_r_usecardtype = 5
+  </select>
+  
+  <!-- 外卖业绩 -->
+  <select id="outResults" parameterType="map" resultType="double">
+		SELECT 
+		 	COALESCE(SUM(r.v7_r_sale_totalprice),0)
+			FROM
+			  V7_RECEPTION r 
+			where 
+				r.v7_r_sale_user = #{id}
+				and r.v7_r_statement_date &gt;= #{strartStr}
+				and r.v7_r_statement_date &lt;=#{endStr}
+  </select>
+  
+  <!-- 加价产品业绩 -->
+  <select id="raiseResults" parameterType="map" resultType="double">
+		SELECT 
+		 	COALESCE(SUM(v7_r_raiseamount), 0) 
+			FROM
+			  V7_RECEPTION r 
+			<where>
+				1=1
+				<if test="positionNum == 2">
+					and r.v7_r_technician = #{id}
+				</if>
+				<if test="positionNum == 3">
+					and r.v7_r_assistant = #{id}
+				</if>
+			</where>
+			and r.v7_r_statement_date &gt;= #{strartStr}
+			and r.v7_r_statement_date &lt;=#{endStr}
+	  		
+  </select>
+  
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, v7_r_num, v7_r_consumption, v7_r_consumetype, v7_r_memberid, v7_r_cardid, v7_r_usecardtype, 
+    v7_r_blowWash, v7_r_blowCutWash, v7_r_permcostprice, v7_r_dyehaircostprice, v7_r_conditionercostprice, 
+    v7_r_sumcostprice, v7_r_discountprice, v7_r_discountrate, v7_r_payCash4Hedging, v7_r_payCash, 
+    v7_r_recordnum, v7_r_raiseamount, v7_r_hairstylist, v7_r_technician, v7_r_assistant, 
+    v7_r_productid, v7_r_sale_user, v7_r_sale_proammount, v7_r_sale_count, v7_r_sale_totalprice, 
+    v7_r_statement_user, v7_r_statement_date, v7_r_remarks, extends1, extends2, extends3, 
+    extends4, extends5
+  </sql>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from V7_RECEPTION
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from V7_RECEPTION
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+ 
+  <insert id="insert" parameterType="com.carrey.v7mc.po.V7Reception" >
+    insert into V7_RECEPTION (id, v7_r_num, v7_r_consumption, 
+      v7_r_consumetype, v7_r_memberid, v7_r_cardid, 
+      v7_r_usecardtype, v7_r_blowWash, v7_r_blowCutWash, 
+      v7_r_permcostprice, v7_r_dyehaircostprice, 
+      v7_r_conditionercostprice, v7_r_sumcostprice, 
+      v7_r_discountprice, v7_r_discountrate, v7_r_payCash4Hedging, 
+      v7_r_payCash, v7_r_recordnum, v7_r_raiseamount, 
+      v7_r_hairstylist, v7_r_technician, v7_r_assistant, 
+      v7_r_productid, v7_r_sale_user, v7_r_sale_proammount, 
+      v7_r_sale_count, v7_r_sale_totalprice, v7_r_statement_user, 
+      v7_r_statement_date, v7_r_remarks, extends1, 
+      extends2, extends3, extends4, 
+      extends5)
+    values (#{id,jdbcType=VARCHAR}, #{v7RNum,jdbcType=VARCHAR}, #{v7RConsumption,jdbcType=INTEGER}, 
+      #{v7RConsumetype,jdbcType=INTEGER}, #{v7RMemberid,jdbcType=VARCHAR}, #{v7RCardid,jdbcType=VARCHAR}, 
+      #{v7RUsecardtype,jdbcType=INTEGER}, #{v7RBlowwash,jdbcType=DOUBLE}, #{v7RBlowcutwash,jdbcType=DOUBLE}, 
+      #{v7RPermcostprice,jdbcType=VARCHAR}, #{v7RDyehaircostprice,jdbcType=VARCHAR}, 
+      #{v7RConditionercostprice,jdbcType=VARCHAR}, #{v7RSumcostprice,jdbcType=DOUBLE}, 
+      #{v7RDiscountprice,jdbcType=DOUBLE}, #{v7RDiscountrate,jdbcType=DOUBLE}, #{v7RPaycash4hedging,jdbcType=DOUBLE}, 
+      #{v7RPaycash,jdbcType=DOUBLE}, #{v7RRecordnum,jdbcType=INTEGER}, #{v7RRaiseamount,jdbcType=DOUBLE}, 
+      #{v7RHairstylist,jdbcType=VARCHAR}, #{v7RTechnician,jdbcType=VARCHAR}, #{v7RAssistant,jdbcType=VARCHAR}, 
+      #{v7RProductid,jdbcType=VARCHAR}, #{v7RSaleUser,jdbcType=VARCHAR}, #{v7RSaleProammount,jdbcType=DOUBLE}, 
+      #{v7RSaleCount,jdbcType=INTEGER}, #{v7RSaleTotalprice,jdbcType=DOUBLE}, #{v7RStatementUser,jdbcType=VARCHAR}, 
+      #{v7RStatementDate,jdbcType=TIMESTAMP}, #{v7RRemarks,jdbcType=VARCHAR}, #{extends1,jdbcType=VARCHAR}, 
+      #{extends2,jdbcType=VARCHAR}, #{extends3,jdbcType=VARCHAR}, #{extends4,jdbcType=VARCHAR}, 
+      #{extends5,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.carrey.v7mc.po.V7Reception" >
+    insert into V7_RECEPTION
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="v7RNum != null" >
+        v7_r_num,
+      </if>
+      <if test="v7RConsumption != null" >
+        v7_r_consumption,
+      </if>
+      <if test="v7RConsumetype != null" >
+        v7_r_consumetype,
+      </if>
+      <if test="v7RMemberid != null" >
+        v7_r_memberid,
+      </if>
+      <if test="v7RCardid != null" >
+        v7_r_cardid,
+      </if>
+      <if test="v7RUsecardtype != null" >
+        v7_r_usecardtype,
+      </if>
+      <if test="v7RBlowwash != null" >
+        v7_r_blowWash,
+      </if>
+      <if test="v7RBlowcutwash != null" >
+        v7_r_blowCutWash,
+      </if>
+      <if test="v7RPermcostprice != null" >
+        v7_r_permcostprice,
+      </if>
+      <if test="v7RDyehaircostprice != null" >
+        v7_r_dyehaircostprice,
+      </if>
+      <if test="v7RConditionercostprice != null" >
+        v7_r_conditionercostprice,
+      </if>
+      <if test="v7RSumcostprice != null" >
+        v7_r_sumcostprice,
+      </if>
+      <if test="v7RDiscountprice != null" >
+        v7_r_discountprice,
+      </if>
+      <if test="v7RDiscountrate != null" >
+        v7_r_discountrate,
+      </if>
+      <if test="v7RPaycash4hedging != null" >
+        v7_r_payCash4Hedging,
+      </if>
+      <if test="v7RPaycash != null" >
+        v7_r_payCash,
+      </if>
+      <if test="v7RRecordnum != null" >
+        v7_r_recordnum,
+      </if>
+      <if test="v7RRaiseamount != null" >
+        v7_r_raiseamount,
+      </if>
+      <if test="v7RHairstylist != null" >
+        v7_r_hairstylist,
+      </if>
+      <if test="v7RTechnician != null" >
+        v7_r_technician,
+      </if>
+      <if test="v7RAssistant != null" >
+        v7_r_assistant,
+      </if>
+      <if test="v7RProductid != null" >
+        v7_r_productid,
+      </if>
+      <if test="v7RSaleUser != null" >
+        v7_r_sale_user,
+      </if>
+      <if test="v7RSaleProammount != null" >
+        v7_r_sale_proammount,
+      </if>
+      <if test="v7RSaleCount != null" >
+        v7_r_sale_count,
+      </if>
+      <if test="v7RSaleTotalprice != null" >
+        v7_r_sale_totalprice,
+      </if>
+      <if test="v7RStatementUser != null" >
+        v7_r_statement_user,
+      </if>
+      <if test="v7RStatementDate != null" >
+        v7_r_statement_date,
+      </if>
+      <if test="v7RRemarks != null" >
+        v7_r_remarks,
+      </if>
+      <if test="extends1 != null" >
+        extends1,
+      </if>
+      <if test="extends2 != null" >
+        extends2,
+      </if>
+      <if test="extends3 != null" >
+        extends3,
+      </if>
+      <if test="extends4 != null" >
+        extends4,
+      </if>
+      <if test="extends5 != null" >
+        extends5,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="v7RNum != null" >
+        #{v7RNum,jdbcType=VARCHAR},
+      </if>
+      <if test="v7RConsumption != null" >
+        #{v7RConsumption,jdbcType=INTEGER},
+      </if>
+      <if test="v7RConsumetype != null" >
+        #{v7RConsumetype,jdbcType=INTEGER},
+      </if>
+      <if test="v7RMemberid != null" >
+        #{v7RMemberid,jdbcType=VARCHAR},
+      </if>
+      <if test="v7RCardid != null" >
+        #{v7RCardid,jdbcType=VARCHAR},
+      </if>
+      <if test="v7RUsecardtype != null" >
+        #{v7RUsecardtype,jdbcType=INTEGER},
+      </if>
+      <if test="v7RBlowwash != null" >
+        #{v7RBlowwash,jdbcType=DOUBLE},
+      </if>
+      <if test="v7RBlowcutwash != null" >
+        #{v7RBlowcutwash,jdbcType=DOUBLE},
+      </if>
+      <if test="v7RPermcostprice != null" >
+        #{v7RPermcostprice,jdbcType=VARCHAR},
+      </if>
+      <if test="v7RDyehaircostprice != null" >
+        #{v7RDyehaircostprice,jdbcType=VARCHAR},
+      </if>
+      <if test="v7RConditionercostprice != null" >
+        #{v7RConditionercostprice,jdbcType=VARCHAR},
+      </if>
+      <if test="v7RSumcostprice != null" >
+        #{v7RSumcostprice,jdbcType=DOUBLE},
+      </if>
+      <if test="v7RDiscountprice != null" >
+        #{v7RDiscountprice,jdbcType=DOUBLE},
+      </if>
+      <if test="v7RDiscountrate != null" >
+        #{v7RDiscountrate,jdbcType=DOUBLE},
+      </if>
+      <if test="v7RPaycash4hedging != null" >
+        #{v7RPaycash4hedging,jdbcType=DOUBLE},
+      </if>
+      <if test="v7RPaycash != null" >
+        #{v7RPaycash,jdbcType=DOUBLE},
+      </if>
+      <if test="v7RRecordnum != null" >
+        #{v7RRecordnum,jdbcType=INTEGER},
+      </if>
+      <if test="v7RRaiseamount != null" >
+        #{v7RRaiseamount,jdbcType=DOUBLE},
+      </if>
+      <if test="v7RHairstylist != null" >
+        #{v7RHairstylist,jdbcType=VARCHAR},
+      </if>
+      <if test="v7RTechnician != null" >
+        #{v7RTechnician,jdbcType=VARCHAR},
+      </if>
+      <if test="v7RAssistant != null" >
+        #{v7RAssistant,jdbcType=VARCHAR},
+      </if>
+      <if test="v7RProductid != null" >
+        #{v7RProductid,jdbcType=VARCHAR},
+      </if>
+      <if test="v7RSaleUser != null" >
+        #{v7RSaleUser,jdbcType=VARCHAR},
+      </if>
+      <if test="v7RSaleProammount != null" >
+        #{v7RSaleProammount,jdbcType=DOUBLE},
+      </if>
+      <if test="v7RSaleCount != null" >
+        #{v7RSaleCount,jdbcType=INTEGER},
+      </if>
+      <if test="v7RSaleTotalprice != null" >
+        #{v7RSaleTotalprice,jdbcType=DOUBLE},
+      </if>
+      <if test="v7RStatementUser != null" >
+        #{v7RStatementUser,jdbcType=VARCHAR},
+      </if>
+      <if test="v7RStatementDate != null" >
+        #{v7RStatementDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="v7RRemarks != null" >
+        #{v7RRemarks,jdbcType=VARCHAR},
+      </if>
+      <if test="extends1 != null" >
+        #{extends1,jdbcType=VARCHAR},
+      </if>
+      <if test="extends2 != null" >
+        #{extends2,jdbcType=VARCHAR},
+      </if>
+      <if test="extends3 != null" >
+        #{extends3,jdbcType=VARCHAR},
+      </if>
+      <if test="extends4 != null" >
+        #{extends4,jdbcType=VARCHAR},
+      </if>
+      <if test="extends5 != null" >
+        #{extends5,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+ 
+  <update id="updateByExampleSelective" parameterType="map" >
+    update V7_RECEPTION
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7RNum != null" >
+        v7_r_num = #{record.v7RNum,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7RConsumption != null" >
+        v7_r_consumption = #{record.v7RConsumption,jdbcType=INTEGER},
+      </if>
+      <if test="record.v7RConsumetype != null" >
+        v7_r_consumetype = #{record.v7RConsumetype,jdbcType=INTEGER},
+      </if>
+      <if test="record.v7RMemberid != null" >
+        v7_r_memberid = #{record.v7RMemberid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7RCardid != null" >
+        v7_r_cardid = #{record.v7RCardid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7RUsecardtype != null" >
+        v7_r_usecardtype = #{record.v7RUsecardtype,jdbcType=INTEGER},
+      </if>
+      <if test="record.v7RBlowwash != null" >
+        v7_r_blowWash = #{record.v7RBlowwash,jdbcType=DOUBLE},
+      </if>
+      <if test="record.v7RBlowcutwash != null" >
+        v7_r_blowCutWash = #{record.v7RBlowcutwash,jdbcType=DOUBLE},
+      </if>
+      <if test="record.v7RPermcostprice != null" >
+        v7_r_permcostprice = #{record.v7RPermcostprice,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7RDyehaircostprice != null" >
+        v7_r_dyehaircostprice = #{record.v7RDyehaircostprice,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7RConditionercostprice != null" >
+        v7_r_conditionercostprice = #{record.v7RConditionercostprice,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7RSumcostprice != null" >
+        v7_r_sumcostprice = #{record.v7RSumcostprice,jdbcType=DOUBLE},
+      </if>
+      <if test="record.v7RDiscountprice != null" >
+        v7_r_discountprice = #{record.v7RDiscountprice,jdbcType=DOUBLE},
+      </if>
+      <if test="record.v7RDiscountrate != null" >
+        v7_r_discountrate = #{record.v7RDiscountrate,jdbcType=DOUBLE},
+      </if>
+      <if test="record.v7RPaycash4hedging != null" >
+        v7_r_payCash4Hedging = #{record.v7RPaycash4hedging,jdbcType=DOUBLE},
+      </if>
+      <if test="record.v7RPaycash != null" >
+        v7_r_payCash = #{record.v7RPaycash,jdbcType=DOUBLE},
+      </if>
+      <if test="record.v7RRecordnum != null" >
+        v7_r_recordnum = #{record.v7RRecordnum,jdbcType=INTEGER},
+      </if>
+      <if test="record.v7RRaiseamount != null" >
+        v7_r_raiseamount = #{record.v7RRaiseamount,jdbcType=DOUBLE},
+      </if>
+      <if test="record.v7RHairstylist != null" >
+        v7_r_hairstylist = #{record.v7RHairstylist,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7RTechnician != null" >
+        v7_r_technician = #{record.v7RTechnician,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7RAssistant != null" >
+        v7_r_assistant = #{record.v7RAssistant,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7RProductid != null" >
+        v7_r_productid = #{record.v7RProductid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7RSaleUser != null" >
+        v7_r_sale_user = #{record.v7RSaleUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7RSaleProammount != null" >
+        v7_r_sale_proammount = #{record.v7RSaleProammount,jdbcType=DOUBLE},
+      </if>
+      <if test="record.v7RSaleCount != null" >
+        v7_r_sale_count = #{record.v7RSaleCount,jdbcType=INTEGER},
+      </if>
+      <if test="record.v7RSaleTotalprice != null" >
+        v7_r_sale_totalprice = #{record.v7RSaleTotalprice,jdbcType=DOUBLE},
+      </if>
+      <if test="record.v7RStatementUser != null" >
+        v7_r_statement_user = #{record.v7RStatementUser,jdbcType=VARCHAR},
+      </if>
+      <if test="record.v7RStatementDate != null" >
+        v7_r_statement_date = #{record.v7RStatementDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.v7RRemarks != null" >
+        v7_r_remarks = #{record.v7RRemarks,jdbcType=VARCHAR},
+      </if>
+      <if test="record.extends1 != null" >
+        extends1 = #{record.extends1,jdbcType=VARCHAR},
+      </if>
+      <if test="record.extends2 != null" >
+        extends2 = #{record.extends2,jdbcType=VARCHAR},
+      </if>
+      <if test="record.extends3 != null" >
+        extends3 = #{record.extends3,jdbcType=VARCHAR},
+      </if>
+      <if test="record.extends4 != null" >
+        extends4 = #{record.extends4,jdbcType=VARCHAR},
+      </if>
+      <if test="record.extends5 != null" >
+        extends5 = #{record.extends5,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update V7_RECEPTION
+    set id = #{record.id,jdbcType=VARCHAR},
+      v7_r_num = #{record.v7RNum,jdbcType=VARCHAR},
+      v7_r_consumption = #{record.v7RConsumption,jdbcType=INTEGER},
+      v7_r_consumetype = #{record.v7RConsumetype,jdbcType=INTEGER},
+      v7_r_memberid = #{record.v7RMemberid,jdbcType=VARCHAR},
+      v7_r_cardid = #{record.v7RCardid,jdbcType=VARCHAR},
+      v7_r_usecardtype = #{record.v7RUsecardtype,jdbcType=INTEGER},
+      v7_r_blowWash = #{record.v7RBlowwash,jdbcType=DOUBLE},
+      v7_r_blowCutWash = #{record.v7RBlowcutwash,jdbcType=DOUBLE},
+      v7_r_permcostprice = #{record.v7RPermcostprice,jdbcType=VARCHAR},
+      v7_r_dyehaircostprice = #{record.v7RDyehaircostprice,jdbcType=VARCHAR},
+      v7_r_conditionercostprice = #{record.v7RConditionercostprice,jdbcType=VARCHAR},
+      v7_r_sumcostprice = #{record.v7RSumcostprice,jdbcType=DOUBLE},
+      v7_r_discountprice = #{record.v7RDiscountprice,jdbcType=DOUBLE},
+      v7_r_discountrate = #{record.v7RDiscountrate,jdbcType=DOUBLE},
+      v7_r_payCash4Hedging = #{record.v7RPaycash4hedging,jdbcType=DOUBLE},
+      v7_r_payCash = #{record.v7RPaycash,jdbcType=DOUBLE},
+      v7_r_recordnum = #{record.v7RRecordnum,jdbcType=INTEGER},
+      v7_r_raiseamount = #{record.v7RRaiseamount,jdbcType=DOUBLE},
+      v7_r_hairstylist = #{record.v7RHairstylist,jdbcType=VARCHAR},
+      v7_r_technician = #{record.v7RTechnician,jdbcType=VARCHAR},
+      v7_r_assistant = #{record.v7RAssistant,jdbcType=VARCHAR},
+      v7_r_productid = #{record.v7RProductid,jdbcType=VARCHAR},
+      v7_r_sale_user = #{record.v7RSaleUser,jdbcType=VARCHAR},
+      v7_r_sale_proammount = #{record.v7RSaleProammount,jdbcType=DOUBLE},
+      v7_r_sale_count = #{record.v7RSaleCount,jdbcType=INTEGER},
+      v7_r_sale_totalprice = #{record.v7RSaleTotalprice,jdbcType=DOUBLE},
+      v7_r_statement_user = #{record.v7RStatementUser,jdbcType=VARCHAR},
+      v7_r_statement_date = #{record.v7RStatementDate,jdbcType=TIMESTAMP},
+      v7_r_remarks = #{record.v7RRemarks,jdbcType=VARCHAR},
+      extends1 = #{record.extends1,jdbcType=VARCHAR},
+      extends2 = #{record.extends2,jdbcType=VARCHAR},
+      extends3 = #{record.extends3,jdbcType=VARCHAR},
+      extends4 = #{record.extends4,jdbcType=VARCHAR},
+      extends5 = #{record.extends5,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.carrey.v7mc.po.V7Reception" >
+    update V7_RECEPTION
+    <set >
+      <if test="v7RNum != null" >
+        v7_r_num = #{v7RNum,jdbcType=VARCHAR},
+      </if>
+      <if test="v7RConsumption != null" >
+        v7_r_consumption = #{v7RConsumption,jdbcType=INTEGER},
+      </if>
+      <if test="v7RConsumetype != null" >
+        v7_r_consumetype = #{v7RConsumetype,jdbcType=INTEGER},
+      </if>
+      <if test="v7RMemberid != null" >
+        v7_r_memberid = #{v7RMemberid,jdbcType=VARCHAR},
+      </if>
+      <if test="v7RCardid != null" >
+        v7_r_cardid = #{v7RCardid,jdbcType=VARCHAR},
+      </if>
+      <if test="v7RUsecardtype != null" >
+        v7_r_usecardtype = #{v7RUsecardtype,jdbcType=INTEGER},
+      </if>
+      <if test="v7RBlowwash != null" >
+        v7_r_blowWash = #{v7RBlowwash,jdbcType=DOUBLE},
+      </if>
+      <if test="v7RBlowcutwash != null" >
+        v7_r_blowCutWash = #{v7RBlowcutwash,jdbcType=DOUBLE},
+      </if>
+      <if test="v7RPermcostprice != null" >
+        v7_r_permcostprice = #{v7RPermcostprice,jdbcType=VARCHAR},
+      </if>
+      <if test="v7RDyehaircostprice != null" >
+        v7_r_dyehaircostprice = #{v7RDyehaircostprice,jdbcType=VARCHAR},
+      </if>
+      <if test="v7RConditionercostprice != null" >
+        v7_r_conditionercostprice = #{v7RConditionercostprice,jdbcType=VARCHAR},
+      </if>
+      <if test="v7RSumcostprice != null" >
+        v7_r_sumcostprice = #{v7RSumcostprice,jdbcType=DOUBLE},
+      </if>
+      <if test="v7RDiscountprice != null" >
+        v7_r_discountprice = #{v7RDiscountprice,jdbcType=DOUBLE},
+      </if>
+      <if test="v7RDiscountrate != null" >
+        v7_r_discountrate = #{v7RDiscountrate,jdbcType=DOUBLE},
+      </if>
+      <if test="v7RPaycash4hedging != null" >
+        v7_r_payCash4Hedging = #{v7RPaycash4hedging,jdbcType=DOUBLE},
+      </if>
+      <if test="v7RPaycash != null" >
+        v7_r_payCash = #{v7RPaycash,jdbcType=DOUBLE},
+      </if>
+      <if test="v7RRecordnum != null" >
+        v7_r_recordnum = #{v7RRecordnum,jdbcType=INTEGER},
+      </if>
+      <if test="v7RRaiseamount != null" >
+        v7_r_raiseamount = #{v7RRaiseamount,jdbcType=DOUBLE},
+      </if>
+      <if test="v7RHairstylist != null" >
+        v7_r_hairstylist = #{v7RHairstylist,jdbcType=VARCHAR},
+      </if>
+      <if test="v7RTechnician != null" >
+        v7_r_technician = #{v7RTechnician,jdbcType=VARCHAR},
+      </if>
+      <if test="v7RAssistant != null" >
+        v7_r_assistant = #{v7RAssistant,jdbcType=VARCHAR},
+      </if>
+      <if test="v7RProductid != null" >
+        v7_r_productid = #{v7RProductid,jdbcType=VARCHAR},
+      </if>
+      <if test="v7RSaleUser != null" >
+        v7_r_sale_user = #{v7RSaleUser,jdbcType=VARCHAR},
+      </if>
+      <if test="v7RSaleProammount != null" >
+        v7_r_sale_proammount = #{v7RSaleProammount,jdbcType=DOUBLE},
+      </if>
+      <if test="v7RSaleCount != null" >
+        v7_r_sale_count = #{v7RSaleCount,jdbcType=INTEGER},
+      </if>
+      <if test="v7RSaleTotalprice != null" >
+        v7_r_sale_totalprice = #{v7RSaleTotalprice,jdbcType=DOUBLE},
+      </if>
+      <if test="v7RStatementUser != null" >
+        v7_r_statement_user = #{v7RStatementUser,jdbcType=VARCHAR},
+      </if>
+      <if test="v7RStatementDate != null" >
+        v7_r_statement_date = #{v7RStatementDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="v7RRemarks != null" >
+        v7_r_remarks = #{v7RRemarks,jdbcType=VARCHAR},
+      </if>
+      <if test="extends1 != null" >
+        extends1 = #{extends1,jdbcType=VARCHAR},
+      </if>
+      <if test="extends2 != null" >
+        extends2 = #{extends2,jdbcType=VARCHAR},
+      </if>
+      <if test="extends3 != null" >
+        extends3 = #{extends3,jdbcType=VARCHAR},
+      </if>
+      <if test="extends4 != null" >
+        extends4 = #{extends4,jdbcType=VARCHAR},
+      </if>
+      <if test="extends5 != null" >
+        extends5 = #{extends5,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.carrey.v7mc.po.V7Reception" >
+    update V7_RECEPTION
+    set v7_r_num = #{v7RNum,jdbcType=VARCHAR},
+      v7_r_consumption = #{v7RConsumption,jdbcType=INTEGER},
+      v7_r_consumetype = #{v7RConsumetype,jdbcType=INTEGER},
+      v7_r_memberid = #{v7RMemberid,jdbcType=VARCHAR},
+      v7_r_cardid = #{v7RCardid,jdbcType=VARCHAR},
+      v7_r_usecardtype = #{v7RUsecardtype,jdbcType=INTEGER},
+      v7_r_blowWash = #{v7RBlowwash,jdbcType=DOUBLE},
+      v7_r_blowCutWash = #{v7RBlowcutwash,jdbcType=DOUBLE},
+      v7_r_permcostprice = #{v7RPermcostprice,jdbcType=VARCHAR},
+      v7_r_dyehaircostprice = #{v7RDyehaircostprice,jdbcType=VARCHAR},
+      v7_r_conditionercostprice = #{v7RConditionercostprice,jdbcType=VARCHAR},
+      v7_r_sumcostprice = #{v7RSumcostprice,jdbcType=DOUBLE},
+      v7_r_discountprice = #{v7RDiscountprice,jdbcType=DOUBLE},
+      v7_r_discountrate = #{v7RDiscountrate,jdbcType=DOUBLE},
+      v7_r_payCash4Hedging = #{v7RPaycash4hedging,jdbcType=DOUBLE},
+      v7_r_payCash = #{v7RPaycash,jdbcType=DOUBLE},
+      v7_r_recordnum = #{v7RRecordnum,jdbcType=INTEGER},
+      v7_r_raiseamount = #{v7RRaiseamount,jdbcType=DOUBLE},
+      v7_r_hairstylist = #{v7RHairstylist,jdbcType=VARCHAR},
+      v7_r_technician = #{v7RTechnician,jdbcType=VARCHAR},
+      v7_r_assistant = #{v7RAssistant,jdbcType=VARCHAR},
+      v7_r_productid = #{v7RProductid,jdbcType=VARCHAR},
+      v7_r_sale_user = #{v7RSaleUser,jdbcType=VARCHAR},
+      v7_r_sale_proammount = #{v7RSaleProammount,jdbcType=DOUBLE},
+      v7_r_sale_count = #{v7RSaleCount,jdbcType=INTEGER},
+      v7_r_sale_totalprice = #{v7RSaleTotalprice,jdbcType=DOUBLE},
+      v7_r_statement_user = #{v7RStatementUser,jdbcType=VARCHAR},
+      v7_r_statement_date = #{v7RStatementDate,jdbcType=TIMESTAMP},
+      v7_r_remarks = #{v7RRemarks,jdbcType=VARCHAR},
+      extends1 = #{extends1,jdbcType=VARCHAR},
+      extends2 = #{extends2,jdbcType=VARCHAR},
+      extends3 = #{extends3,jdbcType=VARCHAR},
+      extends4 = #{extends4,jdbcType=VARCHAR},
+      extends5 = #{extends5,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>
