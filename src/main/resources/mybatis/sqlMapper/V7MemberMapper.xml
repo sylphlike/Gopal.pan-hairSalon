@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.carrey.v7mc.mapperInterface.V7MemberMapper" >
-  <resultMap id="BaseResultMap" type="com.carrey.v7mc.po.V7Member" >
+<mapper namespace="com.horse.v7mc.mapperInterface.V7MemberMapper" >
+  <resultMap id="BaseResultMap" type="com.horse.v7mc.po.V7Member" >
     <id column="ID" property="id" jdbcType="VARCHAR" />
     <result column="v7_m_num" property="v7MNum" jdbcType="INTEGER" />
     <result column="v7_m_name" property="v7MName" jdbcType="VARCHAR" />
@@ -37,7 +37,7 @@
   
   <!-- ********************************自定义SQL开始****************************** -->
   <!-- 统计总数 -->
-  <select id="getTotalAmount" parameterType="com.carrey.v7mc.queryVo.MemberQVo" resultType="int">
+  <select id="getTotalAmount" parameterType="com.horse.v7mc.queryVo.MemberQVo" resultType="int">
   	select count(m.id) from V7_MEMBER m
 	  	<where>
 	  		1=1 
@@ -60,7 +60,7 @@
 	  		and m.v7_m_status != 3 
 	  	</where>
   </select>
-  <select id="getPageData" parameterType="com.carrey.v7mc.queryVo.MemberQVo" resultMap="BaseResultMap">
+  <select id="getPageData" parameterType="com.horse.v7mc.queryVo.MemberQVo" resultMap="BaseResultMap">
   	select * from V7_MEMBER m
   		<where>
 	  		1=1 
@@ -86,7 +86,7 @@
   </select>
   
   <!--会员信息，会员卡信息条件收索 -->
-   <select id="searchByCondition" parameterType="com.carrey.v7mc.queryVo.MemberQVo" resultMap="BaseResultMap">
+   <select id="searchByCondition" parameterType="com.horse.v7mc.queryVo.MemberQVo" resultMap="BaseResultMap">
   		SELECT 
 			  m.id id,
 			  m.V7_M_NUM ,
@@ -153,7 +153,7 @@
 	  	</where>
  	</select>
 	<!-- 根据id改变当前会员状态 -->
-	<update id="updateMemberStatus" parameterType="com.carrey.v7mc.po.V7Member">
+	<update id="updateMemberStatus" parameterType="com.horse.v7mc.po.V7Member">
     	update V7_MEMBER
 	    <set >
 	        v7_m_status = #{v7MStatus,jdbcType=INTEGER},
@@ -236,7 +236,7 @@
     v7_m_status, v7_m_phone, v7_re_c_type, v7_m_create_user, v7_m_crate_time, v7_m_update_user, 
     V7_m_update_time, v7_m_remarks, extends1, extends2, extends3, extends4, extends5
   </sql>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.carrey.v7mc.po.V7MemberExample" >
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.horse.v7mc.po.V7MemberExample" >
     select
     <if test="distinct" >
       distinct
@@ -260,13 +260,13 @@
     delete from V7_MEMBER
     where ID = #{id,jdbcType=VARCHAR}
   </delete>
-  <delete id="deleteByExample" parameterType="com.carrey.v7mc.po.V7MemberExample" >
+  <delete id="deleteByExample" parameterType="com.horse.v7mc.po.V7MemberExample" >
     delete from V7_MEMBER
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.carrey.v7mc.po.V7Member" >
+  <insert id="insert" parameterType="com.horse.v7mc.po.V7Member" >
     insert into V7_MEMBER (ID, v7_m_num, v7_m_name, 
       v7_m_real_name, v7_m_sex, v7_m_birthday, 
       v7_m_passowrd, v7_m_status, v7_m_phone, 
@@ -282,7 +282,7 @@
       #{extends1,jdbcType=VARCHAR}, #{extends2,jdbcType=VARCHAR}, #{extends3,jdbcType=VARCHAR}, 
       #{extends4,jdbcType=VARCHAR}, #{extends5,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.carrey.v7mc.po.V7Member" >
+  <insert id="insertSelective" parameterType="com.horse.v7mc.po.V7Member" >
     insert into V7_MEMBER
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -409,7 +409,7 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.carrey.v7mc.po.V7MemberExample" resultType="java.lang.Integer" >
+  <select id="countByExample" parameterType="com.horse.v7mc.po.V7MemberExample" resultType="java.lang.Integer" >
     select count(*) from V7_MEMBER
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
@@ -509,7 +509,7 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.carrey.v7mc.po.V7Member" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.horse.v7mc.po.V7Member" >
     update V7_MEMBER
     <set >
       <if test="v7MNum != null" >
@@ -572,7 +572,7 @@
     </set>
     where ID = #{id,jdbcType=VARCHAR}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.carrey.v7mc.po.V7Member" >
+  <update id="updateByPrimaryKey" parameterType="com.horse.v7mc.po.V7Member" >
     update V7_MEMBER
     set v7_m_num = #{v7MNum,jdbcType=INTEGER},
       v7_m_name = #{v7MName,jdbcType=VARCHAR},

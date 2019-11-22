@@ -48,7 +48,7 @@
 
   <!-- 缓存管理-->
   <listener>
-    <listener-class>com.carrey.v7mc.system.ehcache.CacheInit</listener-class>
+    <listener-class>com.horse.v7mc.system.ehcache.CacheInit</listener-class>
   </listener>
 
   <!-- session超时定义,单位为分钟 -->

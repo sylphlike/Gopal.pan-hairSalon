@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.carrey.v7mc.mapperInterface.V7StoreOutMapper" >
-  <resultMap id="BaseResultMap" type="com.carrey.v7mc.po.V7StoreOut" >
+<mapper namespace="com.horse.v7mc.mapperInterface.V7StoreOutMapper" >
+  <resultMap id="BaseResultMap" type="com.horse.v7mc.po.V7StoreOut" >
     <id column="id" property="id" jdbcType="VARCHAR" />
     <result column="v7_s_brand" property="v7SBrand" jdbcType="VARCHAR" />
     <result column="v7_s_type" property="v7SType" jdbcType="VARCHAR" />
@@ -25,13 +25,13 @@
     <result column="extends4" property="extends4" jdbcType="VARCHAR" />
     <result column="extends5" property="extends5" jdbcType="VARCHAR" />
   </resultMap>
-  <resultMap id="ResultMapWithBLOBs" type="com.carrey.v7mc.po.V7StoreOut" extends="BaseResultMap" >
+  <resultMap id="ResultMapWithBLOBs" type="com.horse.v7mc.po.V7StoreOut" extends="BaseResultMap" >
     <result column="v7_s_remarks" property="v7SRemarks" jdbcType="LONGVARCHAR" />
   </resultMap>
   
    <!-- ********************************自定义SQL开始****************************** -->
   <!-- 统计总数 -->
-  <select id="getTotalAmount" parameterType="com.carrey.v7mc.queryVo.StoreQVo" resultType="int">
+  <select id="getTotalAmount" parameterType="com.horse.v7mc.queryVo.StoreQVo" resultType="int">
   	select count(m.id) from V7_STORE_OUT m
 	  	<where>
 	  		1=1 
@@ -53,7 +53,7 @@
 	  	</where>
   </select>
   
-   <select id="getPageData" parameterType="com.carrey.v7mc.queryVo.StoreQVo" resultMap="ResultMapWithBLOBs">
+   <select id="getPageData" parameterType="com.horse.v7mc.queryVo.StoreQVo" resultMap="ResultMapWithBLOBs">
   	select * from V7_STORE_OUT m
 		 <where>
 	  		1=1 
@@ -76,7 +76,7 @@
 		order by m.v7_s_oper_time DESC limit #{beginPageIndex}, #{pageSize} 
   </select>
    
-  <select id="productReport"  parameterType="map" resultType="com.carrey.v7mc.po.V7StoreOut" >
+  <select id="productReport"  parameterType="map" resultType="com.horse.v7mc.po.V7StoreOut" >
   		SELECT 
 		  o.v7_s_type v7SType,
 		  SUM(o.v7_s_count) v7SCount,
@@ -156,7 +156,7 @@
   <sql id="Blob_Column_List" >
     v7_s_remarks
   </sql>
-  <select id="selectByExampleWithBLOBs" resultMap="ResultMapWithBLOBs" parameterType="com.carrey.v7mc.po.V7StoreOutExample" >
+  <select id="selectByExampleWithBLOBs" resultMap="ResultMapWithBLOBs" parameterType="com.horse.v7mc.po.V7StoreOutExample" >
     select
     <if test="distinct" >
       distinct
@@ -172,7 +172,7 @@
       order by ${orderByClause}
     </if>
   </select>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.carrey.v7mc.po.V7StoreOutExample" >
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.horse.v7mc.po.V7StoreOutExample" >
     select
     <if test="distinct" >
       distinct
@@ -198,13 +198,13 @@
     delete from V7_STORE_OUT
     where id = #{id,jdbcType=VARCHAR}
   </delete>
-  <delete id="deleteByExample" parameterType="com.carrey.v7mc.po.V7StoreOutExample" >
+  <delete id="deleteByExample" parameterType="com.horse.v7mc.po.V7StoreOutExample" >
     delete from V7_STORE_OUT
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.carrey.v7mc.po.V7StoreOut" >
+  <insert id="insert" parameterType="com.horse.v7mc.po.V7StoreOut" >
     insert into V7_STORE_OUT (id, v7_s_brand, v7_s_type, 
       v7_s_name, v7_s_out_type, v7_s_standard, 
       v7_s_unit, v7_s_price, v7_s_count, 
@@ -222,7 +222,7 @@
       #{extends2,jdbcType=VARCHAR}, #{extends3,jdbcType=VARCHAR}, #{extends4,jdbcType=VARCHAR}, 
       #{extends5,jdbcType=VARCHAR}, #{v7SRemarks,jdbcType=LONGVARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.carrey.v7mc.po.V7StoreOut" >
+  <insert id="insertSelective" parameterType="com.horse.v7mc.po.V7StoreOut" >
     insert into V7_STORE_OUT
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -367,7 +367,7 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.carrey.v7mc.po.V7StoreOutExample" resultType="java.lang.Integer" >
+  <select id="countByExample" parameterType="com.horse.v7mc.po.V7StoreOutExample" resultType="java.lang.Integer" >
     select count(*) from V7_STORE_OUT
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
@@ -507,7 +507,7 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.carrey.v7mc.po.V7StoreOut" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.horse.v7mc.po.V7StoreOut" >
     update V7_STORE_OUT
     <set >
       <if test="v7SBrand != null" >
@@ -579,7 +579,7 @@
     </set>
     where id = #{id,jdbcType=VARCHAR}
   </update>
-  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.carrey.v7mc.po.V7StoreOut" >
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.horse.v7mc.po.V7StoreOut" >
     update V7_STORE_OUT
     set v7_s_brand = #{v7SBrand,jdbcType=VARCHAR},
       v7_s_type = #{v7SType,jdbcType=VARCHAR},
@@ -605,7 +605,7 @@
       v7_s_remarks = #{v7SRemarks,jdbcType=LONGVARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.carrey.v7mc.po.V7StoreOut" >
+  <update id="updateByPrimaryKey" parameterType="com.horse.v7mc.po.V7StoreOut" >
     update V7_STORE_OUT
     set v7_s_brand = #{v7SBrand,jdbcType=VARCHAR},
       v7_s_type = #{v7SType,jdbcType=VARCHAR},

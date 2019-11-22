@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.carrey.v7mc.mapperInterface.V7BrandMapper" >
-  <resultMap id="BaseResultMap" type="com.carrey.v7mc.po.V7Brand" >
+<mapper namespace="com.horse.v7mc.mapperInterface.V7BrandMapper" >
+  <resultMap id="BaseResultMap" type="com.horse.v7mc.po.V7Brand" >
     <id column="id" property="id" jdbcType="VARCHAR" />
     <result column="v7_b_name" property="v7BName" jdbcType="VARCHAR" />
     <result column="v7_b_type" property="v7BType" jdbcType="VARCHAR" />
@@ -21,7 +21,7 @@
   
   <!-- ********************************自定义SQL开始****************************** -->
   <!-- 统计总数 -->
-  <select id="getTotalAmount" parameterType="com.carrey.v7mc.queryVo.BrandQVo" resultType="int">
+  <select id="getTotalAmount" parameterType="com.horse.v7mc.queryVo.BrandQVo" resultType="int">
   	select count(m.id) from V7_BRAND m
 	  	<where>
 	  		1=1 
@@ -36,7 +36,7 @@
 	  	</where>
   </select>
   
-   <select id="getPageData" parameterType="com.carrey.v7mc.queryVo.BrandQVo" resultMap="BaseResultMap">
+   <select id="getPageData" parameterType="com.horse.v7mc.queryVo.BrandQVo" resultMap="BaseResultMap">
   	select * from V7_BRAND m
   		<where>
 	  		1=1 
@@ -52,7 +52,7 @@
   </select>
   
   	<!-- 根据id改变当前品牌状态 -->
-	<update id="updateBrandStatus" parameterType="com.carrey.v7mc.po.V7Brand">
+	<update id="updateBrandStatus" parameterType="com.horse.v7mc.po.V7Brand">
     	update V7_BRAND b
 	    <set >
 	       b.v7_b_status = #{v7BStatus,jdbcType=INTEGER},
@@ -140,7 +140,7 @@
     v7_b_update_user, V7_b_update_time, v7_b_remarks, extends1, extends2, extends3, extends4, 
     extends5
   </sql>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.carrey.v7mc.po.V7BrandExample" >
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.horse.v7mc.po.V7BrandExample" >
     select
     <if test="distinct" >
       distinct
@@ -164,13 +164,13 @@
     delete from V7_BRAND
     where id = #{id,jdbcType=VARCHAR}
   </delete>
-  <delete id="deleteByExample" parameterType="com.carrey.v7mc.po.V7BrandExample" >
+  <delete id="deleteByExample" parameterType="com.horse.v7mc.po.V7BrandExample" >
     delete from V7_BRAND
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.carrey.v7mc.po.V7Brand" >
+  <insert id="insert" parameterType="com.horse.v7mc.po.V7Brand" >
     insert into V7_BRAND (id, v7_b_name, v7_b_type,
       v7_b_brand_declare, v7_b_status, v7_b_create_user, 
       v7_b_crate_time, v7_b_update_user, V7_b_update_time, 
@@ -184,7 +184,7 @@
       #{extends3,jdbcType=VARCHAR}, #{extends4,jdbcType=VARCHAR}, #{extends5,jdbcType=VARCHAR}
       )
   </insert>
-  <insert id="insertSelective" parameterType="com.carrey.v7mc.po.V7Brand" >
+  <insert id="insertSelective" parameterType="com.horse.v7mc.po.V7Brand" >
     insert into V7_BRAND
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -281,7 +281,7 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.carrey.v7mc.po.V7BrandExample" resultType="java.lang.Integer" >
+  <select id="countByExample" parameterType="com.horse.v7mc.po.V7BrandExample" resultType="java.lang.Integer" >
     select count(*) from V7_BRAND
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
@@ -361,7 +361,7 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.carrey.v7mc.po.V7Brand" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.horse.v7mc.po.V7Brand" >
     update V7_BRAND
     <set >
       <if test="v7BName != null" >
@@ -409,7 +409,7 @@
     </set>
     where id = #{id,jdbcType=VARCHAR}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.carrey.v7mc.po.V7Brand" >
+  <update id="updateByPrimaryKey" parameterType="com.horse.v7mc.po.V7Brand" >
     update V7_BRAND
     set v7_b_name = #{v7BName,jdbcType=VARCHAR},
       v7_b_type = #{v7BType,jdbcType=VARCHAR},

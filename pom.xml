@@ -5,11 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.horse</groupId>
-    <artifactId>bing.Pan-hairSalon</artifactId>
+    <artifactId>Gopan-hairSalon</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>war</packaging>
 
-    <name>bing.Pan-hairSalon Maven Webapp</name>
+    <name>Gopan-hairSalon Maven Webapp</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -257,7 +257,7 @@
     </profiles>
 
     <build>
-        <finalName>bing.Pan-hairSalon</finalName>
+        <finalName>Gopan-hairSalon</finalName>
 
         <resources>
             <resource>
