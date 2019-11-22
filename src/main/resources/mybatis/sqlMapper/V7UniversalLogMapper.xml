@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.carrey.v7mc.mapperInterface.V7UniversalLogMapper" >
-  <resultMap id="BaseResultMap" type="com.carrey.v7mc.po.V7UniversalLog" >
+<mapper namespace="com.horse.v7mc.mapperInterface.V7UniversalLogMapper" >
+  <resultMap id="BaseResultMap" type="com.horse.v7mc.po.V7UniversalLog" >
     <id column="id" property="id" jdbcType="VARCHAR" />
     <result column="v7_u_module_name" property="v7UModuleName" jdbcType="VARCHAR" />
     <result column="v7_u_feature_name" property="v7UFeatureName" jdbcType="VARCHAR" />
@@ -18,7 +18,7 @@
     <result column="extends5" property="extends5" jdbcType="VARCHAR" />
   </resultMap>
   
-  <resultMap id="ResultMapWithBLOBs" type="com.carrey.v7mc.po.V7UniversalLog" extends="BaseResultMap" >
+  <resultMap id="ResultMapWithBLOBs" type="com.horse.v7mc.po.V7UniversalLog" extends="BaseResultMap" >
     <result column="v7_u_request_param" property="v7URequestParam" jdbcType="LONGVARCHAR" />
   </resultMap>
   
@@ -26,7 +26,7 @@
     
   <!-- ********************************自定义SQL开始****************************** -->
   <!-- 统计总数 -->
-  <select id="getTotalAmount" parameterType="com.carrey.v7mc.queryVo.UniversalQVo" resultType="int">
+  <select id="getTotalAmount" parameterType="com.horse.v7mc.queryVo.UniversalQVo" resultType="int">
   	select count(m.id) from V7_UNIVERSAL_LOG m
 	  	<where>
 	  		1=1
@@ -48,7 +48,7 @@
 	  		</if>
 	  	</where>
   </select>
-  <select id="getPageData" parameterType="com.carrey.v7mc.queryVo.MemberQVo" resultType="com.carrey.v7mc.po.V7UniversalLog">
+  <select id="getPageData" parameterType="com.horse.v7mc.queryVo.MemberQVo" resultType="com.horse.v7mc.po.V7UniversalLog">
   	select
   		  m.id id,
 		  m.v7_u_module_name v7UModuleName,
@@ -160,7 +160,7 @@
   <sql id="Blob_Column_List" >
     v7_u_request_param
   </sql>
-  <select id="selectByExampleWithBLOBs" resultMap="ResultMapWithBLOBs" parameterType="com.carrey.v7mc.po.V7UniversalLogExample" >
+  <select id="selectByExampleWithBLOBs" resultMap="ResultMapWithBLOBs" parameterType="com.horse.v7mc.po.V7UniversalLogExample" >
     select
     <if test="distinct" >
       distinct
@@ -176,7 +176,7 @@
       order by ${orderByClause}
     </if>
   </select>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.carrey.v7mc.po.V7UniversalLogExample" >
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.horse.v7mc.po.V7UniversalLogExample" >
     select
     <if test="distinct" >
       distinct
@@ -202,13 +202,13 @@
     delete from V7_UNIVERSAL_LOG
     where id = #{id,jdbcType=VARCHAR}
   </delete>
-  <delete id="deleteByExample" parameterType="com.carrey.v7mc.po.V7UniversalLogExample" >
+  <delete id="deleteByExample" parameterType="com.horse.v7mc.po.V7UniversalLogExample" >
     delete from V7_UNIVERSAL_LOG
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.carrey.v7mc.po.V7UniversalLog" >
+  <insert id="insert" parameterType="com.horse.v7mc.po.V7UniversalLog" >
     insert into V7_UNIVERSAL_LOG (id, v7_u_module_name, v7_u_feature_name, 
       v7_u_feature_path, v7_u_request_result, v7_u_request_user, 
       v7_u_request_time, v7_u_request_pcname, v7_u_request_ip, 
@@ -222,7 +222,7 @@
       #{extends4,jdbcType=VARCHAR}, #{extends5,jdbcType=VARCHAR}, #{v7URequestParam,jdbcType=LONGVARCHAR}
       )
   </insert>
-  <insert id="insertSelective" parameterType="com.carrey.v7mc.po.V7UniversalLog" >
+  <insert id="insertSelective" parameterType="com.horse.v7mc.po.V7UniversalLog" >
     insert into V7_UNIVERSAL_LOG
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -319,7 +319,7 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.carrey.v7mc.po.V7UniversalLogExample" resultType="java.lang.Integer" >
+  <select id="countByExample" parameterType="com.horse.v7mc.po.V7UniversalLogExample" resultType="java.lang.Integer" >
     select count(*) from V7_UNIVERSAL_LOG
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
@@ -419,7 +419,7 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.carrey.v7mc.po.V7UniversalLog" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.horse.v7mc.po.V7UniversalLog" >
     update V7_UNIVERSAL_LOG
     <set >
       <if test="v7UModuleName != null" >
@@ -467,7 +467,7 @@
     </set>
     where id = #{id,jdbcType=VARCHAR}
   </update>
-  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.carrey.v7mc.po.V7UniversalLog" >
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.horse.v7mc.po.V7UniversalLog" >
     update V7_UNIVERSAL_LOG
     set v7_u_module_name = #{v7UModuleName,jdbcType=VARCHAR},
       v7_u_feature_name = #{v7UFeatureName,jdbcType=VARCHAR},
@@ -485,7 +485,7 @@
       v7_u_request_param = #{v7URequestParam,jdbcType=LONGVARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.carrey.v7mc.po.V7UniversalLog" >
+  <update id="updateByPrimaryKey" parameterType="com.horse.v7mc.po.V7UniversalLog" >
     update V7_UNIVERSAL_LOG
     set v7_u_module_name = #{v7UModuleName,jdbcType=VARCHAR},
       v7_u_feature_name = #{v7UFeatureName,jdbcType=VARCHAR},

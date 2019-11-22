@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="gbk"?>
 
 <ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="ehcache.xsd">
-    <diskStore path="D:\\logs\\ehcacheTemp" />
+    <diskStore path="/Users/Gopan/logs" />
     <defaultCache maxElementsInMemory="10000" eternal="false" timeToIdleSeconds="30" timeToLiveSeconds="30" overflowToDisk="false"/>
     <!-- 
        	 配置自定义缓存

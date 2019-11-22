@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.carrey.v7mc.mapperInterface.V7SalaryMapper" >
-  <resultMap id="BaseResultMap" type="com.carrey.v7mc.po.V7Salary" >
+<mapper namespace="com.horse.v7mc.mapperInterface.V7SalaryMapper" >
+  <resultMap id="BaseResultMap" type="com.horse.v7mc.po.V7Salary" >
     <id column="id" property="id" jdbcType="VARCHAR" />
     <result column="v7_s_month" property="v7SMonth" jdbcType="VARCHAR" />
     <result column="v7_s_mnum" property="v7SMnum" jdbcType="INTEGER" />
@@ -24,7 +24,7 @@
  
  <!-- ********************************自定义SQL开始****************************** -->
  <!-- 统计总数 -->
-  <select id="getTotalAmount" parameterType="com.carrey.v7mc.queryVo.SalaryQvo" resultType="int">
+  <select id="getTotalAmount" parameterType="com.horse.v7mc.queryVo.SalaryQvo" resultType="int">
   	select count(m.id) from V7_SALARY m
 	  	<where>
 	  		1=1
@@ -39,7 +39,7 @@
 	  		</if>
 	  	</where>
   </select>
-  <select id="getPageData" parameterType="com.carrey.v7mc.queryVo.SalaryQvo" resultMap="BaseResultMap">
+  <select id="getPageData" parameterType="com.horse.v7mc.queryVo.SalaryQvo" resultMap="BaseResultMap">
   	select * from V7_SALARY m
 	  	<where>
 	  		1=1
@@ -157,7 +157,7 @@
     v7_s_out_salary, v7_s_trans_salary, v7_s_charge_salary, v7_s_reality_salary, v7_s_status, 
     extends1, extends2, extends3, extends4, extends5
   </sql>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.carrey.v7mc.po.V7SalaryExample" >
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.horse.v7mc.po.V7SalaryExample" >
     select
     <if test="distinct" >
       distinct
@@ -181,13 +181,13 @@
     delete from V7_SALARY
     where id = #{id,jdbcType=VARCHAR}
   </delete>
-  <delete id="deleteByExample" parameterType="com.carrey.v7mc.po.V7SalaryExample" >
+  <delete id="deleteByExample" parameterType="com.horse.v7mc.po.V7SalaryExample" >
     delete from V7_SALARY
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.carrey.v7mc.po.V7Salary" >
+  <insert id="insert" parameterType="com.horse.v7mc.po.V7Salary" >
     insert into V7_SALARY (id, v7_s_month, v7_s_mnum, 
       v7_s_name, v7_s_position, v7_s_base_salary, 
       v7_s_pre_salary, v7_s_out_salary, v7_s_trans_salary, 
@@ -201,7 +201,7 @@
       #{extends1,jdbcType=VARCHAR}, #{extends2,jdbcType=VARCHAR}, #{extends3,jdbcType=VARCHAR}, 
       #{extends4,jdbcType=VARCHAR}, #{extends5,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.carrey.v7mc.po.V7Salary" >
+  <insert id="insertSelective" parameterType="com.horse.v7mc.po.V7Salary" >
     insert into V7_SALARY
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -310,7 +310,7 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.carrey.v7mc.po.V7SalaryExample" resultType="java.lang.Integer" >
+  <select id="countByExample" parameterType="com.horse.v7mc.po.V7SalaryExample" resultType="java.lang.Integer" >
     select count(*) from V7_SALARY
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
@@ -398,7 +398,7 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.carrey.v7mc.po.V7Salary" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.horse.v7mc.po.V7Salary" >
     update V7_SALARY
     <set >
       <if test="v7SMonth != null" >
@@ -452,7 +452,7 @@
     </set>
     where id = #{id,jdbcType=VARCHAR}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.carrey.v7mc.po.V7Salary" >
+  <update id="updateByPrimaryKey" parameterType="com.horse.v7mc.po.V7Salary" >
     update V7_SALARY
     set v7_s_month = #{v7SMonth,jdbcType=VARCHAR},
       v7_s_mnum = #{v7SMnum,jdbcType=INTEGER},

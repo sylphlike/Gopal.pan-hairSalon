@@ -43,7 +43,7 @@
 		<property name="converters">
 			<list>
 				<!-- 日期类型转换 -->
-				<bean class="com.carrey.v7mc.common.converter.DateConverter"/>
+				<bean class="com.horse.v7mc.common.converter.DateConverter"/>
 			</list>
 		</property>
 	</bean>
@@ -54,7 +54,7 @@
     	全局异常处理类 ，不能有多个类
     	实现接口 HandlerExceptionResolver
      -->
-    <bean class="com.carrey.v7mc.common.exception.SysExceptionResolver"/>
+    <bean class="com.horse.v7mc.common.exception.SysExceptionResolver"/>
     
     
     <!--拦截器 多个拦截器，顺序执行-->
@@ -62,13 +62,13 @@
 		<!--登陆认证拦截器 -->
 		<mvc:interceptor>
 			<mvc:mapping path="/**"/>
-			<bean class="com.carrey.v7mc.common.interceptor.LoginInterceptor"></bean>
+			<bean class="com.horse.v7mc.common.interceptor.LoginInterceptor"></bean>
 		</mvc:interceptor>
 		
 		<!--统一日志 -->
 		<mvc:interceptor>
 			<mvc:mapping path="/**"/>
-			<bean class="com.carrey.v7mc.common.interceptor.UniversalLogManagement"></bean>
+			<bean class="com.horse.v7mc.common.interceptor.UniversalLogManagement"></bean>
 		</mvc:interceptor>
 		
 	</mvc:interceptors>

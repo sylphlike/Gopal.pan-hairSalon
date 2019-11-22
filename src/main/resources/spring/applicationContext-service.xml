@@ -23,37 +23,37 @@
 		注入业务层，业务层实现类必须在此注入，否者 业务成将不能被事物控制
 	 -->
 	 <!--会员  -->
-	 <bean id="memberService" class="com.carrey.v7mc.member.service.impl.V7MemberServiceImpl"></bean>
+	 <bean id="memberService" class="com.horse.v7mc.member.service.impl.V7MemberServiceImpl"></bean>
 	 <!--会员卡 -->	 
-	 <bean id="cardService" class="com.carrey.v7mc.member.service.impl.V7CardServiceImpl"></bean>
+	 <bean id="cardService" class="com.horse.v7mc.member.service.impl.V7CardServiceImpl"></bean>
 
 	
 	 <!-- 品牌 -->
-	 <bean id="brandService" class="com.carrey.v7mc.product.service.impl.BrandServiceImpl"></bean>
+	 <bean id="brandService" class="com.horse.v7mc.product.service.impl.BrandServiceImpl"></bean>
 	 <!-- 商品-->
-	 <bean id="productService" class="com.carrey.v7mc.product.service.impl.ProductServiceImpl"/>
+	 <bean id="productService" class="com.horse.v7mc.product.service.impl.ProductServiceImpl"/>
 	 <!-- 商品入库 -->
-	 <bean id="inProductService" class="com.carrey.v7mc.product.service.impl.InProductServiceImpl"></bean>
+	 <bean id="inProductService" class="com.horse.v7mc.product.service.impl.InProductServiceImpl"></bean>
 	 <!-- 商品出库 -->
-	 <bean id="outProductService" class="com.carrey.v7mc.product.service.impl.OutProductServiceImpl"></bean>
+	 <bean id="outProductService" class="com.horse.v7mc.product.service.impl.OutProductServiceImpl"></bean>
 	 <!-- 库存 -->
-	 <bean id="storeService" class="com.carrey.v7mc.product.service.impl.StoreServiceImpl"></bean>
+	 <bean id="storeService" class="com.horse.v7mc.product.service.impl.StoreServiceImpl"></bean>
 
 	
 	 <!-- 员工 -->
-	 <bean id="employeeService" class="com.carrey.v7mc.employee.service.impl.EmployeeServiceImpl"></bean>
+	 <bean id="employeeService" class="com.horse.v7mc.employee.service.impl.EmployeeServiceImpl"></bean>
 	 <!-- 登录 -->
-	 <bean id="loginService" class="com.carrey.v7mc.longin.service.impl.LoginServiceImpl"></bean>
+	 <bean id="loginService" class="com.horse.v7mc.longin.service.impl.LoginServiceImpl"></bean>
 	 
 	 
 	 <!-- 前台收银 -->
-	 <bean id="cashierService" class="com.carrey.v7mc.cashier.service.impl.CashierServiceImpl"/>
-	 <bean id="cashierReportService" class="com.carrey.v7mc.cashier.service.impl.CashierReportServiceImpl"/>
-	 <bean id="resultsService" class="com.carrey.v7mc.cashier.service.impl.ResultsServiceImpl"/>
+	 <bean id="cashierService" class="com.horse.v7mc.cashier.service.impl.CashierServiceImpl"/>
+	 <bean id="cashierReportService" class="com.horse.v7mc.cashier.service.impl.CashierReportServiceImpl"/>
+	 <bean id="resultsService" class="com.horse.v7mc.cashier.service.impl.ResultsServiceImpl"/>
 	 
 	 <!-- 财务 -->
-	 <bean id="salaryService" class="com.carrey.v7mc.financial.service.impl.SalaryServiceImpl"/>
-	 <bean id="chargeService" class="com.carrey.v7mc.financial.service.impl.ChargeServiceImpl"/>
+	 <bean id="salaryService" class="com.horse.v7mc.financial.service.impl.SalaryServiceImpl"/>
+	 <bean id="chargeService" class="com.horse.v7mc.financial.service.impl.ChargeServiceImpl"/>
 </beans>
 
 

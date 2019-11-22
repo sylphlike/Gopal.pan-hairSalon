@@ -28,13 +28,13 @@
 	<!-- 通知 -->
 	<tx:advice id="txAdvice" transaction-manager="transactionManager">
 		<tx:attributes>
-			<tx:method name="save*"   propagation="REQUIRED" rollback-for="java.lang.Exception,java.lang.RuntimeException,com.carrey.v7mc.common.exception.SysException"/>
-			<tx:method name="add*"    propagation="REQUIRED" rollback-for="java.lang.Exception,java.lang.RuntimeException,com.carrey.v7mc.common.exception.SysException"/>
-			<tx:method name="insert*" propagation="REQUIRED" rollback-for="java.lang.Exception,java.lang.RuntimeException,com.carrey.v7mc.common.exception.SysException"/>
-			<tx:method name="delete*" propagation="REQUIRED" rollback-for="java.lang.Exception,java.lang.RuntimeException,com.carrey.v7mc.common.exception.SysException"/>
-			<tx:method name="del*"    propagation="REQUIRED" rollback-for="java.lang.Exception,java.lang.RuntimeException,com.carrey.v7mc.common.exception.SysException"/>
-			<tx:method name="update*" propagation="REQUIRED" rollback-for="java.lang.Exception,java.lang.RuntimeException,com.carrey.v7mc.common.exception.SysException"/>
-			<tx:method name="upd*"    propagation="REQUIRED" rollback-for="java.lang.Exception,java.lang.RuntimeException,com.carrey.v7mc.common.exception.SysException"/>
+			<tx:method name="save*"   propagation="REQUIRED" rollback-for="java.lang.Exception,java.lang.RuntimeException,com.horse.v7mc.common.exception.SysException"/>
+			<tx:method name="add*"    propagation="REQUIRED" rollback-for="java.lang.Exception,java.lang.RuntimeException,com.horse.v7mc.common.exception.SysException"/>
+			<tx:method name="insert*" propagation="REQUIRED" rollback-for="java.lang.Exception,java.lang.RuntimeException,com.horse.v7mc.common.exception.SysException"/>
+			<tx:method name="delete*" propagation="REQUIRED" rollback-for="java.lang.Exception,java.lang.RuntimeException,com.horse.v7mc.common.exception.SysException"/>
+			<tx:method name="del*"    propagation="REQUIRED" rollback-for="java.lang.Exception,java.lang.RuntimeException,com.horse.v7mc.common.exception.SysException"/>
+			<tx:method name="update*" propagation="REQUIRED" rollback-for="java.lang.Exception,java.lang.RuntimeException,com.horse.v7mc.common.exception.SysException"/>
+			<tx:method name="upd*"    propagation="REQUIRED" rollback-for="java.lang.Exception,java.lang.RuntimeException,com.horse.v7mc.common.exception.SysException"/>
 			<tx:method name="find*"   propagation="SUPPORTS" read-only="true"/>
 			<tx:method name="get*"    propagation="SUPPORTS" read-only="true"/>
 			<tx:method name="select*" propagation="SUPPORTS" read-only="true"/>

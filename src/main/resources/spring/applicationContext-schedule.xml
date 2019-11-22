@@ -36,9 +36,9 @@
 	</bean>
     
      <!-- 要调用的工作类 -->
-    <bean id="cacheSchedule" class="com.carrey.v7mc.system.ehcache.CacheFlushSchedule"></bean>
-    <bean id="monthAccountsSchedule" class="com.carrey.v7mc.cashier.controller.MonthAccountsSchedule"></bean>
-    <bean id="monthSalarySchedule" class="com.carrey.v7mc.financial.controller.MonthSalary"></bean>
+    <bean id="cacheSchedule" class="com.horse.v7mc.system.ehcache.CacheFlushSchedule"></bean>
+    <bean id="monthAccountsSchedule" class="com.horse.v7mc.cashier.controller.MonthAccountsSchedule"></bean>
+    <bean id="monthSalarySchedule" class="com.horse.v7mc.financial.controller.MonthSalary"></bean>
     
     <!-- 定义调用对象和调用对象的方法 -->
     <bean id="jobtaskcacheSchedule" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">

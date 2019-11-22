@@ -1,4 +1,4 @@
-<%@page import="com.carrey.v7mc.common.Constant"%>
+<%@page import="com.horse.v7mc.common.Constant"%>
 <%@ page language="java"  pageEncoding="UTF-8"  %>
 <%@ page contentType="image/jpeg"  import="java.awt.*,java.awt.image.*,java.util.*,javax.imageio.*" %>
 <%!

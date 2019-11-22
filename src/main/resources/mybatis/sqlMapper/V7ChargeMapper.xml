@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.carrey.v7mc.mapperInterface.V7ChargeMapper" >
-  <resultMap id="BaseResultMap" type="com.carrey.v7mc.po.V7Charge" >
+<mapper namespace="com.horse.v7mc.mapperInterface.V7ChargeMapper" >
+  <resultMap id="BaseResultMap" type="com.horse.v7mc.po.V7Charge" >
     <id column="id" property="id" jdbcType="VARCHAR" />
     <result column="v7_c_month" property="v7CMonth" jdbcType="DATE" />
     <result column="v7_c_mnum" property="v7CMnum" jdbcType="INTEGER" />
@@ -20,7 +20,7 @@
   
    <!-- ********************************自定义SQL开始****************************** -->
  <!-- 统计总数 -->
-  <select id="getTotalAmount" parameterType="com.carrey.v7mc.queryVo.ChargeQVo" resultType="int">
+  <select id="getTotalAmount" parameterType="com.horse.v7mc.queryVo.ChargeQVo" resultType="int">
   	select count(m.id) from V7_CHARGE m
 	  	<where>
 	  		1=1
@@ -33,7 +33,7 @@
 	  	</where>
   </select>
   
-  <select id="getPageData" parameterType="com.carrey.v7mc.queryVo.ChargeQVo" resultMap="BaseResultMap">
+  <select id="getPageData" parameterType="com.horse.v7mc.queryVo.ChargeQVo" resultMap="BaseResultMap">
   	select * from V7_CHARGE m
 	  	<where>
 	  		1=1
@@ -121,7 +121,7 @@
     id, v7_c_month, v7_c_mnum, v7_c_name, v7_c_position, v7_c_charge_money, v7_c_charge_explain, 
     v7_c_oper_user, v7_c_oper_time, extends1, extends2, extends3, extends4, extends5
   </sql>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.carrey.v7mc.po.V7ChargeExample" >
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.horse.v7mc.po.V7ChargeExample" >
     select
     <if test="distinct" >
       distinct
@@ -145,13 +145,13 @@
     delete from V7_CHARGE
     where id = #{id,jdbcType=VARCHAR}
   </delete>
-  <delete id="deleteByExample" parameterType="com.carrey.v7mc.po.V7ChargeExample" >
+  <delete id="deleteByExample" parameterType="com.horse.v7mc.po.V7ChargeExample" >
     delete from V7_CHARGE
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.carrey.v7mc.po.V7Charge" >
+  <insert id="insert" parameterType="com.horse.v7mc.po.V7Charge" >
     insert into V7_CHARGE (id, v7_c_month, v7_c_mnum, 
       v7_c_name, v7_c_position, v7_c_charge_money, 
       v7_c_charge_explain, v7_c_oper_user, v7_c_oper_time, 
@@ -163,7 +163,7 @@
       #{extends1,jdbcType=VARCHAR}, #{extends2,jdbcType=VARCHAR}, #{extends3,jdbcType=VARCHAR}, 
       #{extends4,jdbcType=VARCHAR}, #{extends5,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.carrey.v7mc.po.V7Charge" >
+  <insert id="insertSelective" parameterType="com.horse.v7mc.po.V7Charge" >
     insert into V7_CHARGE
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -254,7 +254,7 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.carrey.v7mc.po.V7ChargeExample" resultType="java.lang.Integer" >
+  <select id="countByExample" parameterType="com.horse.v7mc.po.V7ChargeExample" resultType="java.lang.Integer" >
     select count(*) from V7_CHARGE
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
@@ -330,7 +330,7 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.carrey.v7mc.po.V7Charge" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.horse.v7mc.po.V7Charge" >
     update V7_CHARGE
     <set >
       <if test="v7CMonth != null" >
@@ -375,7 +375,7 @@
     </set>
     where id = #{id,jdbcType=VARCHAR}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.carrey.v7mc.po.V7Charge" >
+  <update id="updateByPrimaryKey" parameterType="com.horse.v7mc.po.V7Charge" >
     update V7_CHARGE
     set v7_c_month = #{v7CMonth,jdbcType=DATE},
       v7_c_mnum = #{v7CMnum,jdbcType=INTEGER},

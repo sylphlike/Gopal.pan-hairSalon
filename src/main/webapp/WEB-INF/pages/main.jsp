@@ -1,4 +1,4 @@
-﻿<%@page import="com.carrey.v7mc.po.V7Employee"%>
+﻿<%@page import="com.horse.v7mc.po.V7Employee"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 

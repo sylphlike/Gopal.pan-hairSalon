@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.carrey.v7mc.mapperInterface.V7HandleCardMapper" >
-  <resultMap id="BaseResultMap" type="com.carrey.v7mc.po.V7HandleCard" >
+<mapper namespace="com.horse.v7mc.mapperInterface.V7HandleCardMapper" >
+  <resultMap id="BaseResultMap" type="com.horse.v7mc.po.V7HandleCard" >
     <id column="id" property="id" jdbcType="VARCHAR" />
     <result column="v7_h_card_num" property="v7HCardNum" jdbcType="VARCHAR" />
     <result column="v7_h_handle_type" property="v7HHandleType" jdbcType="INTEGER" />
@@ -115,7 +115,7 @@
     id, v7_h_card_num, v7_h_handle_type, v7_h_card_type, v7_h_money, v7_h_handle_user, 
     v7_h_oper_user, v7_h_oper_time, extends1, extends2, extends3, extends4, extends5
   </sql>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.carrey.v7mc.po.V7HandleCardExample" >
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.horse.v7mc.po.V7HandleCardExample" >
     select
     <if test="distinct" >
       distinct
@@ -139,13 +139,13 @@
     delete from V7_HANDLE_CARD
     where id = #{id,jdbcType=VARCHAR}
   </delete>
-  <delete id="deleteByExample" parameterType="com.carrey.v7mc.po.V7HandleCardExample" >
+  <delete id="deleteByExample" parameterType="com.horse.v7mc.po.V7HandleCardExample" >
     delete from V7_HANDLE_CARD
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.carrey.v7mc.po.V7HandleCard" >
+  <insert id="insert" parameterType="com.horse.v7mc.po.V7HandleCard" >
     insert into V7_HANDLE_CARD (id, v7_h_card_num, v7_h_handle_type, 
       v7_h_card_type, v7_h_money, v7_h_handle_user, 
       v7_h_oper_user, v7_h_oper_time, extends1, 
@@ -157,7 +157,7 @@
       #{extends2,jdbcType=VARCHAR}, #{extends3,jdbcType=VARCHAR}, #{extends4,jdbcType=VARCHAR}, 
       #{extends5,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.carrey.v7mc.po.V7HandleCard" >
+  <insert id="insertSelective" parameterType="com.horse.v7mc.po.V7HandleCard" >
     insert into V7_HANDLE_CARD
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -242,7 +242,7 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.carrey.v7mc.po.V7HandleCardExample" resultType="java.lang.Integer" >
+  <select id="countByExample" parameterType="com.horse.v7mc.po.V7HandleCardExample" resultType="java.lang.Integer" >
     select count(*) from V7_HANDLE_CARD
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
@@ -314,7 +314,7 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.carrey.v7mc.po.V7HandleCard" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.horse.v7mc.po.V7HandleCard" >
     update V7_HANDLE_CARD
     <set >
       <if test="v7HCardNum != null" >
@@ -356,7 +356,7 @@
     </set>
     where id = #{id,jdbcType=VARCHAR}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.carrey.v7mc.po.V7HandleCard" >
+  <update id="updateByPrimaryKey" parameterType="com.horse.v7mc.po.V7HandleCard" >
     update V7_HANDLE_CARD
     set v7_h_card_num = #{v7HCardNum,jdbcType=VARCHAR},
       v7_h_handle_type = #{v7HHandleType,jdbcType=INTEGER},

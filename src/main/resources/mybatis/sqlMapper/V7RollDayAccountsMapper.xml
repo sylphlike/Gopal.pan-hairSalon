@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.carrey.v7mc.mapperInterface.V7RollDayAccountsMapper" >
-  <resultMap id="BaseResultMap" type="com.carrey.v7mc.po.V7RollDayAccounts" >
+<mapper namespace="com.horse.v7mc.mapperInterface.V7RollDayAccountsMapper" >
+  <resultMap id="BaseResultMap" type="com.horse.v7mc.po.V7RollDayAccounts" >
     <id column="id" property="id" jdbcType="VARCHAR" />
     <result column="v7_r_rolling_date" property="v7RRollingDate" jdbcType="DATE" />
     <result column="v7_r_cash" property="v7RCash" jdbcType="DOUBLE" />
@@ -32,7 +32,7 @@
   
  <!-- ********************************自定义SQL开始****************************** -->
  <!-- 统计总数 -->
-  <select id="getTotalAmount" parameterType="com.carrey.v7mc.queryVo.RollDayAccountsQVo" resultType="int">
+  <select id="getTotalAmount" parameterType="com.horse.v7mc.queryVo.RollDayAccountsQVo" resultType="int">
   	select count(m.id) from V7_ROLL_DAY_ACCOUNTS m
 	  	<where>
 	  		1=1
@@ -44,7 +44,7 @@
 	  		</if>
 	  	</where>
   </select>
-  <select id="getPageData" parameterType="com.carrey.v7mc.queryVo.RollDayAccountsQVo" resultMap="BaseResultMap">
+  <select id="getPageData" parameterType="com.horse.v7mc.queryVo.RollDayAccountsQVo" resultMap="BaseResultMap">
   	select * from V7_ROLL_DAY_ACCOUNTS m
 	  	<where>
 	  		1=1
@@ -205,7 +205,7 @@
     v7_r_cardmoney, v7_r_raiseamount, v7_r_takeout, v7_r_total_card, v7_r_total_cash, 
     v7_r_operuser, v7_r_opertime, extends1, extends2, extends3, extends4, extends5
   </sql>
-  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.carrey.v7mc.po.V7RollDayAccountsExample" >
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.horse.v7mc.po.V7RollDayAccountsExample" >
     select
     <if test="distinct" >
       distinct
@@ -229,13 +229,13 @@
     delete from V7_ROLL_DAY_ACCOUNTS
     where id = #{id,jdbcType=VARCHAR}
   </delete>
-  <delete id="deleteByExample" parameterType="com.carrey.v7mc.po.V7RollDayAccountsExample" >
+  <delete id="deleteByExample" parameterType="com.horse.v7mc.po.V7RollDayAccountsExample" >
     delete from V7_ROLL_DAY_ACCOUNTS
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.carrey.v7mc.po.V7RollDayAccounts" >
+  <insert id="insert" parameterType="com.horse.v7mc.po.V7RollDayAccounts" >
     insert into V7_ROLL_DAY_ACCOUNTS (id, v7_r_rolling_date, v7_r_cash, 
       v7_r_vipout, v7_r_hedgeout, v7_r_hedgecashin, 
       v7_r_blowwashout, v7_r_blowcutwashout, v7_r_vipin, 
@@ -255,7 +255,7 @@
       #{extends3,jdbcType=VARCHAR}, #{extends4,jdbcType=VARCHAR}, #{extends5,jdbcType=VARCHAR}
       )
   </insert>
-  <insert id="insertSelective" parameterType="com.carrey.v7mc.po.V7RollDayAccounts" >
+  <insert id="insertSelective" parameterType="com.horse.v7mc.po.V7RollDayAccounts" >
     insert into V7_ROLL_DAY_ACCOUNTS
     <trim prefix="(" suffix=")" suffixOverrides="," >
       <if test="id != null" >
@@ -406,7 +406,7 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.carrey.v7mc.po.V7RollDayAccountsExample" resultType="java.lang.Integer" >
+  <select id="countByExample" parameterType="com.horse.v7mc.po.V7RollDayAccountsExample" resultType="java.lang.Integer" >
     select count(*) from V7_ROLL_DAY_ACCOUNTS
     <if test="_parameter != null" >
       <include refid="Example_Where_Clause" />
@@ -522,7 +522,7 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.carrey.v7mc.po.V7RollDayAccounts" >
+  <update id="updateByPrimaryKeySelective" parameterType="com.horse.v7mc.po.V7RollDayAccounts" >
     update V7_ROLL_DAY_ACCOUNTS
     <set >
       <if test="v7RRollingDate != null" >
@@ -597,7 +597,7 @@
     </set>
     where id = #{id,jdbcType=VARCHAR}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.carrey.v7mc.po.V7RollDayAccounts" >
+  <update id="updateByPrimaryKey" parameterType="com.horse.v7mc.po.V7RollDayAccounts" >
     update V7_ROLL_DAY_ACCOUNTS
     set v7_r_rolling_date = #{v7RRollingDate,jdbcType=DATE},
       v7_r_cash = #{v7RCash,jdbcType=DOUBLE},
