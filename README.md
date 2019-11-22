@@ -1,4 +1,4 @@
-# bing.Pan-hairSalon
+# Gopan-hairSalon
 
 #### 项目介绍
 发廊管理系统

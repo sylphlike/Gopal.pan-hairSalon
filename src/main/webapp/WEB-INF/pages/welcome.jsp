@@ -57,7 +57,7 @@
 </div>
 <footer class="footer">
 	<p>Copyright &copy;2016 V7MC v1.0.0 All Rights Reserved.<br>
-	本系统由<a href="http://user.qzone.qq.com/1260209868/infocenter?ptsig=448lT*nlzbwaQimzsvcI62plL6Xf2RWX8s7pW7kwsKk_" target="_blank" title="bing.Pan">&nbsp;bing.Pan&nbsp;</a>提供技术支持<br>
+	本系统由<a href="http://user.qzone.qq.com/1260209868/infocenter?ptsig=448lT*nlzbwaQimzsvcI62plL6Xf2RWX8s7pW7kwsKk_" target="_blank" title="Gopan">&nbsp;Gopan&nbsp;</a>提供技术支持<br>
 	联系我&nbsp;Email:15923508369@163.com
 	<p>
 </footer>
